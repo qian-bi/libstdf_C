@@ -25,7 +25,7 @@ char *stdf_rec_names[] = {
 	"GDR", "DTR"
 };
 
-inline int _stdf_header_to_idx(rec_typ type, rec_sub sub)
+static int _stdf_header_to_idx(rec_typ type, rec_sub sub)
 {
 	switch (MAKE_REC(type, sub)) {
 		case REC_FAR:	return 1;
