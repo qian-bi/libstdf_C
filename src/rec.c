@@ -303,7 +303,7 @@ rec_wir* stdf_read_rec_wir(stdf_file *file)
 	_stdf_read_dtc_U1(file, &(wir->HEAD_NUM));
 #ifdef STDF_VER3
 	if (file->ver == 3)
-	_stdf_read_dtc_U1(file, &(wir->PAD_BYTE));
+	_stdf_read_dtc_B1(file, &(wir->PAD_BYTE));
 	else
 #endif
 	_stdf_read_dtc_U1(file, &(wir->SITE_GRP));
@@ -324,7 +324,7 @@ rec_wrr* stdf_read_rec_wrr(stdf_file *file)
 	} else {
 	_stdf_read_dtc_U4(file, &(wrr->FINISH_T));
 	_stdf_read_dtc_U1(file, &(wrr->HEAD_NUM));
-	_stdf_read_dtc_U1(file, &(wrr->PAD_BYTE));
+	_stdf_read_dtc_B1(file, &(wrr->PAD_BYTE));
 	}
 #endif
 	_stdf_read_dtc_U4(file, &(wrr->PART_CNT));
@@ -813,6 +813,23 @@ void stdf_free_record(rec_unknown *rec)
 			free(rec);
 			break;
 		}
+#ifdef STDF_VER3
+		case REC_PDR: {
+			rec_pdr *pdr = (rec_pdr*)rec;
+			free(pdr->UNITS);
+			free(pdr->TEST_NAM);
+			free(pdr->SEQ_NAME);
+			free(rec);
+			break;
+		}
+		case REC_FDR: {
+			rec_fdr *fdr = (rec_fdr*)rec;
+			free(fdr->TEST_NAM);
+			free(fdr->SEQ_NAME);
+			free(rec);
+			break;
+		}
+#endif
 		case REC_TSR: {
 			rec_tsr *tsr = (rec_tsr*)rec;
 			free(tsr->TEST_NAM);
@@ -874,6 +891,32 @@ void stdf_free_record(rec_unknown *rec)
 		case REC_EPS:
 			free(rec);
 			break;
+#ifdef STDF_VER3
+		case REC_SHB: {
+			rec_shb *shb = (rec_shb*)rec;
+			free(shb->HBIN_NAM);
+			free(rec);
+			break;
+		}
+		case REC_SSB: {
+			rec_ssb *ssb = (rec_ssb*)rec;
+			free(ssb->SBIN_NAM);
+			free(rec);
+			break;
+		}
+		case REC_STS: {
+			rec_sts *sts = (rec_sts*)rec;
+			free(sts->TEST_NAM);
+			free(sts->SEQ_NAME);
+			free(sts->TEST_LBL);
+			free(rec);
+			break;
+		}
+		case REC_SCR: {
+			free(rec);
+			break;
+		}
+#endif
 		case REC_GDR: {
 /*			rec_gdr *gdr = (rec_gdr*)rec;
 			free(gdr->GEN_DATA);*/

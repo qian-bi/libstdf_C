@@ -315,7 +315,7 @@ typedef struct {
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_GRP;
 #ifdef STDF_VER3
-	dtc_C1		PAD_BYTE;
+	dtc_B1		PAD_BYTE;
 #endif
 	dtc_U4		START_T;
 	dtc_Cn		WAFER_ID;
@@ -326,7 +326,7 @@ typedef struct {
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_GRP;
 #ifdef STDF_VER3
-	dtc_C1		PAD_BYTE;
+	dtc_B1		PAD_BYTE;
 #endif
 	dtc_U4		FINISH_T;
 	dtc_U4		PART_CNT;
@@ -375,7 +375,7 @@ typedef struct {
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_NUM;
 #ifdef STDF_VER3
-	dtc_C1		PAD_BYTE;
+	dtc_B1		PAD_BYTE;
 #endif
 	dtc_B1		PART_FLG;
 	dtc_U2		NUM_TEST;
@@ -425,7 +425,7 @@ typedef struct {
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_NUM;
 #ifdef STDF_VER3
-	dtc_C1		PAD_BYTE;
+	dtc_B1		PAD_BYTE;
 	dtc_R4		TST_MEAN;
 	dtc_R4		TST_SDEV;
 #endif

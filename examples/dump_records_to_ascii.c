@@ -70,6 +70,9 @@ for (i=1; i<argc; ++i) {
 			}
 			case REC_MIR: {
 				rec_mir *mir = (rec_mir*)rec;
+#ifdef STDF_VER3
+				if (f->ver == 4) {
+#endif
 				print_tim("SETUP_T", mir->SETUP_T);
 				print_tim("START_T", mir->START_T);
 				print_int("STAT_NUM", mir->STAT_NUM);
@@ -108,11 +111,47 @@ for (i=1; i<argc; ++i) {
 				print_str("ROM_COD", mir->ROM_COD);
 				print_str("SERL_NUM", mir->SERL_NUM);
 				print_str("SUPR_NAM", mir->SUPR_NAM);
+#ifdef STDF_VER3
+				} else {
+				print_int("CPU_TYPE", mir->CPU_TYPE);
+				print_int("STDF_VER", mir->STDF_VER);
+				print_chr("MODE_COD", mir->MODE_COD);
+				print_int("STAT_NUM", mir->STAT_NUM);
+				print_str("TEST_COD", mir->TEST_COD);
+				print_chr("RTST_COD", mir->RTST_COD);
+				print_chr("PROT_COD", mir->PROT_COD);
+				print_chr("CMOD_COD", mir->CMOD_COD);
+				print_tim("SETUP_T", mir->SETUP_T);
+				print_tim("START_T", mir->START_T);
+				print_str("LOT_ID", mir->LOT_ID);
+				print_str("PART_TYP", mir->PART_TYP);
+				print_str("JOB_NAM", mir->JOB_NAM);
+				print_str("OPER_NAM", mir->OPER_NAM);
+				print_str("NODE_NAM", mir->NODE_NAM);
+				print_str("TSTR_TYP", mir->TSTR_TYP);
+				print_str("EXEC_TYP", mir->EXEC_TYP);
+				print_str("SUPR_NAM", mir->SUPR_NAM);
+				print_str("HAND_ID", mir->HAND_ID);
+				print_str("SBLOT_ID", mir->SBLOT_ID);
+				print_str("JOB_REV", mir->JOB_REV);
+				print_str("PROC_ID", mir->PROC_ID);
+				print_str("PRB_CARD", mir->PRB_CARD);
+				}
+#endif
 				break;
 			}
 			case REC_MRR: {
 				rec_mrr *mrr = (rec_mrr*)rec;
 				print_tim("FINISH_T", mrr->FINISH_T);
+#ifdef STDF_VER3
+				if (f->ver == 3) {
+				print_int("PART_CNT", mrr->PART_CNT);
+				print_int("RTST_CNT", mrr->RTST_CNT);
+				print_int("ABRT_CNT", mrr->ABRT_CNT);
+				print_int("GOOD_CNT", mrr->GOOD_CNT);
+				print_int("FUNC_CNT", mrr->FUNC_CNT);
+				}
+#endif
 				print_chr("DISP_COD", mrr->DISP_COD);
 				print_str("USR_DESC", mrr->USR_DESC);
 				print_str("EXC_DESC", mrr->EXC_DESC);
@@ -213,6 +252,11 @@ for (i=1; i<argc; ++i) {
 			case REC_WIR: {
 				rec_wir *wir = (rec_wir*)rec;
 				print_int("HEAD_NUM", wir->HEAD_NUM);
+#ifdef STDF_VER3
+				if (f->ver == 3)
+				print_hex("PAD_BYTE", wir->PAD_BYTE);
+				else
+#endif
 				print_int("SITE_GRP", wir->SITE_GRP);
 				print_tim("START_T", wir->START_T);
 				print_str("WAFER_ID", wir->WAFER_ID);
@@ -220,18 +264,37 @@ for (i=1; i<argc; ++i) {
 			}
 			case REC_WRR: {
 				rec_wrr *wrr = (rec_wrr*)rec;
+#ifdef STDF_VER3
+				if (f->ver == 4) {
+#endif
 				print_int("HEAD_NUM", wrr->HEAD_NUM);
 				print_int("SITE_GRP", wrr->SITE_GRP);
 				print_tim("FINISH_T", wrr->FINISH_T);
+#ifdef STDF_VER3
+				} else {
+				print_tim("FINISH_T", wrr->FINISH_T);
+				print_int("HEAD_NUM", wrr->HEAD_NUM);
+				print_hex("PAD_BYTE", wrr->PAD_BYTE);
+				}
+#endif
 				print_int("PART_CNT", wrr->PART_CNT);
 				print_int("RTST_CNT", wrr->RTST_CNT);
 				print_int("ABRT_CNT", wrr->ABRT_CNT);
 				print_int("GOOD_CNT", wrr->GOOD_CNT);
 				print_int("FUNC_CNT", wrr->FUNC_CNT);
 				print_str("WAFER_ID", wrr->WAFER_ID);
+#ifdef STDF_VER3
+				if (f->ver == 4) {
+#endif
 				print_str("FABWF_ID", wrr->FABWF_ID);
 				print_str("FRAME_ID", wrr->FRAME_ID);
 				print_str("MASK_ID", wrr->MASK_ID);
+#ifdef STDF_VER3
+				} else {
+				print_str("HAND_ID", wrr->HAND_ID);
+				print_str("PRB_CARD", wrr->PRB_CARD);
+				}
+#endif
 				print_str("USR_DESC", wrr->USR_DESC);
 				print_str("EXC_DESC", wrr->EXC_DESC);
 				break;
@@ -253,18 +316,37 @@ for (i=1; i<argc; ++i) {
 				rec_pir *pir = (rec_pir*)rec;
 				print_int("HEAD_NUM", pir->HEAD_NUM);
 				print_int("SITE_NUM", pir->SITE_NUM);
+#ifdef STDF_VER3
+				if (f->ver == 3) {
+				print_int("X_COORD", pir->X_COORD);
+				print_int("Y_COORD", pir->Y_COORD);
+				print_str("PART_ID", pir->PART_ID);
+				}
+#endif
 				break;
 			}
 			case REC_PRR: {
 				rec_prr *prr = (rec_prr*)rec;
 				print_int("HEAD_NUM", prr->HEAD_NUM);
 				print_int("SITE_NUM", prr->SITE_NUM);
+#ifdef STDF_VER3
+				if (f->ver == 4)
+#endif
 				print_hex("PART_FLG", prr->PART_FLG);
 				print_int("NUM_TEST", prr->NUM_TEST);
 				print_int("HARD_BIN", prr->HARD_BIN);
 				print_int("SOFT_BIN", prr->SOFT_BIN);
+#ifdef STDF_VER3
+				if (f->ver == 3) {
+				print_hex("PART_FLG", prr->PART_FLG);
+				print_hex("PAD_BYTE", prr->PAD_BYTE);
+				}
+#endif
 				print_int("X_COORD", prr->X_COORD);
 				print_int("Y_COORD", prr->Y_COORD);
+#ifdef STDF_VER3
+				if (f->ver == 4)
+#endif
 				print_tim("TEST_T", prr->TEST_T);
 				print_str("PART_ID", prr->PART_ID);
 				print_str("PART_TXT", prr->PART_TXT);
@@ -306,11 +388,17 @@ for (i=1; i<argc; ++i) {
 				rec_tsr *tsr = (rec_tsr*)rec;
 				print_int("HEAD_NUM", tsr->HEAD_NUM);
 				print_int("SITE_NUM", tsr->SITE_NUM);
+#ifdef STDF_VER3
+				if (f->ver == 4)
+#endif
 				print_chr("TEST_TYP", tsr->TEST_TYP);
 				print_int("TEST_NUM", tsr->TEST_NUM);
 				print_int("EXEC_CNT", tsr->EXEC_CNT);
 				print_int("FAIL_CNT", tsr->FAIL_CNT);
 				print_int("ALRM_CNT", tsr->ALRM_CNT);
+#ifdef STDF_VER3
+				if (f->ver == 4) {
+#endif
 				print_str("TEST_NAM", tsr->TEST_NAM);
 				print_str("SEQ_NAME", tsr->SEQ_NAME);
 				print_str("TEST_LBL", tsr->TEST_LBL);
@@ -320,6 +408,20 @@ for (i=1; i<argc; ++i) {
 				print_rel("TEST_MAX", tsr->TEST_MAX);
 				print_rel("TST_SUMS", tsr->TST_SUMS);
 				print_rel("TST_SQRS", tsr->TST_SQRS);
+#ifdef STDF_VER3
+				} else {
+				print_hex("OPT_FLAG", tsr->OPT_FLAG);
+				print_hex("PAD_BYTE", tsr->PAD_BYTE);
+				print_rel("TEST_MIN", tsr->TEST_MIN);
+				print_rel("TEST_MAX", tsr->TEST_MAX);
+				print_rel("TST_MEAN", tsr->TST_MEAN);
+				print_rel("TST_SDEV", tsr->TST_SDEV);
+				print_rel("TST_SUMS", tsr->TST_SUMS);
+				print_rel("TST_SQRS", tsr->TST_SQRS);
+				print_str("TEST_NAM", tsr->TEST_NAM);
+				print_str("SEQ_NAME", tsr->SEQ_NAME);
+				}
+#endif
 				break;
 			}
 			case REC_PTR: {
