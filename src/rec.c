@@ -672,6 +672,9 @@ void stdf_free_record(stdf_file *file, rec_unknown *rec)
 		}
 		case REC_MIR: {
 			rec_mir *mir = (rec_mir*)rec;
+#ifdef STDF_VER3
+			if (file->ver == 4) {
+#endif
 			free(mir->LOT_ID);
 			free(mir->PART_TYP);
 			free(mir->NODE_NAM);
@@ -702,6 +705,24 @@ void stdf_free_record(stdf_file *file, rec_unknown *rec)
 			free(mir->ROM_COD);
 			free(mir->SERL_NUM);
 			free(mir->SUPR_NAM);
+#ifdef STDF_VER3
+			} else {
+			free(mir->TEST_COD);
+			free(mir->LOT_ID);
+			free(mir->PART_TYP);
+			free(mir->JOB_NAM);
+			free(mir->OPER_NAM);
+			free(mir->NODE_NAM);
+			free(mir->TSTR_TYP);
+			free(mir->EXEC_TYP);
+			free(mir->SUPR_NAM);
+			free(mir->HAND_ID);
+			free(mir->SBLOT_ID);
+			free(mir->JOB_REV);
+			free(mir->PROC_ID);
+			free(mir->PRB_CARD);
+			}
+#endif
 			free(mir);
 			break;
 		}
@@ -791,9 +812,18 @@ void stdf_free_record(stdf_file *file, rec_unknown *rec)
 		case REC_WRR: {
 			rec_wrr *wrr = (rec_wrr*)rec;
 			free(wrr->WAFER_ID);
+#ifdef STDF_VER3
+			if (file->ver == 4) {
+#endif
 			free(wrr->FABWF_ID);
 			free(wrr->FRAME_ID);
 			free(wrr->MASK_ID);
+#ifdef STDF_VER3
+			} else {
+			free(wrr->HAND_ID);
+			free(wrr->PRB_CARD);
+			}
+#endif
 			free(wrr->USR_DESC);
 			free(wrr->EXC_DESC);
 			free(rec);
@@ -802,9 +832,15 @@ void stdf_free_record(stdf_file *file, rec_unknown *rec)
 		case REC_WCR:
 			free(rec);
 			break;
-		case REC_PIR:
+		case REC_PIR: {
+#ifdef STDF_VER3
+			rec_pir *pir = (rec_pir*)rec;
+			if (file->ver == 3)
+			free(pir->PART_ID);
+#endif
 			free(rec);
 			break;
+		}
 		case REC_PRR: {
 			rec_prr *prr = (rec_prr*)rec;
 			free(prr->PART_ID);
@@ -834,6 +870,9 @@ void stdf_free_record(stdf_file *file, rec_unknown *rec)
 			rec_tsr *tsr = (rec_tsr*)rec;
 			free(tsr->TEST_NAM);
 			free(tsr->SEQ_NAME);
+#ifdef STDF_VER3
+			if (file->ver == 4)
+#endif
 			free(tsr->TEST_LBL);
 			free(rec);
 			break;
