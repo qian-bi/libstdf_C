@@ -20,4 +20,6 @@ extern char* stdf_get_rec_name(int, int);
 #define	stdf_get_rec_name_from_head(h) stdf_get_rec_name(h.REC_TYP, h.REC_SUB)
 #define	stdf_get_rec_name_from_rec(r) stdf_get_rec_name(r->header.REC_TYP, r->h.REC_SUB)
 
+extern char* stdf_get_Vn_name(int);
+
 #endif /* _LIBSTDF_FUNCS_H */

@@ -5,3 +5,4 @@ stdf_close
 stdf_read_record
 stdf_free_record
 stdf_get_rec_name
+stdf_get_Vn_name

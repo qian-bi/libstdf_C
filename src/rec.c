@@ -62,18 +62,16 @@ char* stdf_get_rec_name(int type, int subtype)
 	return name;
 }
 
-#define	__do_warn(type, reason) \
+#define	warn_untested(type) \
 	do { \
 		fprintf(stderr, "*********************************************\n"); \
-		fprintf(stderr, "This record type (" type ") has not been " reason "!\n"); \
+		fprintf(stderr, "This record type (" type ") has not been tested!\n"); \
 		fprintf(stderr, "Please consider sending this file to\n"); \
 		fprintf(stderr, "vapier@users.sourceforge.net to help out the\n"); \
 		fprintf(stderr, "FreeSTDF project and make sure this code\n"); \
 		fprintf(stderr, "works exactly the way it should!\n"); \
 		fprintf(stderr, "*********************************************\n"); \
 	} while (0)
-#define	warn_untested(type) __do_warn(type, "tested")
-#define	warn_not_coded(type) __do_warn(type, "implemented")
 
 #define __malloc_rec(r) ((r*)malloc(sizeof(r)))
 rec_unknown* stdf_read_rec_unknown(stdf_file *file)
@@ -242,7 +240,6 @@ rec_pmr* stdf_read_rec_pmr(stdf_file *file)
 rec_pgr* stdf_read_rec_pgr(stdf_file *file)
 {
 	rec_pgr *pgr = __malloc_rec(rec_pgr);
-	warn_untested("PGR");
 	_stdf_read_dtc_U2(file, &(pgr->GRP_INDX));
 	_stdf_read_dtc_Cn(file, &(pgr->GRP_NAM));
 	_stdf_read_dtc_U2(file, &(pgr->INDX_CNT));
@@ -266,7 +263,6 @@ rec_plr* stdf_read_rec_plr(stdf_file *file)
 rec_rdr* stdf_read_rec_rdr(stdf_file *file)
 {
 	rec_rdr *rdr = __malloc_rec(rec_rdr);
-	warn_untested("RDR");
 	_stdf_read_dtc_U2(file, &(rdr->NUM_BINS));
 	_stdf_read_dtc_xU2(file, &(rdr->RTST_BIN), rdr->NUM_BINS);
 	return rdr;
@@ -274,7 +270,6 @@ rec_rdr* stdf_read_rec_rdr(stdf_file *file)
 rec_sdr* stdf_read_rec_sdr(stdf_file *file)
 {
 	rec_sdr *sdr = __malloc_rec(rec_sdr);
-	warn_untested("SDR");
 	_stdf_read_dtc_U1(file, &(sdr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(sdr->SITE_GRP));
 	_stdf_read_dtc_U1(file, &(sdr->SITE_CNT));
@@ -643,9 +638,8 @@ rec_scr* stdf_read_rec_scr(stdf_file *file)
 rec_gdr* stdf_read_rec_gdr(stdf_file *file)
 {
 	rec_gdr *gdr = __malloc_rec(rec_gdr);
-	warn_not_coded("GDR");
 	_stdf_read_dtc_U2(file, &(gdr->FLD_CNT));
-/*	_stdf_read_dtc_Vn(file, &(gdr->GEN_DATA), gdr->FLD_CNT);*/
+	_stdf_read_dtc_Vn(file, &(gdr->GEN_DATA), gdr->FLD_CNT);
 	return gdr;
 }
 rec_dtr* stdf_read_rec_dtr(stdf_file *file)
@@ -759,15 +753,15 @@ void stdf_free_record(stdf_file *file, rec_unknown *rec)
 		case REC_PGR: {
 			rec_pgr *pgr = (rec_pgr*)rec;
 			free(pgr->GRP_NAM);
-			free(pgr->PMR_INDX);
+			free_xU2(pgr->PMR_INDX);
 			free(rec);
 			break;
 		}
 		case REC_PLR: {
 			rec_plr *plr = (rec_plr*)rec;
-			free(plr->GRP_INDX);
-			free(plr->GRP_MODE);
-			free(plr->GRP_RADX);
+			free_xU2(plr->GRP_INDX);
+			free_xU2(plr->GRP_MODE);
+			free_xU1(plr->GRP_RADX);
 			free_xCn(plr->PGM_CHAR, plr->GRP_CNT);
 			free_xCn(plr->RTN_CHAR, plr->GRP_CNT);
 			free_xCn(plr->PGM_CHAL, plr->GRP_CNT);
@@ -777,13 +771,13 @@ void stdf_free_record(stdf_file *file, rec_unknown *rec)
 		}
 		case REC_RDR: {
 			rec_rdr *rdr = (rec_rdr*)rec;
-			free(rdr->RTST_BIN);
+			free_xU2(rdr->RTST_BIN);
 			free(rec);
 			break;
 		}
 		case REC_SDR: {
 			rec_sdr *sdr = (rec_sdr*)rec;
-			/*free(sdr->SITE_NUM);*/
+			free_xU1(sdr->SITE_NUM);
 			free(sdr->HAND_TYP);
 			free(sdr->HAND_ID);
 			free(sdr->CARD_TYP);
@@ -891,10 +885,10 @@ void stdf_free_record(stdf_file *file, rec_unknown *rec)
 		case REC_MPR: {
 			rec_mpr *mpr = (rec_mpr*)rec;
 			free(mpr->RTN_STAT);
-			free(mpr->RTN_RSLT);
+			free_xR4(mpr->RTN_RSLT);
 			free(mpr->TEST_TXT);
 			free(mpr->ALARM_ID);
-			free(mpr->RTN_INDX);
+			free_xU2(mpr->RTN_INDX);
 			free(mpr->UNITS);
 			free(mpr->UNITS_IN);
 			free(mpr->C_RESFMT);
@@ -905,9 +899,9 @@ void stdf_free_record(stdf_file *file, rec_unknown *rec)
 		}
 		case REC_FTR: {
 			rec_ftr *ftr = (rec_ftr*)rec;
-			free(ftr->RTN_INDX);
+			free_xU2(ftr->RTN_INDX);
 			free(ftr->RTN_STAT);
-			free(ftr->PGM_INDX);
+			free_xU2(ftr->PGM_INDX);
 			free(ftr->PGM_STAT);
 			free(ftr->FAIL_PIN);
 			free(ftr->VECT_NAM);
@@ -957,8 +951,8 @@ void stdf_free_record(stdf_file *file, rec_unknown *rec)
 		}
 #endif
 		case REC_GDR: {
-/*			rec_gdr *gdr = (rec_gdr*)rec;
-			free(gdr->GEN_DATA);*/
+			rec_gdr *gdr = (rec_gdr*)rec;
+			free_Vn(gdr->GEN_DATA, gdr->FLD_CNT);
 			free(rec);
 			break;
 		}

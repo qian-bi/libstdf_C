@@ -25,7 +25,7 @@ int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, long opts)
 {
 	switch (cpu_type) {
 		case CPU_TYPE_DEC:
-			f->byte_order = PDP_ENDIAN;
+			f->byte_order = 0xBEEF;
 			fprintf(stderr, "byte_order: CPU_TYPE_DEC (PDP_ENDIAN) has no implementation\n");
 			break;
 

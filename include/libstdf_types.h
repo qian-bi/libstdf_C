@@ -116,9 +116,6 @@ typedef	int16_t			dtc_I2;
 typedef	int32_t			dtc_I4;
 typedef	float			dtc_R4;
 typedef	double			dtc_R8;
-/*
-typedef	char*			dtc_Vn;
-*/
 typedef	char*			dtc_Bn;
 typedef	char			dtc_B1;
 typedef	char*			dtc_Dn;
@@ -128,6 +125,11 @@ typedef	dtc_U1*			dtc_xU1;
 typedef	dtc_U2*			dtc_xU2;
 typedef	dtc_R4*			dtc_xR4;
 typedef	dtc_N1*			dtc_xN1;
+typedef struct {
+	dtc_B1	type;
+	void*	data;
+} dtc_Vn_ele;
+typedef	dtc_Vn_ele*		dtc_Vn;
 
 /* Definitions for Record Types [page 15+] */
 typedef struct {
@@ -351,7 +353,7 @@ typedef struct {
 	dtc_R4		WAFR_SIZ;
 	dtc_R4		DIE_HT;
 	dtc_R4		DIE_WID;
-	dtc_C1		WF_UNITS;
+	dtc_U1		WF_UNITS;
 	dtc_C1		WF_FLAT;
 	dtc_I2		CENTER_X;
 	dtc_I2		CENTER_Y;
@@ -597,7 +599,7 @@ typedef struct {
 typedef struct {
 	rec_header	header;
 	dtc_U2		FLD_CNT;
-/*	dtc_Vn		GEN_DATA;*/
+	dtc_Vn		GEN_DATA;
 } rec_gdr;
 /* DTR: Datalog Text Record [page 66] */
 typedef struct {

@@ -44,18 +44,25 @@ extern void _stdf_read_dtc_Dn(stdf_file*, dtc_Dn*);
 #define	_stdf_read_dtc_I2(f, var) _stdf_read_dtc_num(f, var, dtc_I2)
 #define	_stdf_read_dtc_I4(f, var) _stdf_read_dtc_num(f, var, dtc_I4)
 #define	_stdf_read_dtc_R4(f, var) _stdf_read_dtc_num(f, var, dtc_R4)
+#define	_stdf_read_dtc_R8(f, var) _stdf_read_dtc_num(f, var, dtc_R8)
 
 #define	_stdf_read_dtc_C1(f, var) _stdf_read_dtc(f, var, dtc_C1, ' ')
 #define	_stdf_read_dtc_B1(f, var) _stdf_read_dtc(f, var, dtc_B1, 0x00)
+#define	_stdf_read_dtc_N1(f, var) _stdf_read_dtc(f, var, dtc_N1, 0x00)
 
 extern void _stdf_read_dtc_xN1(stdf_file*, dtc_xN1*, dtc_U2);
-extern void __stdf_read_dtc_x(stdf_file*, void*, dtc_U2, int);
-#define	_stdf_read_dtc_x(f, var, cnt, dtc) __stdf_read_dtc_x(f, var, cnt, sizeof(dtc))
-#define	_stdf_read_dtc_xU1(f, var, cnt) _stdf_read_dtc_x(f, var, cnt, dtc_U1)
-#define	_stdf_read_dtc_xU2(f, var, cnt) _stdf_read_dtc_x(f, var, cnt, dtc_U2)
-#define	_stdf_read_dtc_xR4(f, var, cnt) _stdf_read_dtc_x(f, var, cnt, dtc_R4)
+extern void _stdf_read_dtc_xU1(stdf_file*, dtc_xU1*, dtc_U2);
+extern void _stdf_read_dtc_xU2(stdf_file*, dtc_xU2*, dtc_U2);
+extern void _stdf_read_dtc_xR4(stdf_file*, dtc_xR4*, dtc_U2);
+#define	free_x(x) if (x) free(x)
+#define	free_xU1(x) free_x(x)
+#define	free_xU2(x) free_x(x)
+#define	free_xR4(x) free_x(x)
 
 extern void _stdf_read_dtc_xCn(stdf_file*, dtc_xCn*, dtc_U2);
 extern void free_xCn(dtc_xCn, dtc_U2);
+
+extern void _stdf_read_dtc_Vn(stdf_file*, dtc_Vn*, dtc_U2);
+extern void free_Vn(dtc_Vn, dtc_U2);
 
 #endif /* _LIBSTDF_DTC_H */

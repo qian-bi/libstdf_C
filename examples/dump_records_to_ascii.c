@@ -14,18 +14,89 @@
 
 #define print_fmt(n,f,v) printf("\t" n ": " f, v)
 #define print_int(n,i) print_fmt(n, "%i\n", i)
-#define print_str(n,s) print_fmt(n, "%s\n", (*s ? s+1 : NULL))
+#define print_str(n,s) print_fmt(n, "%s\n", (*s ? s+1 : "(null)"))
 #define print_chr(n,c) print_fmt(n, "%c\n", c)
 #define print_tim(n,d) print_fmt(n, "%s", ctime((time_t*)&d))
 #define print_hex(n,h) print_fmt(n, "%X\n", h)
 #define print_rel(n,r) print_fmt(n, "%f\n", r)
 
-#define	print_UNK(n) \
+#define print_x(xFunc, xType, format) \
+	void xFunc(char *n, xType u, int c) \
+	{ \
+		int i; \
+		--c; \
+		printf("\t%s: ", n); \
+		for (i=0; i<=c; ++i) { \
+			printf(format, u[i]); \
+			if (i < c) printf(", "); \
+		} \
+		printf("\n"); \
+	}
+print_x(print_xU1, dtc_xU1, "%i")
+print_x(print_xU2, dtc_xU2, "%i")
+print_x(print_xR4, dtc_xR4, "%f")
+
+void print_Vn(char *n, dtc_Vn v, int c)
+{
+	int i;
+	--c;
+	printf("\t%s:\n", n);
+	for (i=0; i<=c; ++i) {
+		printf("\t\t%s: ", stdf_get_Vn_name(v[i].type));
+		switch (v[i].type) {
+			case GDR_B0: printf("(pad)"); break;
+			case GDR_U1: printf("%i", *((dtc_U1*)v[i].data)); break;
+			case GDR_U2: printf("%i", *((dtc_U2*)v[i].data)); break;
+			case GDR_U4: printf("%i", *((dtc_U4*)v[i].data)); break;
+			case GDR_I1: printf("%i", *((dtc_I1*)v[i].data)); break;
+			case GDR_I2: printf("%i", *((dtc_I2*)v[i].data)); break;
+			case GDR_I4: printf("%i", *((dtc_I4*)v[i].data)); break;
+			case GDR_R4: printf("%f", *((dtc_R4*)v[i].data)); break;
+			case GDR_R8: printf("%f", *((dtc_R8*)v[i].data)); break;
+			case GDR_Cn: {
+				dtc_Cn Cn = *((dtc_Cn*)v[i].data);
+				printf("%s", (*Cn ? Cn+1 : "(null"));
+				break;
+			}
+			case GDR_Bn: printf("[??]"); break;
+			case GDR_Dn: printf("[??]"); break;
+			case GDR_N1: printf("%X", *((dtc_N1*)v[i].data)); break;
+		}
+		printf("\n");
+	}
+	if (c == -1)
+		printf("\n");
+}
+void print_Bn(char *n, dtc_Bn b)
+{
+	int i;
+	printf("\t%s:", n);
+	for (i=1; i<=*b; ++i)
+		printf(" %X", *(b+i));
+	if (*b == 0)
+		printf(" (null)");
+	printf("\n");
+}
+void print_Dn(char *n, dtc_Dn d)
+{
+	int i;
+	dtc_U2 *num_bits = (dtc_U2*)d, len;
+	len = *num_bits / 8;
+	if (*num_bits % 8) ++len;
+	printf("\t%s:", n);
+	for (i=2; i<len; ++i)
+		printf(" %X", *(d+i));
+	if (len == 0)
+		printf(" (null)");
+	printf("\n");
+}
+
+#define print_UNK(n) \
 	do { \
 		fprintf(stderr, "******************************************\n"); \
 		fprintf(stderr, "This field (" n ") has not been tested!\n"); \
 		fprintf(stderr, "Please consider sending this file to\n"); \
-		fprintf(stderr, "vapier@users.sourceforge.net to help out the\n"); \
+		fprintf(stderr, "vapier@gmail.com to help out the\n"); \
 		fprintf(stderr, "FreeSTDF project and make sure this code\n"); \
 		fprintf(stderr, "works exactly the way it should!\n"); \
 		fprintf(stderr, "******************************************\n"); \
@@ -48,7 +119,7 @@ for (i=1; i<argc; ++i) {
 	f = stdf_open(argv[i]);
 	if (!f) {
 		perror("Could not open file");
-		return EXIT_FAILURE;
+		continue;
 	}
 
 	while ((rec=stdf_read_record(f)) != NULL) {
@@ -204,25 +275,25 @@ for (i=1; i<argc; ++i) {
 				print_int("GRP_INDX", pgr->GRP_INDX);
 				print_str("GRP_NAM", pgr->GRP_NAM);
 				print_int("INDX_CNT", pgr->INDX_CNT);
-				print_UNK("PMR_INDX");
+				print_xU2("PMR_INDX", pgr->PMR_INDX, pgr->INDX_CNT);
 				break;
 			}
 			case REC_PLR: {
 				rec_plr *plr = (rec_plr*)rec;
 				print_int("GRP_CNT", plr->GRP_CNT);
-				print_UNK("GRP_INDX");
-				print_UNK("GRP_MODE");
-				print_UNK("GRP_RADX");
-				print_UNK("PGM_CHAR");
-				print_UNK("RTN_CHAR");
-				print_UNK("PGM_CHAL");
-				print_UNK("RTN_CHAL");
+				print_xU2("GRP_INDX", plr->GRP_INDX, plr->GRP_CNT);
+				print_xU2("GRP_MODE", plr->GRP_MODE, plr->GRP_CNT);
+				print_xU1("GRP_RADX", plr->GRP_RADX, plr->GRP_CNT);
+				print_UNK("PGM_CHAR");/*, plr->PGM_CHAR, plr->GRP_CNT);*/
+				print_UNK("RTN_CHAR");/*, plr->RTN_CHAR, plr->GRP_CNT);*/
+				print_UNK("PGM_CHAL");/*, plr->PGM_CHAL, plr->GRP_CNT);*/
+				print_UNK("RTN_CHAL");/*, plr->RTN_CHAL, plr->GRP_CNT);*/
 				break;
 			}
 			case REC_RDR: {
 				rec_rdr *rdr = (rec_rdr*)rec;
 				print_int("NUM_BINS", rdr->NUM_BINS);
-				print_UNK("RTST_BIN");
+				print_xU2("RTST_BIN", rdr->RTST_BIN, rdr->NUM_BINS);
 				break;
 			}
 			case REC_SDR: {
@@ -230,7 +301,7 @@ for (i=1; i<argc; ++i) {
 				print_int("HEAD_NUM", sdr->HEAD_NUM);
 				print_int("SITE_GRP", sdr->SITE_GRP);
 				print_int("SITE_CNT", sdr->SITE_CNT);
-				print_UNK("SITE_NUM");
+				print_xU1("SITE_NUM", sdr->SITE_NUM, sdr->SITE_CNT);
 				print_str("HAND_TYP", sdr->HAND_TYP);
 				print_str("HAND_ID", sdr->HAND_ID);
 				print_str("CARD_TYP", sdr->CARD_TYP);
@@ -304,7 +375,7 @@ for (i=1; i<argc; ++i) {
 				print_rel("WAFR_SIZ", wcr->WAFR_SIZ);
 				print_rel("DIE_HT", wcr->DIE_HT);
 				print_rel("DIE_WID", wcr->DIE_WID);
-				print_chr("WF_UNITS", wcr->WF_UNITS);
+				print_int("WF_UNITS", wcr->WF_UNITS);
 				print_chr("WF_FLAT", wcr->WF_FLAT);
 				print_int("CENTER_X", wcr->CENTER_X);
 				print_int("CENTER_Y", wcr->CENTER_Y);
@@ -350,7 +421,7 @@ for (i=1; i<argc; ++i) {
 				print_tim("TEST_T", prr->TEST_T);
 				print_str("PART_ID", prr->PART_ID);
 				print_str("PART_TXT", prr->PART_TXT);
-				print_UNK("PART_FIX");
+				print_Bn("PART_FIX", prr->PART_FIX);
 				break;
 			}
 #ifdef STDF_VER3
@@ -458,7 +529,7 @@ for (i=1; i<argc; ++i) {
 				print_int("RTN_ICNT", mpr->RTN_ICNT);
 				print_int("RSLT_CNT", mpr->RSLT_CNT);
 				print_UNK("RTN_STAT");
-				print_UNK("RTN_RSLT");
+				print_xR4("RTN_RSLT", mpr->RTN_RSLT, mpr->RTN_ICNT);
 				print_str("TEST_TXT", mpr->TEST_TXT);
 				print_str("ALARM_ID", mpr->ALARM_ID);
 				print_hex("OPT_FLAG", mpr->OPT_FLAG);
@@ -469,7 +540,7 @@ for (i=1; i<argc; ++i) {
 				print_rel("HI_LIMIT", mpr->HI_LIMIT);
 				print_rel("START_IN", mpr->START_IN);
 				print_rel("INCR_IN", mpr->INCR_IN);
-				print_UNK("RTN_INDX");
+				print_xU2("RTN_INDX", mpr->RTN_INDX, mpr->RTN_ICNT);
 				print_str("UNITS", mpr->UNITS);
 				print_str("UNITS_IN", mpr->UNITS_IN);
 				print_str("C_RESFMT", mpr->C_RESFMT);
@@ -495,11 +566,11 @@ for (i=1; i<argc; ++i) {
 				print_int("VECT_OFF", ftr->VECT_OFF);
 				print_int("RTN_ICNT", ftr->RTN_ICNT);
 				print_int("PGM_ICNT", ftr->PGM_ICNT);
-				print_UNK("RTN_INDX");
+				print_xU2("RTN_INDX", ftr->RTN_INDX, ftr->PGM_ICNT);
 				print_UNK("RTN_STAT");
-				print_UNK("PGM_INDX");
+				print_xU2("PGM_INDX", ftr->PGM_INDX, ftr->PGM_ICNT);
 				print_UNK("PGM_STAT");
-				print_UNK("FAIL_PIN");
+				print_Dn("FAIL_PIN", ftr->FAIL_PIN);
 				print_str("VECT_NAM", ftr->VECT_NAM);
 				print_str("TIME_SET", ftr->TIME_SET);
 				print_str("OP_CODE", ftr->OP_CODE);
@@ -508,7 +579,7 @@ for (i=1; i<argc; ++i) {
 				print_str("PROG_TXT", ftr->PROG_TXT);
 				print_str("RSLT_TXT", ftr->RSLT_TXT);
 				print_int("PATG_NUM", ftr->PATG_NUM);
-				print_UNK("SPIN_MAP");
+				print_Dn("SPIN_MAP", ftr->SPIN_MAP);
 				break;
 			}
 			case REC_BPS: {
@@ -574,8 +645,9 @@ for (i=1; i<argc; ++i) {
 			}
 #endif
 			case REC_GDR: {
-				/*rec_gdr *gdr = (rec_gdr*)rec;*/
-				print_UNK("GEN_DATA");
+				rec_gdr *gdr = (rec_gdr*)rec;
+				print_int("FLD_CNT", gdr->FLD_CNT);
+				print_Vn("GEN_DATA", gdr->GEN_DATA, gdr->FLD_CNT);
 				break;
 			}
 			case REC_DTR: {
