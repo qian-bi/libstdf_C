@@ -8,7 +8,7 @@ AM_PROG_LIBTOOL
 AM_ENABLE_SHARED
 AM_ENABLE_STATIC
 
-AC_CHECK_HEADERS([endian.h sys/endian.h])
+AC_CHECK_HEADERS([stdio.h endian.h sys/endian.h])
 
 CFLAGS="$CFLAGS -Wall -Werror"
 
@@ -235,6 +235,8 @@ AC_OUTPUT([
 Makefile
 include/Makefile
 src/Makefile
+doc/Makefile
+doc/man/Makefile
 examples/Makefile
 libstdf-config
 libstdf.pc
