@@ -504,7 +504,7 @@ for (i=1; i<argc; ++i) {
 				print_int("SITE_NUM", ptr->SITE_NUM);
 				print_hex("TEST_FLG", ptr->TEST_FLG);
 				print_hex("PARM_FLG", ptr->PARM_FLG);
-				print_rel("RESTULT", ptr->RESTULT);
+				print_rel("RESULT", ptr->RESULT);
 				print_str("TEST_TXT", ptr->TEST_TXT);
 				print_str("ALARM_ID", ptr->ALARM_ID);
 				print_hex("OPT_FLAG", ptr->OPT_FLAG);

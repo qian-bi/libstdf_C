@@ -480,7 +480,7 @@ rec_ptr* stdf_read_rec_ptr(stdf_file *file)
 	_stdf_read_dtc_U1(file, &(ptr->SITE_NUM));
 	_stdf_read_dtc_B1(file, &(ptr->TEST_FLG));
 	_stdf_read_dtc_B1(file, &(ptr->PARM_FLG));
-	_stdf_read_dtc_R4(file, &(ptr->RESTULT));
+	_stdf_read_dtc_R4(file, &(ptr->RESULT));
 	_stdf_read_dtc_Cn(file, &(ptr->TEST_TXT));
 	_stdf_read_dtc_Cn(file, &(ptr->ALARM_ID));
 	_stdf_read_dtc_B1(file, &(ptr->OPT_FLAG));

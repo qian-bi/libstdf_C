@@ -475,7 +475,7 @@ typedef struct {
 	dtc_U1		SITE_NUM;
 	dtc_B1		TEST_FLG;
 	dtc_B1		PARM_FLG;
-	dtc_R4		RESTULT;
+	dtc_R4		RESULT;
 	dtc_Cn		TEST_TXT;
 	dtc_Cn		ALARM_ID;
 	dtc_B1		OPT_FLAG;
