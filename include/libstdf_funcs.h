@@ -16,6 +16,8 @@
 
 extern stdf_file* stdf_open(char*);							/**< Open a file with default options */
 extern stdf_file* stdf_open_ex(char*, uint32_t);			/**< Open a file with custom options */
+extern stdf_file* stdf_dopen(int);							/**< Open a file descriptor with default options */
+extern stdf_file* stdf_dopen_ex(int, uint32_t);				/**< Open a file descriptor with custom options */
 extern int stdf_close(stdf_file*);							/**< Close an open file */
 
 extern rec_unknown* stdf_read_record(stdf_file*);			/**< Read in the next record and parse it */

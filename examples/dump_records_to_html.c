@@ -182,7 +182,8 @@ int main(int argc, char *argv[])
 	        argv[x], argv[x], f->ver, f->byte_order, cpu_name);
 
 	for (type=1; type<3; type++) {
-		f->fops->reopen(f);
+		f->fops->close(f);
+		f->fops->open(f);
 
 		width = 0;
 		rec_count = max_recs;

@@ -12,7 +12,7 @@
 
 unknown:
 
- - allow for stdf_open to accept a file descriptor ... would allow for
+ + allow for stdf_open to accept a file descriptor ... would allow for
    reading from sockets and all that fun stuff :)
    zziplib reading atm prevents this ... zip has no way of accepting a file
    descriptor, just a filename ... perhaps patch the library and get it

@@ -31,7 +31,6 @@ typedef struct {
 	int		(*open)(void*);
 	int		(*read)(void*, void*, long);
 	int		(*close)(void*);
-	int		(*reopen)(void*);
 } __stdf_fops;
 
 /**

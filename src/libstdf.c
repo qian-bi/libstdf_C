@@ -60,7 +60,6 @@ int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, uint32_t opts)
 	}
 	f->opts = opts;
 
-	f->__data = NULL;
 	f->rec_pos = NULL;
 	f->rec_end = NULL;
 
@@ -71,10 +70,13 @@ static int __stdf_open_reg(void *data)
 {
 	stdf_file *stdf = (stdf_file*)data;
 
-	if (stdf->filename[0] == '-' && stdf->filename[1] == '\0')
-		stdf->fd = 0;
-	else
-		stdf->fd = open(stdf->filename, O_RDONLY | O_BINARY);
+	/* if filename is NULL we can assume that the fd is already set ... */
+	if (stdf->filename) {
+		if (stdf->filename[0] == '-' && stdf->filename[1] == '\0')
+			stdf->fd = 0;
+		else
+			stdf->fd = open(stdf->filename, O_RDONLY | O_BINARY);
+	}
 
 	return stdf->fd;
 }
@@ -84,18 +86,17 @@ static int __stdf_read_reg(void *data, void *buf, long count)
 }
 static int __stdf_close_reg(void *data)
 {
-	return close(((stdf_file*)data)->fd);
-}
-static int __stdf_reopen_reg(void *data)
-{
-	__stdf_close_reg(data);
-	return __stdf_open_reg(data);
+	stdf_file *stdf = (stdf_file*)data;
+	if (stdf->__data) {
+		free(stdf->__data);
+		stdf->__data = NULL;
+	}
+	return close(stdf->fd);
 }
 static __stdf_fops __stdf_fops_reg = {
 	__stdf_open_reg,
 	__stdf_read_reg,
-	__stdf_close_reg,
-	__stdf_reopen_reg
+	__stdf_close_reg
 };
 
 #if HAVE_ZIP
@@ -107,10 +108,14 @@ static int __stdf_open_zip(void *data)
 	   zziplib really suck this much ? */
 	ZZIP_DIR *d;
 	ZZIP_DIRENT *de;
+	zzip_error_t err;
 
 	stdf->fd_zip = NULL;
 
-	d = zzip_opendir(stdf->filename);
+	if (__stdf_open_reg(data) == -1)
+		return -1;
+
+	d = zzip_dir_fdopen(stdf->fd, &err);
 	if (d == NULL)
 		return -1;
 	de = zzip_readdir(d);
@@ -134,16 +139,10 @@ static int __stdf_close_zip(void *data)
 	stdf_file *stdf = (stdf_file*)data;
 	return (stdf->fd_zip==NULL) ? -1 : zzip_close(stdf->fd_zip);
 }
-static int __stdf_reopen_zip(void *data)
-{
-	__stdf_close_zip(data);
-	return __stdf_open_zip(data);
-}
 static __stdf_fops __stdf_fops_zip = {
 	__stdf_open_zip,
 	__stdf_read_zip,
-	__stdf_close_zip,
-	__stdf_reopen_zip
+	__stdf_close_zip
 };
 #endif
 
@@ -173,16 +172,10 @@ static int __stdf_close_gzip(void *data)
 		gzclose(stdf->fd_gzip);
 	return __stdf_close_reg(data);
 }
-static int __stdf_reopen_gzip(void *data)
-{
-	__stdf_close_gzip(data);
-	return __stdf_open_gzip(data);
-}
 static __stdf_fops __stdf_fops_gzip = {
 	__stdf_open_gzip,
 	__stdf_read_gzip,
-	__stdf_close_gzip,
-	__stdf_reopen_gzip
+	__stdf_close_gzip
 };
 #endif
 
@@ -212,27 +205,26 @@ static int __stdf_close_bzip2(void *data)
 		BZ2_bzclose(stdf->fd_bzip2);
 	return __stdf_close_reg(data);
 }
-static int __stdf_reopen_bzip2(void *data)
-{
-	__stdf_close_bzip2(data);
-	return __stdf_open_bzip2(data);
-}
 static __stdf_fops __stdf_fops_bzip2 = {
 	__stdf_open_bzip2,
 	__stdf_read_bzip2,
-	__stdf_close_bzip2,
-	__stdf_reopen_bzip2
+	__stdf_close_bzip2
 };
 #endif
 
-stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
+static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts)
 {
-	char temp[4];
 	stdf_file *ret = (stdf_file*)malloc(sizeof(stdf_file));
 
-	if (!pathname || pathname[0] == '\0')
-		return NULL;
-	ret->filename = strdup(pathname);
+	if (!pathname || pathname[0] == '\0') {
+		if (fd == -1) {
+			free(ret);
+			return NULL;
+		}
+		ret->filename = NULL;
+		ret->fd = fd;
+	} else
+		ret->filename = strdup(pathname);
 
 	if (opts & STDF_OPTS_ZIP)
 		ret->file_format = STDF_FORMAT_ZIP;
@@ -240,7 +232,7 @@ stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
 		ret->file_format = STDF_FORMAT_GZIP;
 	else if (opts & STDF_OPTS_BZIP2)
 		ret->file_format = STDF_FORMAT_BZIP2;
-	else
+	else if (ret->filename) {
 		/* try to guess from the filename if it's compressed */
 		if (strrchr(ret->filename, '.') != NULL)
 			if (strstr(ret->filename, ".zip") != NULL)
@@ -253,6 +245,7 @@ stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
 				ret->file_format = STDF_FORMAT_REG;
 		else
 			ret->file_format = STDF_FORMAT_REG;
+	}
 
 	switch (ret->file_format) {
 		case STDF_FORMAT_ZIP:
@@ -288,23 +281,18 @@ stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
 		goto out_err;
 
 	/* try to peek at the FAR record to figure out the CPU type/STDF ver */
-	if (ret->fops->read(ret, temp, 4) != 4)
+	ret->__data = (byte_t*)malloc(6);
+	if (ret->fops->read(ret, ret->__data, 6) != 6)
 		goto out_err;
 	else {
-		if ((MAKE_REC(temp[2], temp[3]) == REC_FAR)
+		if ((MAKE_REC(ret->__data[2], ret->__data[3]) != REC_FAR)
 #ifdef STDF_VER3
-			/* STDF v3 can have either a FAR or a MIR record */
-			|| (MAKE_REC(temp[2], temp[3]) == REC_MIR)
+		    /* STDF v3 can have either a FAR or a MIR record */
+		    && (MAKE_REC(ret->__data[2], ret->__data[3]) != REC_MIR)
 #endif
-			)
-			ret->fops->read(ret, temp, 2);
-		else
+		   )
 			goto out_err;
-		if (__stdf_init(ret, temp[0], temp[1], opts))
-			goto out_err;
-
-		/* now we re-open since with compressed files you can't seek :) */
-		if (ret->fops->reopen(ret) == -1)
+		if (__stdf_init(ret, ret->__data[4], ret->__data[5], opts))
 			goto out_err;
 	}
 
@@ -315,15 +303,27 @@ out_err:
 	free(ret);
 	return NULL;
 }
+stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
+{
+	return _stdf_open(pathname, -1, opts);
+}
 stdf_file* stdf_open(char *pathname)
 {
-	return stdf_open_ex(pathname, STDF_OPTS_DEFAULT);
+	return _stdf_open(pathname, -1, STDF_OPTS_DEFAULT);
+}
+stdf_file* stdf_dopen(int fd)
+{
+	return _stdf_open(NULL, fd, STDF_OPTS_DEFAULT);
+}
+stdf_file* stdf_dopen_ex(int fd, uint32_t opts)
+{
+	return _stdf_open(NULL, fd, opts);
 }
 
 int stdf_close(stdf_file *file)
 {
 	int ret = file->fops->close(file);
-	free(file->filename);
+	if (file->filename) free(file->filename);
 	free(file);
 	return ret;
 }
@@ -331,11 +331,20 @@ int stdf_close(stdf_file *file)
 rec_unknown* stdf_read_record_raw(stdf_file *file)
 {
 	rec_unknown *raw_rec = NULL;
-	char header[4];
+	char header[6];
+	int cheated;
 
-	/* read the record header to find out how big this next record is */
-	if (file->fops->read(file, header, 4) != 4)
-		return NULL;
+	if (!file->__data) {
+		/* read the record header to find out how big this next record is */
+		if (file->fops->read(file, header, 4) != 4)
+			return NULL;
+		cheated = 0;
+	} else {
+		memcpy(header, file->__data, 6);
+		free(file->__data);
+		file->__data = NULL;
+		cheated = 1;
+	}
 	raw_rec = (rec_unknown*)malloc(sizeof(rec_unknown));
 	if (raw_rec == NULL) {
 		perror("stdf_read_record_raw():malloc.1");
@@ -356,8 +365,13 @@ rec_unknown* stdf_read_record_raw(stdf_file *file)
 		free(raw_rec);
 		return NULL;
 	}
-	file->fops->read(file, ((byte_t*)raw_rec->data)+4, file->header.REC_LEN);
-	memcpy(raw_rec->data, header, 4);
+	if (cheated) {
+		file->fops->read(file, ((byte_t*)raw_rec->data)+6, file->header.REC_LEN-2);
+		memcpy(raw_rec->data, header, 6);
+	} else {
+		file->fops->read(file, ((byte_t*)raw_rec->data)+4, file->header.REC_LEN);
+		memcpy(raw_rec->data, header, 4);
+	}
 
 	return raw_rec;
 }
@@ -421,6 +435,8 @@ rec_unknown* stdf_parse_raw_record(rec_unknown *raw_rec)
 	}
 	file->header.state = REC_STATE_PARSED;
 	memcpy(&(rec->header), &(file->header), sizeof(rec_header));
+
+	file->__data = NULL;
 
 	return rec;
 }
