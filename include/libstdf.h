@@ -23,9 +23,20 @@ typedef struct {
 	rec_header	header;
 
 	int			fd;
+#if HAVE_ZIP
+	ZZIP_FILE	*fd_zip;
+#endif
+#if HAVE_GZIP
+	gzFile		fd_gzip;
+#endif
+#if HAVE_BZIP2
+	BZFILE		*fd_bzip2;
+#endif
+
 	int			byte_order;
-	long		opts;
+	uint32_t	opts;
 	dtc_U1		ver;
+	byte_t		file_format;
 
 	byte_t		*__data;
 #ifndef __STDF_READ_ONE_RECORD
@@ -35,13 +46,22 @@ typedef struct {
 	byte_t		*rec_end;
 } stdf_file;
 
+/* the format of the stdf file */
+#define	STDF_FILE_REG				0x01
+#define	STDF_FILE_ZIP				0x02
+#define	STDF_FILE_GZIP				0x03
+#define	STDF_FILE_BZIP2				0x04
+
 /* options for input behavior */
 #define	STDF_OPTS_FORCE				0x01
 #ifdef STDF_VER3
 #define	STDF_OPTS_FORCE_V3			0x02
 #endif
-#define	STDF_OPTS_FORCE_V4			0x03
+#define	STDF_OPTS_FORCE_V4			0x04
 #define	STDF_OPTS_DEFAULT			0x00
+#define	STDF_OPTS_ZIP				0x08
+#define	STDF_OPTS_GZIP				0x10
+#define	STDF_OPTS_BZIP2				0x20
 
 #include <libstdf_funcs.h>
 

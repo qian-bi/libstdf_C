@@ -10,7 +10,7 @@
 #define _LIBSTDF_FUNCS_H
 
 extern stdf_file* stdf_open(char*);
-extern stdf_file* stdf_open_ex(char*, int);
+extern stdf_file* stdf_open_ex(char*, uint32_t);
 extern int stdf_close(stdf_file*);
 
 extern rec_unknown* stdf_read_record(stdf_file*);
