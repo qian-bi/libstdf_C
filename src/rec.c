@@ -71,6 +71,14 @@ int stdf_rec_to_idx_count()
 {
 	return 32;
 }
+int stdf_rec_name_to_idx(char *rec_name)
+{
+	int i = stdf_rec_to_idx_count();
+	while (--i > 0)
+		if (strncmp(rec_name, stdf_rec_names[i], 3) == 0)
+			return i;
+	return 0;
+}
 int stdf_rec_to_idx(rec_unknown *rec)
 {
 	return _stdf_header_to_idx(rec->header.REC_TYP, rec->header.REC_SUB);

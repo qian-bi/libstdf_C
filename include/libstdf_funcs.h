@@ -31,6 +31,7 @@ extern char* stdf_get_rec_name(rec_typ, rec_sub);			/**< Translate a record into
 
 extern int stdf_rec_to_idx(rec_unknown*);					/**< Normalize the record namespace into array indexes */
 extern int stdf_rec_to_idx_count();							/**< Highest array reference the normalize will return */
+extern int stdf_rec_name_to_idx(char*);						/**< Normalize the record names into array indexes */
 
 extern char* stdf_get_Vn_name(int);							/**< Translate a Vn type into the 2 letter spec name */
 extern void stdf_get_Vn_name_r(int, char*);					/**< Translate a Vn type into the 2 letter spec name (reentrant version) */
