@@ -2,7 +2,7 @@
 
 trap ":" INT QUIT TSTP
 
-[ -z "${VER}" ] \
+[ -z "$1" ] \
 	&& VER=test \
 	|| VER=$1
 
