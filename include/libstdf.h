@@ -14,6 +14,10 @@
 #ifndef _LIBSTDF_H
 #define _LIBSTDF_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <libstdf_systems.h>
 #include <libstdf_bswap.h>
 
@@ -89,5 +93,9 @@ typedef struct {
 } stdf_file;
 
 #include <libstdf_funcs.h>
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LIBSTDF_H */
