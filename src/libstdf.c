@@ -21,7 +21,7 @@
 /* for memcpy(3) */
 #include <string.h>
 
-int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, long opts)
+int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, uint32_t opts)
 {
 	switch (cpu_type) {
 		case CPU_TYPE_DEC:
@@ -77,24 +77,159 @@ int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, long opts)
 	return 0;
 }
 
-stdf_file* stdf_open_ex(char *pathname, int opts)
+static inline int __stdf_file_open(char *file, stdf_file *stdf)
+{
+#if HAVE_ZIP
+	/* am i doing something wrong or does
+	   zziplib really suck this much ? */
+	if (stdf->file_format == STDF_FILE_ZIP) {
+		ZZIP_DIR *d;
+		ZZIP_DIRENT *de;
+		d = zzip_opendir(file);
+		if (d == NULL)
+			return -1;
+		de = zzip_readdir(d);
+		if (de == NULL) {
+			zzip_dir_close(d);
+			return -1;
+		}
+		stdf->fd_zip = zzip_file_open(d, de->d_name, O_RDONLY);
+		zzip_dir_close(d);
+		if (stdf->fd_zip == NULL)
+			return -1;
+		return 0;
+	}
+#endif
+
+	if (file[0] == '-' && file[1] == '\0')
+		stdf->fd = 0;
+	else
+		stdf->fd = open(file, O_RDONLY);
+	if (stdf->fd == -1)
+		return -1;
+
+#if HAVE_GZIP
+	if (stdf->file_format == STDF_FILE_GZIP) {
+		stdf->fd_gzip = gzdopen(stdf->fd, "rb");
+		if (stdf->fd_gzip == NULL)
+			return -1;
+		return stdf->fd;
+	}
+#endif
+
+#if HAVE_BZIP2
+	if (stdf->file_format == STDF_FILE_BZIP2) {
+		stdf->fd_bzip2 = BZ2_bzdopen(stdf->fd, "rb");
+		if (stdf->fd_bzip2 == NULL)
+			return -1;
+		return stdf->fd;
+	}
+#endif
+
+	return stdf->fd;
+}
+
+static inline int __stdf_file_close(stdf_file *stdf)
+{
+#if HAVE_ZIP
+	if (stdf->file_format == STDF_FILE_ZIP)
+		return zzip_close(stdf->fd_zip);
+#endif
+
+#if HAVE_GZIP
+	if (stdf->file_format == STDF_FILE_GZIP)
+		return gzclose(stdf->fd_gzip);
+#endif
+
+#if HAVE_BZIP2
+	if (stdf->file_format == STDF_FILE_BZIP2)
+		BZ2_bzclose(stdf->fd_bzip2);
+#endif
+
+	return close(stdf->fd);
+}
+
+static inline int __stdf_file_read(stdf_file *stdf, void *buf, int count)
+{
+#if HAVE_ZIP
+	if (stdf->file_format == STDF_FILE_ZIP)
+		return zzip_read(stdf->fd_zip, buf, count);
+#endif
+
+#if HAVE_GZIP
+	if (stdf->file_format == STDF_FILE_GZIP)
+		return gzread(stdf->fd_gzip, buf, count);
+#endif
+
+#if HAVE_BZIP2
+	if (stdf->file_format == STDF_FILE_BZIP2)
+		return BZ2_bzread(stdf->fd_bzip2, buf, count);
+#endif
+
+	return read(stdf->fd, buf, count);
+}
+
+stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
 {
 	stdf_file *ret = (stdf_file*)malloc(sizeof(stdf_file));
 
-	if (!pathname)
+	if (!pathname || pathname[0] == '\0')
 		return NULL;
-	if (pathname[0] == '-' && pathname[1] == '\0')
-		ret->fd = 0;
-	else {
-		ret->fd = open(pathname, O_RDONLY);
-		if (ret->fd == -1)
-			goto out_err;
+
+	if (opts & STDF_OPTS_ZIP) {
+#if HAVE_ZIP
+		ret->file_format = STDF_FILE_ZIP;
+#else
+		fprintf(stderr, "stdf_open(): zip support was disabled!\n");
+		goto out_err;
+#endif
+	} else if (opts & STDF_OPTS_GZIP) {
+#if HAVE_GZIP
+		ret->file_format = STDF_FILE_GZIP;
+#else
+		fprintf(stderr, "stdf_open(): gzip support was disabled!\n");
+		goto out_err;
+#endif
+	} else if (opts & STDF_OPTS_BZIP2) {
+#if HAVE_BZIP2
+		ret->file_format = STDF_FILE_BZIP2;
+#else
+		fprintf(stderr, "stdf_open(): bzip2 compression was disabled!\n");
+		goto out_err;
+#endif
+	} else {
+#if HAVE_ZIP || HAVE_GZIP || HAVE_BZIP2
+		/* try to guess from the filename if it's compressed */
+		if (strrchr(pathname, '.') != NULL) {
+#if HAVE_ZIP
+			if (strstr(pathname, ".zip") != NULL)
+				ret->file_format = STDF_FILE_ZIP;
+			else
+#endif
+#if HAVE_GZIP
+			if (strstr(pathname, ".gz") != NULL)
+				ret->file_format = STDF_FILE_GZIP;
+			else
+#endif
+#if HAVE_BZIP2
+			if (strstr(pathname, ".bz") != NULL || \
+			    strstr(pathname, ".bz2") != NULL)
+				ret->file_format = STDF_FILE_BZIP2;
+			else
+#endif
+				ret->file_format = STDF_FILE_REG;
+		} else
+#endif
+			ret->file_format = STDF_FILE_REG;
 	}
 
-	/* try to peek at the FAR record to figure out the CPU type/STDF ver */
-	if (read(ret->fd, &(ret->header), 4) != 4) {
+	if (__stdf_file_open(pathname, ret) == -1)
 		goto out_err;
-	} else {
+
+	/* try to peek at the FAR record to figure out the CPU type/STDF ver */
+	if (__stdf_file_read(ret, &(ret->header), 4) != 4)
+		goto out_err;
+	else {
 		char temp[2];
 		if ((HEAD_TO_REC(ret->header) == REC_FAR)
 #ifdef STDF_VER3
@@ -102,17 +237,21 @@ stdf_file* stdf_open_ex(char *pathname, int opts)
 			|| (HEAD_TO_REC(ret->header) == REC_MIR)
 #endif
 			)
-			read(ret->fd, temp, 2);
+			__stdf_file_read(ret, temp, 2);
 		else
 			goto out_err;
 		if (__stdf_init(ret, temp[0], temp[1], opts))
 			goto out_err;
-		lseek(ret->fd, 0, SEEK_SET);
+
+		/* now we re-open since with compressed files you can't seek :) */
+		__stdf_file_close(ret);
+		if (__stdf_file_open(pathname, ret) == -1)
+			goto out_err;
 	}
 
 	return ret;
 out_err:
-	close(ret->fd);
+	__stdf_file_close(ret);
 	free(ret);
 	return NULL;
 }
@@ -123,7 +262,7 @@ stdf_file* stdf_open(char *pathname)
 
 int stdf_close(stdf_file *file)
 {
-	int ret = close(file->fd);
+	int ret = __stdf_file_close(file);
 #ifndef __STDF_READ_ONE_RECORD
 	free(file->__data);
 #endif
@@ -137,12 +276,12 @@ rec_unknown* stdf_read_record(stdf_file *file)
 
 #ifdef __STDF_READ_ONE_RECORD
 	/* read the record header to find out how big this next record is */
-	if (read(file->fd, &(file->header), 4) != 4)
+	if (__stdf_file_read(file, &(file->header), 4) != 4)
 		return rec;
 	_stdf_byte_order_to_host(file, &(file->header.REC_LEN), sizeof(dtc_U2));
 	/* buffer the whole record in memory */
 	file->__data = (void*)malloc(file->header.REC_LEN);
-	read(file->fd, file->__data, file->header.REC_LEN);
+	__stdf_file_read(file, file->__data, file->header.REC_LEN);
 	file->rec_pos = file->__data;
 	file->rec_end = file->rec_pos + file->header.REC_LEN;
 #else
