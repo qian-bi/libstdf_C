@@ -655,7 +655,7 @@ rec_dtr* stdf_read_rec_dtr(stdf_file *file)
 	return dtr;
 }
 
-void stdf_free_record(rec_unknown *rec)
+void stdf_free_record(stdf_file *file, rec_unknown *rec)
 {
 	if (!rec)
 		return;

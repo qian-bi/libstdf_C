@@ -92,7 +92,7 @@ stdf_file* stdf_open_ex(char *pathname, int opts)
 	}
 
 	/* try to peek at the FAR record to figure out the CPU type/STDF ver */
-	if (read(ret->fd, &(ret->header), sizeof(rec_header)) != sizeof(rec_header)) {
+	if (read(ret->fd, &(ret->header), 4) != 4) {
 		goto out_err;
 	} else {
 		char temp[2];

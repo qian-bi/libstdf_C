@@ -8,7 +8,7 @@ AM_PROG_LIBTOOL
 AM_ENABLE_SHARED
 AM_ENABLE_STATIC
 
-AC_CHECK_HEADERS([endian.h sys/endian.h bswap.h byteswap.h])
+AC_CHECK_HEADERS([errno.h endian.h sys/endian.h bswap.h byteswap.h])
 
 CFLAGS="$CFLAGS -Wall -Werror"
 

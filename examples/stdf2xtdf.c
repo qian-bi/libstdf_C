@@ -408,7 +408,7 @@ for (i=1; i<argc; ++i) {
 		}
 		if (HEAD_TO_REC(rec->header) != REC_UNKNOWN)
 			printf("</%s>\n", recname);
-		stdf_free_record(rec);
+		stdf_free_record(f, rec);
 	}
 	printf("</stdf>\n");
 	stdf_close(f);

@@ -584,7 +584,7 @@ for (i=1; i<argc; ++i) {
 				break;
 			}
 		}
-		stdf_free_record(rec);
+		stdf_free_record(f, rec);
 	}
 	stdf_close(f);
 }
