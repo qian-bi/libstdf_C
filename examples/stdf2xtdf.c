@@ -32,7 +32,7 @@
 	{ \
 		int i; \
 		--c; \
-		printf("\t<%s value=': ", n); \
+		printf("\t<%s value=' ", n); \
 		for (i=0; i<=c; ++i) { \
 			printf(format, u[i]); \
 			if (i < c) printf(","); \
@@ -49,7 +49,7 @@ void print_Vn(char *n, dtc_Vn v, int c)
 	--c;
 	printf("\t<%s>\n", n);
 	for (i=0; i<=c; ++i) {
-		printf("\t\t<%s value=: ", stdf_get_Vn_name(v[i].type));
+		printf("\t\t<%s value='", stdf_get_Vn_name(v[i].type));
 		switch (v[i].type) {
 			case GDR_B0: printf("(pad)"); break;
 			case GDR_U1: printf("%i", *((dtc_U1*)v[i].data)); break;
@@ -69,7 +69,7 @@ void print_Vn(char *n, dtc_Vn v, int c)
 			case GDR_Dn: printf("[??]"); break;
 			case GDR_N1: printf("%X", *((dtc_N1*)v[i].data)); break;
 		}
-		printf("/>\n");
+		printf("'/>\n");
 	}
 	printf("\t</%s>\n", n);
 }
