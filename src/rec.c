@@ -52,16 +52,18 @@ char* stdf_get_rec_name(int type, int subtype)
 	return name;
 }
 
-#define	warn_untested(type) \
+#define	__do_warn(type, reason) \
 	do { \
 		fprintf(stderr, "******************************************\n"); \
-		fprintf(stderr, "This record type (" type ") has not been tested!\n"); \
+		fprintf(stderr, "This record type (" type ") has not been " reason "!\n"); \
 		fprintf(stderr, "Please consider sending this file to\n"); \
 		fprintf(stderr, "vapier@users.sourceforge.net to help out the\n"); \
 		fprintf(stderr, "FreeSTDF project and make sure this code\n"); \
 		fprintf(stderr, "works exactly the way it should!\n"); \
 		fprintf(stderr, "******************************************\n"); \
 	} while (0)
+#define	warn_untested(type) __do_warn(type, "tested")
+#define	warn_not_coded(type) __do_warn(type, "implemented")
 
 #define __malloc_rec(r) ((r*)malloc(sizeof(r)))
 rec_unknown* stdf_read_rec_unknown(stdf_file *file)
@@ -312,6 +314,20 @@ rec_prr* stdf_read_rec_prr(stdf_file *file)
 	_stdf_read_dtc_Bn(file, &(prr->PART_FIX));
 	return prr;
 }
+#ifdef STDF_VER3
+rec_pdr* stdf_read_rec_pdr(stdf_file *file)
+{
+	warn_not_coded("PDR [stdf ver3]");
+	rec_pdr *pdr = __malloc_rec(rec_pdr);
+	return pdr;
+}
+rec_fdr* stdf_read_rec_fdr(stdf_file *file)
+{
+	warn_not_coded("FDR [stdf ver3]");
+	rec_fdr *fdr = __malloc_rec(rec_fdr);
+	return fdr;
+}
+#endif
 rec_tsr* stdf_read_rec_tsr(stdf_file *file)
 {
 	rec_tsr *tsr = __malloc_rec(rec_tsr);
@@ -436,10 +452,36 @@ rec_eps* stdf_read_rec_eps(stdf_file *file)
 	rec_eps *eps = __malloc_rec(rec_eps);
 	return eps;
 }
+#ifdef STDF_VER3
+rec_shb* stdf_read_rec_shb(stdf_file *file)
+{
+	warn_not_coded("SHB [stdf ver3]");
+	rec_shb *shb = __malloc_rec(rec_shb);
+	return shb;
+}
+rec_ssb* stdf_read_rec_ssb(stdf_file *file)
+{
+	warn_not_coded("SSB [stdf ver3]");
+	rec_ssb *ssb = __malloc_rec(rec_ssb);
+	return ssb;
+}
+rec_sts* stdf_read_rec_sts(stdf_file *file)
+{
+	warn_not_coded("STS [stdf ver3]");
+	rec_sts *sts = __malloc_rec(rec_sts);
+	return sts;
+}
+rec_scr* stdf_read_rec_scr(stdf_file *file)
+{
+	warn_not_coded("SCR [stdf ver3]");
+	rec_scr *scr = __malloc_rec(rec_scr);
+	return scr;
+}
+#endif
 rec_gdr* stdf_read_rec_gdr(stdf_file *file)
 {
 	rec_gdr *gdr = __malloc_rec(rec_gdr);
-	warn_untested("GDR");
+	warn_not_coded("GDR");
 	_stdf_read_dtc_U2(file, &(gdr->FLD_CNT));
 /*	_stdf_read_dtc_Vn(file, &(gdr->GEN_DATA), gdr->FLD_CNT);*/
 	return gdr;

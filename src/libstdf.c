@@ -154,12 +154,22 @@ rec_unknown* stdf_read_record(stdf_file *file)
 		case REC_WCR: rec = (rec_unknown*)stdf_read_rec_wcr(file); break;
 		case REC_PIR: rec = (rec_unknown*)stdf_read_rec_pir(file); break;
 		case REC_PRR: rec = (rec_unknown*)stdf_read_rec_prr(file); break;
+#ifdef STDF_VER3
+		case REC_PDR: rec = (rec_unknown*)stdf_read_rec_pdr(file); break;
+		case REC_FDR: rec = (rec_unknown*)stdf_read_rec_fdr(file); break;
+#endif
 		case REC_TSR: rec = (rec_unknown*)stdf_read_rec_tsr(file); break;
 		case REC_PTR: rec = (rec_unknown*)stdf_read_rec_ptr(file); break;
 		case REC_MPR: rec = (rec_unknown*)stdf_read_rec_mpr(file); break;
 		case REC_FTR: rec = (rec_unknown*)stdf_read_rec_ftr(file); break;
 		case REC_BPS: rec = (rec_unknown*)stdf_read_rec_bps(file); break;
 		case REC_EPS: rec = (rec_unknown*)stdf_read_rec_eps(file); break;
+#ifdef STDF_VER3
+		case REC_SHB: rec = (rec_unknown*)stdf_read_rec_shb(file); break;
+		case REC_SSB: rec = (rec_unknown*)stdf_read_rec_ssb(file); break;
+		case REC_STS: rec = (rec_unknown*)stdf_read_rec_sts(file); break;
+		case REC_SCR: rec = (rec_unknown*)stdf_read_rec_scr(file); break;
+#endif
 		case REC_GDR: rec = (rec_unknown*)stdf_read_rec_gdr(file); break;
 		case REC_DTR: rec = (rec_unknown*)stdf_read_rec_dtr(file); break;
 		default:

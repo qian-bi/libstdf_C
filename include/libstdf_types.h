@@ -17,6 +17,7 @@
 #define	REC_TYP_PER_TEST	10
 #define	REC_TYP_PER_EXEC	15
 #define	REC_TYP_PER_PROG	20
+#define	REC_TYP_PER_SITE	25
 #define	REC_TYP_GENERIC		50
 #define	REC_TYP_RESV_IMAGE	180
 #define	REC_TYP_RESV_IG900	181
@@ -39,12 +40,22 @@
 #define	REC_SUB_WCR			30
 #define	REC_SUB_PIR			10
 #define	REC_SUB_PRR			20
+#ifdef	STDF_VER3
+#define	REC_SUB_PDR			10
+#define	REC_SUB_FDR			20
+#endif
 #define	REC_SUB_TSR			30
 #define	REC_SUB_PTR			10
 #define	REC_SUB_MPR			15
 #define	REC_SUB_FTR			20
 #define	REC_SUB_BPS			10
 #define	REC_SUB_EPS			20
+#ifdef	STDF_VER3
+#define	REC_SUB_SHB			10
+#define	REC_SUB_SSB			20
+#define	REC_SUB_STS			30
+#define	REC_SUB_SCR			40
+#endif
 #define	REC_SUB_GDR			10
 #define	REC_SUB_DTR			30
 #define	REC_SUB_UNKNOWN		0xFF
@@ -68,12 +79,20 @@
 #define	REC_WCR				MAKE_REC(REC_TYP_PER_WAFER, REC_SUB_WCR)
 #define	REC_PIR				MAKE_REC(REC_TYP_PER_PART, REC_SUB_PIR)
 #define	REC_PRR				MAKE_REC(REC_TYP_PER_PART, REC_SUB_PRR)
+#define	REC_PDR				MAKE_REC(REC_TYP_PER_TEST, REC_SUB_PDR)
+#define	REC_FDR				MAKE_REC(REC_TYP_PER_TEST, REC_SUB_FDR)
 #define	REC_TSR				MAKE_REC(REC_TYP_PER_TEST, REC_SUB_TSR)
 #define	REC_PTR				MAKE_REC(REC_TYP_PER_EXEC, REC_SUB_PTR)
 #define	REC_MPR				MAKE_REC(REC_TYP_PER_EXEC, REC_SUB_MPR)
 #define	REC_FTR				MAKE_REC(REC_TYP_PER_EXEC, REC_SUB_FTR)
 #define	REC_BPS				MAKE_REC(REC_TYP_PER_PROG, REC_SUB_BPS)
 #define	REC_EPS				MAKE_REC(REC_TYP_PER_PROG, REC_SUB_EPS)
+#ifdef	STDF_VER3
+#define	REC_SHB				MAKE_REC(REC_TYP_PER_SITE, REC_SUB_SHB)
+#define	REC_SSB				MAKE_REC(REC_TYP_PER_SITE, REC_SUB_SSB)
+#define	REC_STS				MAKE_REC(REC_TYP_PER_SITE, REC_SUB_STS)
+#define	REC_SCR				MAKE_REC(REC_TYP_PER_SITE, REC_SUB_SCR)
+#endif
 #define	REC_GDR				MAKE_REC(REC_TYP_GENERIC, REC_SUB_GDR)
 #define	REC_DTR				MAKE_REC(REC_TYP_GENERIC, REC_SUB_DTR)
 #define	REC_UNKNOWN			MAKE_REC(REC_TYP_UNKNOWN, REC_SUB_UNKNOWN)
@@ -330,6 +349,16 @@ typedef struct {
 	dtc_Cn		PART_TXT;
 	dtc_Bn		PART_FIX;
 } rec_prr;
+#ifdef	STDF_VER3
+/* PDR: Parametric Test Description */
+typedef struct {
+	rec_header	header;
+} rec_pdr;
+/* FDR: Functional Test Description */
+typedef struct {
+	rec_header	header;
+} rec_fdr;
+#endif
 /* TSR: Test Synopsis Record [page 45] */
 typedef struct {
 	rec_header	header;
@@ -446,6 +475,24 @@ typedef struct {
 typedef struct {
 	rec_header	header;
 } rec_eps;
+#ifdef	STDF_VER3
+/* SHB: Site-Specific Hardware Bin Record */
+typedef struct {
+	rec_header	header;
+} rec_shb;
+/* SSB: Site-Specific Software Bin Record */
+typedef struct {
+	rec_header	header;
+} rec_ssb;
+/* STS: Site-Specific Test Synopsis Record */
+typedef struct {
+	rec_header	header;
+} rec_sts;
+/* SCR: Site-Specific Part Count Record */
+typedef struct {
+	rec_header	header;
+} rec_scr;
+#endif
 /* GDR: Generic Data Record [page 64] */
 typedef struct {
 	rec_header	header;

@@ -29,12 +29,18 @@ extern rec_wrr* stdf_read_rec_wrr(stdf_file*);
 extern rec_wcr* stdf_read_rec_wcr(stdf_file*);
 extern rec_pir* stdf_read_rec_pir(stdf_file*);
 extern rec_prr* stdf_read_rec_prr(stdf_file*);
+extern rec_pdr* stdf_read_rec_pdr(stdf_file*);
+extern rec_fdr* stdf_read_rec_fdr(stdf_file*);
 extern rec_tsr* stdf_read_rec_tsr(stdf_file*);
 extern rec_ptr* stdf_read_rec_ptr(stdf_file*);
 extern rec_mpr* stdf_read_rec_mpr(stdf_file*);
 extern rec_ftr* stdf_read_rec_ftr(stdf_file*);
 extern rec_bps* stdf_read_rec_bps(stdf_file*);
 extern rec_eps* stdf_read_rec_eps(stdf_file*);
+extern rec_shb* stdf_read_rec_shb(stdf_file*);
+extern rec_ssb* stdf_read_rec_ssb(stdf_file*);
+extern rec_sts* stdf_read_rec_sts(stdf_file*);
+extern rec_scr* stdf_read_rec_scr(stdf_file*);
 extern rec_gdr* stdf_read_rec_gdr(stdf_file*);
 extern rec_dtr* stdf_read_rec_dtr(stdf_file*);
 

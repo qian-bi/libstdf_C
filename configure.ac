@@ -11,6 +11,23 @@ AM_PROG_LIBTOOL
 
 CFLAGS="$CFLAGS -Wall -Werror"
 
+enable_stdf_ver3_support="no"
+AC_ARG_ENABLE(stdf-ver3, [  --enable-stdf-ver3           enable support for version 3 of STDF \[default=no\]], [
+	if test "$enableval" = "yes" ; then
+		AC_MSG_RESULT(yes)
+		enable_stdf_ver3_support="yes"
+	else
+		AC_MSG_RESULT(no)
+		enable_stdf_ver3_support="no"
+	fi
+	],[
+	AC_MSG_RESULT($enable_stdf_ver3_support)
+	]
+)
+if test "x$enable_stdf_ver3_support" = "xyes" ; then
+	AC_DEFINE(STDF_VER3, 1, "Enable support for STDFv3")
+fi
+
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.0,
 	[
 		AC_DEFINE(HAVE_GLIB, 1, [Has glib support (used by example programs)])
