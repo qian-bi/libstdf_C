@@ -83,7 +83,7 @@ stdf_file* stdf_open_ex(char *pathname, int opts)
 
 	if (!pathname)
 		return NULL;
-	if (pathname[0] == '-')
+	if (pathname[0] == '-' && pathname[1] == '\0')
 		ret->fd = 0;
 	else {
 		ret->fd = open(pathname, O_RDONLY);
