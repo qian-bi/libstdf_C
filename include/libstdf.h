@@ -14,12 +14,18 @@
 #ifndef _LIBSTDF_H
 #define _LIBSTDF_H
 
-#include <libstdf_types.h>
+#ifdef WIN32
+# include <libstdf_win32.h>
+#else
+# include <libstdf_systems.h>
+#endif
+#include <libstdf_bswap.h>
+
 #include <libstdf_const.h>
+#include <libstdf_types.h>
 
 /* STDF File structure */
 #define	__STDF_HOST_BYTE_ORDER		BYTE_ORDER
-typedef	uint8_t						byte_t;
 
 typedef struct {
 	int		(*open)(void*);
@@ -27,6 +33,31 @@ typedef struct {
 	int		(*close)(void*);
 	int		(*reopen)(void*);
 } __stdf_fops;
+
+/**
+ * Compressed file format
+ */
+typedef enum {
+	STDF_FORMAT_REG,			/**< Regular file */
+	STDF_FORMAT_ZIP,			/**< Zipped file */
+	STDF_FORMAT_GZIP,			/**< gzipped file */
+	STDF_FORMAT_BZIP2,			/**< bzipped file */
+} stdf_format;
+
+/**
+ * Misc options to control libstdf behavior
+ */
+typedef enum {
+	STDF_OPTS_DEFAULT	= 0x00,	/**< Default options */
+	STDF_OPTS_FORCE		= 0x01,	/**< Force reading even if some sanity checks fail */
+#ifdef STDF_VER3
+	STDF_OPTS_FORCE_V3	= 0x02,	/**< Force STDFv3 behavior */
+#endif
+	STDF_OPTS_FORCE_V4	= 0x04,	/**< Force STDFv4 behavior */
+	STDF_OPTS_ZIP		= 0x08,	/**< File is compressed with zip */
+	STDF_OPTS_GZIP		= 0x10,	/**< File is compressed with gzip */
+	STDF_OPTS_BZIP2		= 0x20	/**< File is compressed with bzip2 */
+} stdf_options;
 
 /**
  * @brief The main STDF file structure.
@@ -46,7 +77,7 @@ typedef struct {
 	BZFILE		*fd_bzip2;
 #endif
 	};
-	byte_t		file_format;	/**< Compressed file format of the file */
+	stdf_format	file_format;	/**< Compressed file format */
 	char		*filename;		/**< Filename that was given to stdf_open() */
 	__stdf_fops	*fops;			/**< Virtual file i/o functions to hide compression details */
 
@@ -58,23 +89,6 @@ typedef struct {
 	byte_t		*rec_pos;
 	byte_t		*rec_end;
 } stdf_file;
-
-/* the format of the stdf file */
-#define	STDF_FILE_REG				0x01
-#define	STDF_FILE_ZIP				0x02
-#define	STDF_FILE_GZIP				0x03
-#define	STDF_FILE_BZIP2				0x04
-
-/* options for input behavior */
-#define	STDF_OPTS_FORCE				0x01
-#ifdef STDF_VER3
-#define	STDF_OPTS_FORCE_V3			0x02
-#endif
-#define	STDF_OPTS_FORCE_V4			0x04
-#define	STDF_OPTS_DEFAULT			0x00
-#define	STDF_OPTS_ZIP				0x08
-#define	STDF_OPTS_GZIP				0x10
-#define	STDF_OPTS_BZIP2				0x20
 
 #include <libstdf_funcs.h>
 

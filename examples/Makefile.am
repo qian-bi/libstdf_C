@@ -1,5 +1,6 @@
 if BUILD_EXAMPLES
 noinst_PROGRAMS = \
+	example \
 	record_stats \
 	dump_records_to_ascii \
 	dump_records_to_html \

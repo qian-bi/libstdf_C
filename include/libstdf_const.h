@@ -15,17 +15,18 @@
 #define _LIBSTDF_CONST_H
 
 /* FAR: File Attributes Record [page 18] */
-#define	CPU_TYPE_DEC		0
-#define	CPU_TYPE_SPARC		1
-#define	CPU_TYPE_X86		2
-#define	CPU_TYPE_UNKNOWN	123	/* really reserved for Teradyne ... but screw them */
-#ifdef	STDF_VER3
-#define	CPU_TYPE_SUN_680XX	CPU_TYPE_SPARC
-#define	CPU_TYPE_SUN_80386	CPU_TYPE_X86
-/* wtf are these ?  LTX/Apollo ? */
-#define	CPU_TYPE_LTX		3
-#define	CPU_TYPE_APOLLO		4
+typedef enum {
+	CPU_TYPE_DEC		= 0,				/**< PDP-11 / VAX */
+	CPU_TYPE_SPARC		= 1,				/**< sparc [Solaris] */
+	CPU_TYPE_X86		= 2,				/**< x86 [Sun386i / Windows / DOS] */
+	CPU_TYPE_UNKNOWN	= 123,				/**< Unknown kind of CPU */
+#ifdef STDF_VER3
+	CPU_TYPE_SUN_680XX	= CPU_TYPE_SPARC,	/**< sparc [Solaris] */
+	CPU_TYPE_SUN_80386	= CPU_TYPE_X86,		/**< x86 [Sun386i] */
+	CPU_TYPE_LTX		= 3,				/**< WTF is LTX ? */
+	CPU_TYPE_APOLLO		= 4					/**< WTF is Apollo ? */
 #endif
+} cpu_types;
 
 /* MIR: Master Information Record [page 20] */
 #define	MODE_AEL			'A'
@@ -108,18 +109,20 @@
 
 
 /* GDR: Generic Data Record [page 64] */
-#define	GDR_B0				0
-#define	GDR_U1				1
-#define	GDR_U2				2
-#define	GDR_U4				3
-#define	GDR_I1				4
-#define	GDR_I2				5
-#define	GDR_I4				6
-#define	GDR_R4				7
-#define	GDR_R8				8
-#define	GDR_Cn				10
-#define	GDR_Bn				11
-#define	GDR_Dn				12
-#define	GDR_N1				13
+typedef enum {
+	GDR_B0				= 0,
+	GDR_U1				= 1,
+	GDR_U2				= 2,
+	GDR_U4				= 3,
+	GDR_I1				= 4,
+	GDR_I2				= 5,
+	GDR_I4				= 6,
+	GDR_R4				= 7,
+	GDR_R8				= 8,
+	GDR_Cn				= 10,
+	GDR_Bn				= 11,
+	GDR_Dn				= 12,
+	GDR_N1				= 13
+} dtc_Vn_type;
 
 #endif /* _LIBSTDF_CONST_H */

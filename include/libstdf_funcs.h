@@ -23,7 +23,7 @@ extern rec_unknown* stdf_read_record_raw(stdf_file*);		/**< Read in the next rec
 extern rec_unknown* stdf_parse_raw_record(rec_unknown*);	/**< Parse a previously read record */
 extern void stdf_free_record(rec_unknown*);					/**< Free a record  */
 
-extern char* stdf_get_rec_name(int, int);					/**< Translate a record into the 3 letter spec name */
+extern char* stdf_get_rec_name(rec_typ, rec_sub);			/**< Translate a record into the 3 letter spec name */
 #define	stdf_get_rec_name_from_head(h) stdf_get_rec_name(h.REC_TYP, h.REC_SUB)
 #define	stdf_get_rec_name_from_rec(r) stdf_get_rec_name(r->header.REC_TYP, r->h.REC_SUB)
 

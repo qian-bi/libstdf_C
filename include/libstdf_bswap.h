@@ -14,17 +14,26 @@
 #ifndef _LIBSTDF_BSWAP_H
 #define _LIBSTDF_BSWAP_H
 
+/**
+ * @brief Swap bytes in a 16 bit value
+ */
 #define stdf_bswap_16(x) \
 	x = ((((x) & 0xff00) >> 8) | \
 	     (((x) & 0x00ff) << 8))
+/**
+ * @brief Swap bytes in a 32 bit value
+ */
 #define stdf_bswap_32(x) \
 	x = ((((x) & 0xff000000) >> 24) | \
 	     (((x) & 0x00ff0000) >>  8) | \
 	     (((x) & 0x0000ff00) <<  8) | \
 	     (((x) & 0x000000ff) << 24))
 
-/* gcc sometimes stupidly types these wrong */
+/**
+ * @brief Swap bytes in a 64 bit value
+ */
 #if defined(__GNUC__)
+/* gcc sometimes stupidly types these wrong */
 #define stdf_bswap_64(x) \
 	x = ((((x) & 0xff00000000000000ull) >> 56) | \
 	     (((x) & 0x00ff000000000000ull) >> 40) | \

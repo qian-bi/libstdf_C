@@ -3,9 +3,9 @@
  + zip/gzip/bzip reading support so people don't have to unpack before
    sending the files through the library
 
- - doxygenify the sources and post results to the website
+ + doxygenify the sources and post results to the website
 
- - generate some manpages automagically
+ + generate some manpages automagically
 
  - publish a cleaned up spec file containing all the info i have for
    STDFv[34] in html format and post to website

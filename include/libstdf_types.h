@@ -14,63 +14,60 @@
 #ifndef _LIBSTDF_TYPES_H
 #define _LIBSTDF_TYPES_H
 
-#ifdef WIN32
-# include <libstdf_win32.h>
-#else
-# include <libstdf_systems.h>
-#endif
-#include <libstdf_bswap.h>
-
 /* Definitions for Record Types [page 7] */
-#define	REC_TYP_INFO		0
-#define	REC_TYP_PER_LOT		1
-#define	REC_TYP_PER_WAFER	2
-#define	REC_TYP_PER_PART	5
-#define	REC_TYP_PER_TEST	10
-#define	REC_TYP_PER_EXEC	15
-#define	REC_TYP_PER_PROG	20
-#define	REC_TYP_PER_SITE	25
-#define	REC_TYP_GENERIC		50
-#define	REC_TYP_RESV_IMAGE	180
-#define	REC_TYP_RESV_IG900	181
-#define	REC_TYP_UNKNOWN		0xFF
+typedef enum {
+	REC_TYP_INFO		= 0,
+	REC_TYP_PER_LOT		= 1,
+	REC_TYP_PER_WAFER	= 2,
+	REC_TYP_PER_PART	= 5,
+	REC_TYP_PER_TEST	= 10,
+	REC_TYP_PER_EXEC	= 15,
+	REC_TYP_PER_PROG	= 20,
+	REC_TYP_PER_SITE	= 25,
+	REC_TYP_GENERIC		= 50,
+	REC_TYP_RESV_IMAGE	= 180,
+	REC_TYP_RESV_IG900	= 181,
+	REC_TYP_UNKNOWN		= 0xFF
+} rec_typ;
 /* Definitions for Record Subtypes [page 7] */
-#define	REC_SUB_FAR			10
-#define	REC_SUB_ATR			20
-#define	REC_SUB_MIR			10
-#define	REC_SUB_MRR			20
-#define	REC_SUB_PCR			30
-#define	REC_SUB_HBR			40
-#define	REC_SUB_SBR			50
-#define	REC_SUB_PMR			60
-#define	REC_SUB_PGR			62
-#define	REC_SUB_PLR			63
-#define	REC_SUB_RDR			70
-#define	REC_SUB_SDR			80
-#define	REC_SUB_WIR			10
-#define	REC_SUB_WRR			20
-#define	REC_SUB_WCR			30
-#define	REC_SUB_PIR			10
-#define	REC_SUB_PRR			20
-#ifdef	STDF_VER3
-#define	REC_SUB_PDR			10
-#define	REC_SUB_FDR			20
+typedef enum {
+	REC_SUB_FAR			= 10,
+	REC_SUB_ATR			= 20,
+	REC_SUB_MIR			= 10,
+	REC_SUB_MRR			= 20,
+	REC_SUB_PCR			= 30,
+	REC_SUB_HBR			= 40,
+	REC_SUB_SBR			= 50,
+	REC_SUB_PMR			= 60,
+	REC_SUB_PGR			= 62,
+	REC_SUB_PLR			= 63,
+	REC_SUB_RDR			= 70,
+	REC_SUB_SDR			= 80,
+	REC_SUB_WIR			= 10,
+	REC_SUB_WRR			= 20,
+	REC_SUB_WCR			= 30,
+	REC_SUB_PIR			= 10,
+	REC_SUB_PRR			= 20,
+#ifdef STDF_VER3
+	REC_SUB_PDR			= 10,
+	REC_SUB_FDR			= 20,
 #endif
-#define	REC_SUB_TSR			30
-#define	REC_SUB_PTR			10
-#define	REC_SUB_MPR			15
-#define	REC_SUB_FTR			20
-#define	REC_SUB_BPS			10
-#define	REC_SUB_EPS			20
-#ifdef	STDF_VER3
-#define	REC_SUB_SHB			10
-#define	REC_SUB_SSB			20
-#define	REC_SUB_STS			30
-#define	REC_SUB_SCR			40
+	REC_SUB_TSR			= 30,
+	REC_SUB_PTR			= 10,
+	REC_SUB_MPR			= 15,
+	REC_SUB_FTR			= 20,
+	REC_SUB_BPS			= 10,
+	REC_SUB_EPS			= 20,
+#ifdef STDF_VER3
+	REC_SUB_SHB			= 10,
+	REC_SUB_SSB			= 20,
+	REC_SUB_STS			= 30,
+	REC_SUB_SCR			= 40,
 #endif
-#define	REC_SUB_GDR			10
-#define	REC_SUB_DTR			30
-#define	REC_SUB_UNKNOWN		0xFF
+	REC_SUB_GDR			= 10,
+	REC_SUB_DTR			= 30,
+	REC_SUB_UNKNOWN		= 0xFF
+} rec_sub;
 /* Definitions that combine Record Types with Subtypes */
 #define	MAKE_REC(typ,sub)	((typ << 8) + sub)
 #define	HEAD_TO_REC(h)		MAKE_REC(h.REC_TYP,h.REC_SUB)
@@ -112,6 +109,7 @@
 #define	REC_UNKNOWN			MAKE_REC(REC_TYP_UNKNOWN, REC_SUB_UNKNOWN)
 
 /* Definitions for Data Type Codes and Representation [page 8] */
+typedef	uint8_t			byte_t;
 typedef	char*			dtc_Cn;
 typedef	char			dtc_C1;
 typedef	uint8_t			dtc_U1;
@@ -132,34 +130,39 @@ typedef	dtc_U2*			dtc_xU2;
 typedef	dtc_R4*			dtc_xR4;
 typedef	dtc_N1*			dtc_xN1;
 typedef struct {
-	dtc_B1	type;
-	void*	data;
+	dtc_Vn_type	type;
+	void*		data;
 } dtc_Vn_ele;
 typedef	dtc_Vn_ele*		dtc_Vn;
 
+typedef enum {
+	REC_STATE_RAW,
+	REC_STATE_PARSED
+} rec_state;
 /**
- * The typical header found with every record in a STDF file.  
+ * @brief The header found with every record in a STDF file.
+ *
  * See the Definitions for Record Types [page 15+] of the spec
  * file for more information
  */
 typedef struct {
 	void		*stdf_file;
-	dtc_B1		state;
+	rec_state	state;
 	dtc_U2		REC_LEN;		/**< Record length (in bytes) */
-	dtc_U1		REC_TYP;		/**< The 'type' of record (class) */
-	dtc_U1		REC_SUB;		/**< The 'sub type' of record */
+	rec_typ		REC_TYP;		/**< The 'type' of record (class) */
+	rec_sub		REC_SUB;		/**< The 'sub type' of record */
 } rec_header;
 /**
- * The basic record type.  Figure out what kind of record this
- * really represents by looking at the header.  Then simply
- * cast it as the appropriate record type.
+ * @brief The basic record type.
+ *
+ * You figure out what kind of record this really represents
+ * by looking at the header.  Then simply cast it as the
+ * appropriate record type.
  */
 typedef struct {
 	rec_header	header;
 	void		*data;
 } rec_unknown;
-#define	REC_HEADER_RAW		0x01
-#define	REC_HEADER_PARSED	0x02
 /* FAR: File Attributes Record [page 18] */
 typedef struct {
 	rec_header	header;

@@ -14,10 +14,10 @@
 #include "dtc.h"
 #include "rec.h"
 
-char* stdf_get_rec_name(int type, int subtype)
+char* stdf_get_rec_name(rec_typ type, rec_sub sub)
 {
 	static char name[4];
-	switch (MAKE_REC(type, subtype)) {
+	switch (MAKE_REC(type, sub)) {
 		case REC_FAR: memcpy(name, "FAR", 3); break;
 		case REC_ATR: memcpy(name, "ATR", 3); break;
 		case REC_MIR: memcpy(name, "MIR", 3); break;
@@ -653,7 +653,7 @@ void stdf_free_record(rec_unknown *rec)
 		return;
 	file = (stdf_file*)(rec->header.stdf_file);
 
-	if (rec->header.state & REC_HEADER_RAW) {
+	if (rec->header.state == REC_STATE_RAW) {
 		free(rec->data);
 		free(rec);
 		return;

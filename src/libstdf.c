@@ -235,27 +235,27 @@ stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
 	ret->filename = strdup(pathname);
 
 	if (opts & STDF_OPTS_ZIP)
-		ret->file_format = STDF_FILE_ZIP;
+		ret->file_format = STDF_FORMAT_ZIP;
 	else if (opts & STDF_OPTS_GZIP)
-		ret->file_format = STDF_FILE_GZIP;
+		ret->file_format = STDF_FORMAT_GZIP;
 	else if (opts & STDF_OPTS_BZIP2)
-		ret->file_format = STDF_FILE_BZIP2;
+		ret->file_format = STDF_FORMAT_BZIP2;
 	else
 		/* try to guess from the filename if it's compressed */
 		if (strrchr(ret->filename, '.') != NULL)
 			if (strstr(ret->filename, ".zip") != NULL)
-				ret->file_format = STDF_FILE_ZIP;
+				ret->file_format = STDF_FORMAT_ZIP;
 			else if (strstr(ret->filename, ".gz") != NULL)
-				ret->file_format = STDF_FILE_GZIP;
+				ret->file_format = STDF_FORMAT_GZIP;
 			else if (strstr(ret->filename, ".bz") != NULL || strstr(ret->filename, ".bz2") != NULL)
-				ret->file_format = STDF_FILE_BZIP2;
+				ret->file_format = STDF_FORMAT_BZIP2;
 			else
-				ret->file_format = STDF_FILE_REG;
+				ret->file_format = STDF_FORMAT_REG;
 		else
-			ret->file_format = STDF_FILE_REG;
+			ret->file_format = STDF_FORMAT_REG;
 
 	switch (ret->file_format) {
-		case STDF_FILE_ZIP:
+		case STDF_FORMAT_ZIP:
 #if HAVE_ZIP
 			ret->fops = &__stdf_fops_zip;
 			break;
@@ -263,7 +263,7 @@ stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
 			fprintf(stderr, "stdf_open(): zip support was disabled!\n");
 			goto out_err;
 #endif
-		case STDF_FILE_GZIP:
+		case STDF_FORMAT_GZIP:
 #if HAVE_GZIP
 			ret->fops = &__stdf_fops_gzip;
 			break;
@@ -271,7 +271,7 @@ stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
 			fprintf(stderr, "stdf_open(): gzip support was disabled!\n");
 			goto out_err;
 #endif
-		case STDF_FILE_BZIP2:
+		case STDF_FORMAT_BZIP2:
 #if HAVE_BZIP2
 			ret->fops = &__stdf_fops_bzip2;
 			break;
@@ -280,7 +280,7 @@ stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
 			goto out_err;
 #endif
 		default:
-		case STDF_FILE_REG:
+		case STDF_FORMAT_REG:
 			ret->fops = &__stdf_fops_reg;
 	}
 
@@ -342,7 +342,7 @@ rec_unknown* stdf_read_record_raw(stdf_file *file)
 		return NULL;
 	}
 	raw_rec->header.stdf_file = (void*)file;
-	raw_rec->header.state = REC_HEADER_RAW;
+	raw_rec->header.state = REC_STATE_RAW;
 	memcpy(&(raw_rec->header.REC_LEN), header, 2);
 	raw_rec->header.REC_TYP = header[2];
 	raw_rec->header.REC_SUB = header[3];
@@ -419,7 +419,7 @@ rec_unknown* stdf_parse_raw_record(rec_unknown *raw_rec)
 			file->header.REC_SUB = REC_SUB_UNKNOWN;
 			break;
 	}
-	file->header.state &= ~REC_HEADER_RAW & REC_HEADER_PARSED;
+	file->header.state = REC_STATE_PARSED;
 	memcpy(&(rec->header), &(file->header), sizeof(rec_header));
 
 	return rec;
