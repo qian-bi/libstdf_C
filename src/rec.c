@@ -649,10 +649,18 @@ rec_dtr* stdf_read_rec_dtr(stdf_file *file)
 	return dtr;
 }
 
-void stdf_free_record(stdf_file *file, rec_unknown *rec)
+void stdf_free_record(rec_unknown *rec)
 {
+	stdf_file *file;
 	if (!rec)
 		return;
+	file = (stdf_file*)(rec->header.stdf_file);
+
+	if (rec->header.state & REC_HEADER_RAW) {
+		free(rec->data);
+		free(rec);
+		return;
+	}
 
 	switch (HEAD_TO_REC(rec->header)) {
 		case REC_FAR:
