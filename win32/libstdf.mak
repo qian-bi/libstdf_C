@@ -45,6 +45,6 @@ clean:
 	-del $(STATICLIB)
 	-del $(SHAREDLIB)
 	-del $(IMPORTLIB)
-	-del src\*.obj
+	-del ..\src\*.obj
 	-del *.exe
 	-del $(RESFILE)
