@@ -1,31 +1,26 @@
-0.2:
-
- - stop thrashing the file system so damned hard ... read in the STDF 
-   in as chunks of XXX bytes and then have the dtc functions run off 
-   that buffer in memory
-
- - add a win32 directory with a workspace so this will build in Visual 
-   Studio ?  guess that means figuring out how to make a proper .dll 
-   and making sure everything is portable as can be ...
-
- - test the variable sized data types ... i can generate fake STDF 
-   files for the basic data types, but the descriptions aren't very 
-   clear on the xU2, xCn, etc... types and the only way to *really* 
-   test them would be if i had a real data file ... anyone willing to 
-   donate one or two ? :)
-   i guess these suck currently and just cause segfaults ... for now,
-   do no real work except to move the data pointer ahead the correct
-   number of bytes ... :(
-
- - STDFv3 as best as i can
-
 0.3:
 
  - zip/gzip/bzip reading support so people don't have to unpack before
    sending the files through the library
 
+ - doxygenify the sources and post results to the website
+
+ - generate some manpages automagically
+
+ - publish a cleaned up spec file containing all the info i have for
+   STDFv[34] in html format and post to website
+
+ - clean up the custom STDF files i wrote and post to website along with
+   the output generated when run through the example apps
+
 unknown:
+
+ - test dtc_xCn / dtc_xN1 types which means testing PLR / MPR / FTR records
 
  - ATDF support
 
  - STDF writing support
+
+ - STDF 'lint' remover to 'shrink' STDF files ...
+   - check if PTR records repeat the entries for limits, test name, etc...
+     If so, then remove duplicate entries after the first occurence
