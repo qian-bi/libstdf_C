@@ -64,13 +64,13 @@ char* stdf_get_rec_name(int type, int subtype)
 
 #define	__do_warn(type, reason) \
 	do { \
-		fprintf(stderr, "******************************************\n"); \
+		fprintf(stderr, "*********************************************\n"); \
 		fprintf(stderr, "This record type (" type ") has not been " reason "!\n"); \
 		fprintf(stderr, "Please consider sending this file to\n"); \
 		fprintf(stderr, "vapier@users.sourceforge.net to help out the\n"); \
 		fprintf(stderr, "FreeSTDF project and make sure this code\n"); \
 		fprintf(stderr, "works exactly the way it should!\n"); \
-		fprintf(stderr, "******************************************\n"); \
+		fprintf(stderr, "*********************************************\n"); \
 	} while (0)
 #define	warn_untested(type) __do_warn(type, "tested")
 #define	warn_not_coded(type) __do_warn(type, "implemented")
@@ -327,14 +327,14 @@ rec_prr* stdf_read_rec_prr(stdf_file *file)
 #ifdef STDF_VER3
 rec_pdr* stdf_read_rec_pdr(stdf_file *file)
 {
-	warn_not_coded("PDR [stdf ver3]");
 	rec_pdr *pdr = __malloc_rec(rec_pdr);
+	warn_not_coded("PDR [stdf ver3]");
 	return pdr;
 }
 rec_fdr* stdf_read_rec_fdr(stdf_file *file)
 {
-	warn_not_coded("FDR [stdf ver3]");
 	rec_fdr *fdr = __malloc_rec(rec_fdr);
+	warn_not_coded("FDR [stdf ver3]");
 	return fdr;
 }
 #endif
@@ -465,26 +465,26 @@ rec_eps* stdf_read_rec_eps(stdf_file *file)
 #ifdef STDF_VER3
 rec_shb* stdf_read_rec_shb(stdf_file *file)
 {
-	warn_not_coded("SHB [stdf ver3]");
 	rec_shb *shb = __malloc_rec(rec_shb);
+	warn_not_coded("SHB [stdf ver3]");
 	return shb;
 }
 rec_ssb* stdf_read_rec_ssb(stdf_file *file)
 {
-	warn_not_coded("SSB [stdf ver3]");
 	rec_ssb *ssb = __malloc_rec(rec_ssb);
+	warn_not_coded("SSB [stdf ver3]");
 	return ssb;
 }
 rec_sts* stdf_read_rec_sts(stdf_file *file)
 {
-	warn_not_coded("STS [stdf ver3]");
 	rec_sts *sts = __malloc_rec(rec_sts);
+	warn_not_coded("STS [stdf ver3]");
 	return sts;
 }
 rec_scr* stdf_read_rec_scr(stdf_file *file)
 {
-	warn_not_coded("SCR [stdf ver3]");
 	rec_scr *scr = __malloc_rec(rec_scr);
+	warn_not_coded("SCR [stdf ver3]");
 	return scr;
 }
 #endif
@@ -610,7 +610,7 @@ void stdf_free_record(rec_unknown *rec)
 		}
 		case REC_SDR: {
 			rec_sdr *sdr = (rec_sdr*)rec;
-			free(sdr->SITE_NUM);
+			/*free(sdr->SITE_NUM);*/
 			free(sdr->HAND_TYP);
 			free(sdr->HAND_ID);
 			free(sdr->CARD_TYP);

@@ -28,8 +28,9 @@ int main(int argc, char *argv[])
 	rec_unknown *rec;
 #if HAVE_GLIB
 	GHashTable *hash_table;
+	long *stat;
 #endif
-	long *stat, cnt;
+	long cnt;
 	int i;
 
 	if (argc <= 1) {

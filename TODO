@@ -11,5 +11,10 @@
    clear on the xU2, xCn, etc... types and the only way to *really* 
    test them would be if i had a real data file ... anyone willing to 
    donate one or two ? :)
+   i guess these suck currently and just cause segfaults ... for now,
+   do no real work except to move the data pointer ahead the correct
+   number of bytes ... :(
 
-- should stdfv3 even bother being supported ?
+ - STDF writing support
+
+ - should stdfv3 even bother being supported ?

@@ -27,9 +27,9 @@ void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int 
 	}
 
 	switch (len) {
-		case 2:	*((__uint16_t*)in) = bswap_16(*((__uint16_t*)in)); break;
-		case 4:	*((__uint32_t*)in) = bswap_32(*((__uint32_t*)in)); break;
-		case 8:	*((__uint64_t*)in) = bswap_64(*((__uint64_t*)in)); break;
+		case 2:	*((uint16_t*)in) = bswap_16(*((uint16_t*)in)); break;
+		case 4:	*((uint32_t*)in) = bswap_32(*((uint32_t*)in)); break;
+		case 8:	*((uint64_t*)in) = bswap_64(*((uint64_t*)in)); break;
 		default:
 			fprintf(stderr, "__byte_order_change(): byte len of %i has no implementation\n", len);
 	}
@@ -87,8 +87,10 @@ void _stdf_read_dtc_xN1(stdf_file *f, dtc_xN1 *xN1, dtc_U2 cnt)
 void __stdf_read_dtc_x(stdf_file *f, void *in, dtc_U2 cnt, int in_size)
 {
 	/* maybe be rewritten to work in a for loop so we can do byte swapping ? */
+/*
 	in = malloc(in_size * cnt);
 	memcpy(in, f->rec_pos, in_size * cnt);
+*/
 	f->rec_pos += in_size * cnt;
 }
 

@@ -9,7 +9,11 @@
 #ifndef _LIBSTDF_TYPES_H
 #define _LIBSTDF_TYPES_H
 
+#ifdef	WIN32
+#include <libstdf_win32.h>
+#else
 #include <libstdf_systems.h>
+#endif
 
 /* Definitions for Record Types [page 7] */
 #define	REC_TYP_INFO		0
@@ -103,12 +107,12 @@
 typedef	char*			dtc_Cn;
 typedef	char*			dtc_Cf;
 typedef	char			dtc_C1;
-typedef	__uint8_t		dtc_U1;
-typedef	__uint16_t		dtc_U2;
-typedef	__uint32_t		dtc_U4;
-typedef	__int8_t		dtc_I1;
-typedef	__int16_t		dtc_I2;
-typedef	__int32_t		dtc_I4;
+typedef	uint8_t			dtc_U1;
+typedef	uint16_t		dtc_U2;
+typedef	uint32_t		dtc_U4;
+typedef	int8_t			dtc_I1;
+typedef	int16_t			dtc_I2;
+typedef	int32_t			dtc_I4;
 typedef	float			dtc_R4;
 typedef	double			dtc_R8;
 /*

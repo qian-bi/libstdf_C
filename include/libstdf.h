@@ -19,7 +19,7 @@
 /* STDF File structure */
 #include <sys/types.h>
 #define	__STDF_HOST_BYTE_ORDER		BYTE_ORDER
-typedef	__uint8_t					byte_t;
+typedef	uint8_t						byte_t;
 typedef struct {
 	rec_header	header;
 
