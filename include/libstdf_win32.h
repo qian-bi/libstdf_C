@@ -11,8 +11,10 @@
  * $Header$
  */
 
-#ifndef _LIBSTDF_SYSTEMS_H
-#define _LIBSTDF_SYSTEMS_H
+#ifndef _LIBSTDF_WIN32_H
+#define _LIBSTDF_WIN32_H
+
+#include <libstdf_win32_options.h>
 
 #include <sys/types.h>
 
@@ -37,4 +39,4 @@ typedef signed __int64		int64_t;
 #define	BYTE_ORDER		LITTLE_ENDIAN
 #endif
 
-#endif /* _LIBSTDF_SYSTEMS_H */
+#endif /* _LIBSTDF_WIN32_H */
