@@ -271,6 +271,37 @@ for (i=1; i<argc; ++i) {
 				print_UNK("PART_FIX");
 				break;
 			}
+#ifdef STDF_VER3
+			case REC_PDR: {
+				rec_pdr *pdr = (rec_pdr*)rec;
+				print_int("TEST_NUM", pdr->TEST_NUM);
+				print_hex("DESC_FLG", pdr->DESC_FLG);
+				print_hex("OPT_FLAG", pdr->OPT_FLAG);
+				print_int("RES_SCAL", pdr->RES_SCAL);
+				print_str("UNITS", pdr->UNITS);
+				print_int("RES_LDIG", pdr->RES_LDIG);
+				print_int("RES_RDIG", pdr->RES_RDIG);
+				print_int("LLM_SCAL", pdr->LLM_SCAL);
+				print_int("HLM_SCAL", pdr->HLM_SCAL);
+				print_int("LLM_LDIG", pdr->LLM_LDIG);
+				print_int("LLM_RDIG", pdr->LLM_RDIG);
+				print_int("HLM_LDIG", pdr->HLM_LDIG);
+				print_int("HLM_RDIG", pdr->HLM_RDIG);
+				print_rel("LO_LIMIT", pdr->LO_LIMIT);
+				print_rel("HI_LIMIT", pdr->HI_LIMIT);
+				print_str("TEST_NAM", pdr->TEST_NAM);
+				print_str("SEQ_NAME", pdr->SEQ_NAME);
+				break;
+			}
+			case REC_FDR: {
+				rec_fdr *fdr = (rec_fdr*)rec;
+				print_int("TEST_NUM", fdr->TEST_NUM);
+				print_hex("DESC_FLG", fdr->DESC_FLG);
+				print_str("TEST_NAM", fdr->TEST_NAM);
+				print_str("SEQ_NAME", fdr->SEQ_NAME);
+				break;
+			}
+#endif
 			case REC_TSR: {
 				rec_tsr *tsr = (rec_tsr*)rec;
 				print_int("HEAD_NUM", tsr->HEAD_NUM);
@@ -387,6 +418,7 @@ for (i=1; i<argc; ++i) {
 				/*rec_eps *eps = (rec_eps*)rec;*/
 				break;
 			}
+#ifdef STDF_VER3
 			case REC_SHB: {
 				rec_shb *shb = (rec_shb*)rec;
 				print_int("HEAD_NUM", shb->HEAD_NUM);
@@ -438,6 +470,7 @@ for (i=1; i<argc; ++i) {
 				print_int("FUNC_CNT", scr->FUNC_CNT);
 				break;
 			}
+#endif
 			case REC_GDR: {
 				/*rec_gdr *gdr = (rec_gdr*)rec;*/
 				print_UNK("GEN_DATA");
