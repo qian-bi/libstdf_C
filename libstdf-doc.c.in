@@ -1,14 +1,12 @@
 /**
-@brief Library for manipulating STDF files.
-
-These routines are used for Ecore Library interaction
-*/
+ * @brief Library for manipulating STDF files.
+ **/
 
 /**
 @mainpage libstdf
 
-@version 0.2
-@author Mike Frysinger <vapier\@gmail.com>
+@version @VERSION@
+@author Mike Frysinger <@PACKAGE_BUGREPORT@>
 @date July 2004
 
 

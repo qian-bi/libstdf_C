@@ -279,6 +279,7 @@ doc/man/Makefile
 examples/Makefile
 libstdf-config
 libstdf.pc
+libstdf-doc.c
 ],[
 chmod +x libstdf-config
 ])
