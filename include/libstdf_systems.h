@@ -14,6 +14,9 @@
 #if defined(HAVE_STDINT_H)
 # include <stdint.h>
 #endif
+#if defined(HAVE_INTTYPES_H)
+# include <inttypes.h>
+#endif
 #if defined(HAVE_SYS_TYPES_H)
 # include <sys/types.h>
 #endif
@@ -28,28 +31,14 @@
 # include <sys/endian.h>
 #endif
 
-#if defined(HAVE_BYTESWAP_H)
-# include <byteswap.h>
-#elif defined(HAVE_BSWAP_H)
-# include <bswap.h>
-#else
-#define bswap_16(x) \
-	x = ((((x) & 0xff00) >> 8) | \
-	     (((x) & 0x00ff) << 8))
-#define bswap_32(x) \
-	x = ((((x) & 0xff000000) >> 24) | \
-	     (((x) & 0x00ff0000) >>  8) | \
-	     (((x) & 0x0000ff00) <<  8) | \
-	     (((x) & 0x000000ff) << 24))
-#define bswap_64(x) \
-	x = ((((x) & 0xff00000000000000) >> 56) | \
-	     (((x) & 0x00ff000000000000) >> 40) | \
-	     (((x) & 0x0000ff0000000000) >> 24) | \
-	     (((x) & 0x000000ff00000000) >>  8) | \
-	     (((x) & 0x00000000ff000000) <<  8) | \
-	     (((x) & 0x0000000000ff0000) << 24) | \
-	     (((x) & 0x000000000000ff00) << 40) | \
-	     (((x) & 0x00000000000000ff) << 56))
+#if HAVE_ZIP
+# include <zzip/zzip.h>
+#endif
+#if HAVE_GZIP
+# include <zlib.h>
+#endif
+#if HAVE_BZIP2
+# include <bzlib.h>
 #endif
 
 #endif /* _LIBSTDF_SYSTEMS_H */

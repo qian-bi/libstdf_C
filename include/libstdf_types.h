@@ -9,11 +9,12 @@
 #ifndef _LIBSTDF_TYPES_H
 #define _LIBSTDF_TYPES_H
 
-#ifdef	WIN32
-#include <libstdf_win32.h>
+#ifdef WIN32
+# include <libstdf_win32.h>
 #else
-#include <libstdf_systems.h>
+# include <libstdf_systems.h>
 #endif
+#include <libstdf_bswap.h>
 
 /* Definitions for Record Types [page 7] */
 #define	REC_TYP_INFO		0
