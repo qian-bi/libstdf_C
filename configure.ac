@@ -53,7 +53,7 @@ if test "x$enable_zip_compression" != "xno" ; then
 			AM_CONDITIONAL(HAVE_ZIP, true)
 			ZIP_CFLAGS="${ZZIPLIB_CFLAGS}"
 			ZIP_LIBS="${ZZIPLIB_LIBS}"
-		])
+		], [ dontdie="" ])
 fi
 if test "x$zip_found" = "xno" ; then
 	if test "x$enable_zip_compression" = "xyes" ; then
