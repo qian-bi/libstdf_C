@@ -17,7 +17,7 @@
 
 #define	MAX_REC_STYLES	4
 int max_width, width, rec_rot;
-unsigned char *recbuff;
+rec_unknown *raw_rec;
 
 #define	OUT_HEX			1
 #define	OUT_ASCII		2
@@ -26,12 +26,13 @@ void write_rec(FILE *f, rec_header *h, int type)
 {
 	int i;
 	int towrite, written;
-	unsigned char *rec;
+	byte_t *rec;
 	int tagged;
 
-	rec = recbuff;
+	rec = raw_rec->data;
 	written = 0;
 	tagged = 0;
+	h->REC_LEN += 4;
 
 	do {
 		towrite = max_width - width;
@@ -95,10 +96,7 @@ void usage(char *prog)
 int main(int argc, char *argv[])
 {
 	stdf_file *f;
-	rec_header h;
-	int byte_order, stdfver;
 	char cpu_name[256];
-	int in;
 	FILE *out;
 	int x, rec_count, max_recs, type;
 
@@ -147,9 +145,6 @@ int main(int argc, char *argv[])
 		perror("Could not stdf_open file");
 		return EXIT_FAILURE;
 	}
-	byte_order = f->byte_order;
-	stdfver = f->ver;
-	stdf_close(f);
 	if (f->byte_order == LITTLE_ENDIAN)
 		sprintf(cpu_name, "Little Endian [intel/x86]");
 	else if (f->byte_order == BIG_ENDIAN)
@@ -157,10 +152,6 @@ int main(int argc, char *argv[])
 	else
 		sprintf(cpu_name, "Unknown Endian [???]");
 
-	if ((in=open(argv[x], O_RDONLY)) == -1) {
-		perror("Could not open stdf file");
-		return EXIT_FAILURE;
-	}
 	if ((out=fopen(argv[x+1], "w")) == NULL) {
 		perror("Could not open html file");
 		return EXIT_FAILURE;
@@ -185,11 +176,10 @@ int main(int argc, char *argv[])
 	        "<body>\n"
 	        "<h1>File: %s<br>STDF v%i<br>CPU Type: %i (%s)</h1>\n"
 	        "<table><tr>\n",
-	        argv[x], argv[x], stdfver, byte_order, cpu_name);
+	        argv[x], argv[x], f->ver, f->byte_order, cpu_name);
 
-	recbuff = (char*)malloc(sizeof(char) * (0x0FFFF + 4));
 	for (type=1; type<3; type++) {
-		lseek(in, 0, SEEK_SET);
+		f->fops->reopen(f);
 
 		width = 0;
 		rec_count = max_recs;
@@ -203,24 +193,18 @@ int main(int argc, char *argv[])
 				fprintf(out, "<th>%i</th>", width);
 		fprintf(out, "</tr>\n<tr>");
 
-		while (read(in, &h, 4) == 4) {
-			if (byte_order != BYTE_ORDER)
-				stdf_bswap_16(h.REC_LEN);
-			lseek(in, -4, SEEK_CUR);
-			h.REC_LEN += 4;
-			read(in, recbuff, h.REC_LEN);
-
-			write_rec(out, &h, type);
+		while ((raw_rec=stdf_read_record_raw(f)) != NULL) {
+			write_rec(out, &(f->header), type);
 			if (--rec_count == 0)
 				break;
 			if (++rec_rot > MAX_REC_STYLES)
 				rec_rot = 1;
+			stdf_free_record(raw_rec);
 		}
 		if (width != 0)
 			fprintf(out, "</tr>\n");
 		fprintf(out, "</table></td>\n");
 	}
-	free(recbuff);
 
 	fprintf(out,
 	        "</tr></table>\n"
@@ -228,7 +212,7 @@ int main(int argc, char *argv[])
 	        "</html>");
 
 	fclose(out);
-	close(in);
+	stdf_close(f);
 
 	return EXIT_SUCCESS;
 }
