@@ -15,3 +15,6 @@ If you're using CVS:
 --- Compiling [win32] ---
 from the win32 directory, run:
 nmake -f libstdf.mak
+
+if you'd like to build the examples, just run:
+nmake -f libstdf.mak examples
