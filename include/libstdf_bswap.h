@@ -1,4 +1,7 @@
-/* libstdf_bswap.h
+/**
+ * @file libstdf_bswap.h
+ * @brief Byte swapping functions.
+ *
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php

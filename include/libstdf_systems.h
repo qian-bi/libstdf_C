@@ -1,4 +1,7 @@
-/* libstdf_systems.h
+/**
+ * @file libstdf_systems.h
+ * @brief System specific include files / features.
+ *
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
@@ -20,8 +23,20 @@
 #if defined(HAVE_SYS_TYPES_H)
 # include <sys/types.h>
 #endif
+#if defined(HAVE_SYS_STAT_H)
+# include <sys/stat.h>
+#endif
 #if defined(HAVE_UNISTD_H)
 # include <unistd.h>
+#endif
+#if defined(HAVE_STDIO_H)
+# include <stdio.h>
+#endif
+#if defined(HAVE_STDLIB_H)
+# include <stdlib.h>
+#endif
+#if defined(HAVE_STRING_H)
+# include <string.h>
 #endif
 
 #if defined(HAVE_ENDIAN_H)
