@@ -1,4 +1,8 @@
-noinst_PROGRAMS = record_stats dump_records_to_ascii is_valid_stdf
+noinst_PROGRAMS = \
+	record_stats \
+	dump_records_to_ascii \
+	is_valid_stdf \
+	stdf2xtdf
 
 INCLUDES = -I$(top_builddir)/include $(GLIB_CFLAGS)
 

@@ -691,4 +691,6 @@ void stdf_free_record(rec_unknown *rec)
 			       stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB));
 			break;
 	}
+
+	rec = NULL;
 }
