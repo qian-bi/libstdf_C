@@ -1,5 +1,5 @@
 HOMEPAGE:    http://freestdf.sourceforge.net/
-AUTHOR:      Mike Frysinger <vapier@users.sourceforge.net>
+AUTHOR:      Mike Frysinger <vapier@gmail.com>
 
 --- Compiling ---
 If you downloaded a source tarball:
@@ -8,5 +8,6 @@ If you downloaded a source tarball:
 (3) sudo make install
 
 If you're using CVS:
-(1) ./autogen.sh
-(2) sudo make install
+(1) nano test.sh (add/remove options for configure)
+(2) ./autogen.sh
+(3) sudo make install
