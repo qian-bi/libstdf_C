@@ -14,7 +14,11 @@
 #ifndef _LIBSTDF_SYSTEMS_H
 #define _LIBSTDF_SYSTEMS_H
 
-#include <libstdf_sys_config.h>
+#ifdef WIN32
+# include <libstdf_win32.h>
+#else
+# include <libstdf_sys_config.h>
+#endif
 
 #if defined(HAVE_STDINT_H)
 # include <stdint.h>
@@ -30,6 +34,9 @@
 #endif
 #if defined(HAVE_UNISTD_H)
 # include <unistd.h>
+#endif
+#if defined(HAVE_FCNTL_H)
+# include <fcntl.h>
 #endif
 #if defined(HAVE_STDIO_H)
 # include <stdio.h>
@@ -56,6 +63,9 @@
 #endif
 #if HAVE_BZIP2
 # include <bzlib.h>
+#endif
+#if !HAVE_ZIP && !HAVE_GZIP && !HAVE_BZIP2
+# define HAVE_NO_COMPRESSION	1
 #endif
 
 #endif /* _LIBSTDF_SYSTEMS_H */

@@ -14,11 +14,7 @@
 #ifndef _LIBSTDF_H
 #define _LIBSTDF_H
 
-#ifdef WIN32
-# include <libstdf_win32.h>
-#else
-# include <libstdf_systems.h>
-#endif
+#include <libstdf_systems.h>
 #include <libstdf_bswap.h>
 
 #include <libstdf_const.h>
@@ -41,7 +37,7 @@ typedef enum {
 	STDF_FORMAT_REG,			/**< Regular file */
 	STDF_FORMAT_ZIP,			/**< Zipped file */
 	STDF_FORMAT_GZIP,			/**< gzipped file */
-	STDF_FORMAT_BZIP2,			/**< bzipped file */
+	STDF_FORMAT_BZIP2			/**< bzipped file */
 } stdf_format;
 
 /**
@@ -66,6 +62,7 @@ typedef struct {
 	rec_header	header;			/**< A processed version of the last record read */
 
 	int			fd;				/**< Actual file descriptor for the backing file */
+#if !HAVE_NO_COMPRESSION
 	union {
 #if HAVE_ZIP
 	ZZIP_FILE	*fd_zip;
@@ -77,6 +74,7 @@ typedef struct {
 	BZFILE		*fd_bzip2;
 #endif
 	};
+#endif
 	stdf_format	file_format;	/**< Compressed file format */
 	char		*filename;		/**< Filename that was given to stdf_open() */
 	__stdf_fops	*fops;			/**< Virtual file i/o functions to hide compression details */

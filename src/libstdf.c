@@ -92,10 +92,10 @@ static int __stdf_reopen_reg(void *data)
 	return __stdf_open_reg(data);
 }
 static __stdf_fops __stdf_fops_reg = {
-	.open   = __stdf_open_reg,
-	.read   = __stdf_read_reg,
-	.close  = __stdf_close_reg,
-	.reopen = __stdf_reopen_reg,
+	__stdf_open_reg,
+	__stdf_read_reg,
+	__stdf_close_reg,
+	__stdf_reopen_reg
 };
 
 #if HAVE_ZIP
@@ -140,10 +140,10 @@ static int __stdf_reopen_zip(void *data)
 	return __stdf_open_zip(data);
 }
 static __stdf_fops __stdf_fops_zip = {
-	.open   = __stdf_open_zip,
-	.read   = __stdf_read_zip,
-	.close  = __stdf_close_zip,
-	.reopen = __stdf_reopen_zip,
+	__stdf_open_zip,
+	__stdf_read_zip,
+	__stdf_close_zip,
+	__stdf_reopen_zip
 };
 #endif
 
@@ -179,10 +179,10 @@ static int __stdf_reopen_gzip(void *data)
 	return __stdf_open_gzip(data);
 }
 static __stdf_fops __stdf_fops_gzip = {
-	.open   = __stdf_open_gzip,
-	.read   = __stdf_read_gzip,
-	.close  = __stdf_close_gzip,
-	.reopen = __stdf_reopen_gzip,
+	__stdf_open_gzip,
+	__stdf_read_gzip,
+	__stdf_close_gzip,
+	__stdf_reopen_gzip
 };
 #endif
 
@@ -218,10 +218,10 @@ static int __stdf_reopen_bzip2(void *data)
 	return __stdf_open_bzip2(data);
 }
 static __stdf_fops __stdf_fops_bzip2 = {
-	.open   = __stdf_open_bzip2,
-	.read   = __stdf_read_bzip2,
-	.close  = __stdf_close_bzip2,
-	.reopen = __stdf_reopen_bzip2,
+	__stdf_open_bzip2,
+	__stdf_read_bzip2,
+	__stdf_close_bzip2,
+	__stdf_reopen_bzip2
 };
 #endif
 

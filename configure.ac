@@ -3,12 +3,15 @@ AM_INIT_AUTOMAKE(libstdf, 0.1)
 AM_CONFIG_HEADER(include/libstdf_sys_config.h)
 
 AC_PROG_CC
-AC_PROG_CXX
 AM_PROG_LIBTOOL
 AM_ENABLE_SHARED
 AM_ENABLE_STATIC
 
-AC_CHECK_HEADERS([stdio.h endian.h sys/endian.h])
+AC_CHECK_HEADERS([
+stdint.h inttypes.h sys/types.h sys/stat.h
+unistd.h fcntl.h stdio.h stdlib.h
+string.h endian.h sys/endian.h
+])
 
 CFLAGS="$CFLAGS -Wall -Werror"
 

@@ -14,8 +14,16 @@
 #ifndef _LIBSTDF_WIN32_OPTIONS_H
 #define _LIBSTDF_WIN32_OPTIONS_H
 
-#define	HAVE_ZIP	1
-#define	HAVE_GZIP	1
-#define	HAVE_BZIP	1
+#define	HAVE_ZIP	0
+#define	HAVE_GZIP	0
+#define	HAVE_BZIP	0
+
+/* you shouldn't have to touch anything below here */
+#define	HAVE_SYS_TYPES_H	1
+#define	HAVE_SYS_STAT_H		1
+#define	HAVE_FCNTL_H		1
+#define	HAVE_STDIO_H		1
+#define	HAVE_STDLIB_H		1
+#define	HAVE_STRING_H		1
 
 #endif /* _LIBSTDF_WIN32_OPTIONS_H */
