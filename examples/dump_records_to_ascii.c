@@ -9,6 +9,8 @@
 #define print_str(n,s) print_fmt(n, "%s\n", (*s ? s+1 : NULL))
 #define print_chr(n,c) print_fmt(n, "%c\n", c)
 #define print_tim(n,d) print_fmt(n, "%s", ctime((time_t*)&d))
+#define print_hex(n,h) print_fmt(n, "%X\n", h)
+#define print_rel(n,r) print_fmt(n, "%f\n", r)
 
 int main(int argc, char *argv[])
 {
@@ -137,6 +139,12 @@ int main(int argc, char *argv[])
 				print_int("SITE_NUM", pmr->SITE_NUM);
 				break;
 			}
+/*
+rec_pgr
+rec_plr
+rec_rdr
+rec_sdr
+*/
 			case REC_WIR: {
 				rec_wir *wir = (rec_wir*)rec;
 				print_int("HEAD_NUM", wir->HEAD_NUM);
@@ -165,9 +173,9 @@ int main(int argc, char *argv[])
 			}
 			case REC_WCR: {
 				rec_wcr *wcr = (rec_wcr*)rec;
-				/* print_R4 WAFR_SIZ */
-				/* print_R4 DIE_HT */
-				/* print_R4 DIE_WID */
+				print_rel("WAFR_SIZ", wcr->WAFR_SIZ);
+				print_rel("DIE_HT", wcr->DIE_HT);
+				print_rel("DIE_WID", wcr->DIE_WID);
 				print_chr("WF_UNITS", wcr->WF_UNITS);
 				print_chr("WF_FLAT", wcr->WF_FLAT);
 				print_int("CENTER_X", wcr->CENTER_X);
@@ -180,6 +188,87 @@ int main(int argc, char *argv[])
 				rec_pir *pir = (rec_pir*)rec;
 				print_int("HEAD_NUM", pir->HEAD_NUM);
 				print_int("SITE_NUM", pir->SITE_NUM);
+				break;
+			}
+			case REC_PRR: {
+				rec_prr *prr = (rec_prr*)rec;
+				print_int("HEAD_NUM", prr->HEAD_NUM);
+				print_int("SITE_NUM", prr->SITE_NUM);
+				print_hex("PART_FLG", prr->PART_FLG);
+				print_int("NUM_TEST", prr->NUM_TEST);
+				print_int("HARD_BIN", prr->HARD_BIN);
+				print_int("SOFT_BIN", prr->SOFT_BIN);
+				print_int("X_COORD", prr->X_COORD);
+				print_int("Y_COORD", prr->Y_COORD);
+				print_tim("TEST_T", prr->TEST_T);
+				print_str("PART_ID", prr->PART_ID);
+				print_str("PART_TXT", prr->PART_TXT);
+				/*print_hxs("PART_FIX", prr->*/
+				break;
+			}
+			case REC_TSR: {
+				rec_tsr *tsr = (rec_tsr*)rec;
+				print_int("HEAD_NUM", tsr->HEAD_NUM);
+				print_int("SITE_NUM", tsr->SITE_NUM);
+				print_chr("TEST_TYP", tsr->TEST_TYP);
+				print_int("TEST_NUM", tsr->TEST_NUM);
+				print_int("EXEC_CNT", tsr->EXEC_CNT);
+				print_int("FAIL_CNT", tsr->FAIL_CNT);
+				print_int("ALRM_CNT", tsr->ALRM_CNT);
+				print_str("TEST_NAM", tsr->TEST_NAM);
+				print_str("SEQ_NAME", tsr->SEQ_NAME);
+				print_str("TEST_LBL", tsr->TEST_LBL);
+				print_hex("OPT_FLAG", tsr->OPT_FLAG);
+				print_rel("TEST_TIM", tsr->TEST_TIM);
+				print_rel("TEST_MIN", tsr->TEST_MIN);
+				print_rel("TEST_MAX", tsr->TEST_MAX);
+				print_rel("TST_SUMS", tsr->TST_SUMS);
+				print_rel("TST_SQRS", tsr->TST_SQRS);
+				break;
+			}
+			case REC_PTR: {
+				rec_ptr *ptr = (rec_ptr*)rec;
+				print_int("TEST_NUM", ptr->TEST_NUM);
+				print_int("HEAD_NUM", ptr->HEAD_NUM);
+				print_int("SITE_NUM", ptr->SITE_NUM);
+				print_hex("TEST_FLG", ptr->TEST_FLG);
+				print_hex("PARM_FLG", ptr->PARM_FLG);
+				print_rel("RESTULT", ptr->RESTULT);
+				print_str("TEST_TXT", ptr->TEST_TXT);
+				print_str("ALARM_ID", ptr->ALARM_ID);
+				print_hex("OPT_FLAG", ptr->OPT_FLAG);
+				print_int("RES_SCAL", ptr->RES_SCAL);
+				print_int("LLM_SCAL", ptr->LLM_SCAL);
+				print_int("HLM_SCAL", ptr->HLM_SCAL);
+				print_rel("LO_LIMIT", ptr->LO_LIMIT);
+				print_rel("HI_LIMIT", ptr->HI_LIMIT);
+				print_str("UNITS", ptr->UNITS);
+				print_str("C_RESFMT", ptr->C_RESFMT);
+				print_str("C_LLMFMT", ptr->C_LLMFMT);
+				print_str("C_HLMFMT", ptr->C_HLMFMT);
+				print_rel("LO_SPEC", ptr->LO_SPEC);
+				print_rel("HI_SPEC", ptr->HI_SPEC);
+				break;
+			}
+/*
+rec_mpr
+rec_ftr
+*/
+			case REC_BPS: {
+				rec_bps *bps = (rec_bps*)rec;
+				print_str("SEQ_NAME", bps->SEQ_NAME);
+				break;
+			}
+			case REC_EPS: {
+				/*rec_eps *eps = (rec_eps*)rec;*/
+				break;
+			}
+/*
+rec_gdr
+*/
+			case REC_DTR: {
+				rec_dtr *dtr = (rec_dtr*)rec;
+				print_str("TEXT_DAT", dtr->TEXT_DAT);
 				break;
 			}
 		}

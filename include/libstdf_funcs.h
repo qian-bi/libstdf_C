@@ -15,5 +15,6 @@ extern rec_unknown* stdf_read_record(stdf_file*);
 extern void stdf_free_record(rec_unknown*);
 
 extern char* stdf_get_rec_name(int,int);
+//#define	stdf_get_rec_name(h) stdf_get_rec_name(h.REC_TYP, h.REC_SUB)
 
 #endif /* _LIBSTDF_FUNCS_H */

@@ -89,11 +89,22 @@ typedef	__int16_t		dtc_I2;
 typedef	__int32_t		dtc_I4;
 typedef	float			dtc_R4;
 typedef	double			dtc_R8;
+/*
 typedef	char*			dtc_Vn;
+*/
 typedef	char*			dtc_Bn;
 typedef	char			dtc_B1;
+/*
 typedef	char*			dtc_Dn;
 typedef	char			dtc_N1;
+*/
+typedef	dtc_Cn*			dtc_xCn;
+typedef	dtc_U1*			dtc_xU1;
+typedef	dtc_U2*			dtc_xU2;
+typedef	dtc_R4*			dtc_xR4;
+/*
+typedef	dtc_N1*			dtc_xN1;
+*/
 
 /* Definitions for Record Types [page 15+] */
 typedef struct {
@@ -121,7 +132,7 @@ typedef struct {
 	dtc_U4		MOD_TIM;
 	dtc_Cn		CMD_LINE;
 } rec_atr;
-/* MIR: Master Information Record (MIR) */
+/* MIR: Master Information Record [page 20] */
 typedef struct {
 	rec_header	header;
 	dtc_U4		SETUP_T;
@@ -163,6 +174,7 @@ typedef struct {
 	dtc_Cn		SERL_NUM;
 	dtc_Cn		SUPR_NAM;
 } rec_mir;
+/* MRR: Master Results Record [page 23] */
 typedef struct {
 	rec_header	header;
 	dtc_U4		FINISH_T;
@@ -170,6 +182,7 @@ typedef struct {
 	dtc_Cn		USR_DESC;
 	dtc_Cn		EXC_DESC;
 } rec_mrr;
+/* PCR: Part Count Record [page 24] */
 typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
@@ -180,6 +193,7 @@ typedef struct {
 	dtc_U4		GOOD_CNT;
 	dtc_U4		FUNC_CNT;
 } rec_pcr;
+/* HBR: Hardware Bin Record [page 25] */
 typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
@@ -189,6 +203,7 @@ typedef struct {
 	dtc_C1		HBIN_PF;
 	dtc_Cn		HBIN_NAM;
 } rec_hbr;
+/* SBR: Software Bin Record [page 27] */
 typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
@@ -198,6 +213,7 @@ typedef struct {
 	dtc_C1		SBIN_PF;
 	dtc_Cn		SBIN_NAM;
 } rec_sbr;
+/* PMR: Pin Map Record [page 29] */
 typedef struct {
 	rec_header	header;
 	dtc_U2		PMR_INDX;
@@ -208,12 +224,57 @@ typedef struct {
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_NUM;
 } rec_pmr;
-/*
-rec_pgr
-rec_plr
-rec_rdr
-rec_sdr
-*/
+/* PGR: Pin Group Record [page 31] */
+typedef struct {
+	rec_header	header;
+	dtc_U2		GRP_INDX;
+	dtc_Cn		GRP_NAM;
+	dtc_U2		INDX_CNT;
+	dtc_xU2		PMR_INDX;
+} rec_pgr;
+/* PLR: Pin List Record [page 32] */
+typedef struct {
+	rec_header	header;
+	dtc_U2		GRP_CNT;
+	dtc_xU2		GRP_INDX;
+	dtc_xU2		GRP_MODE;
+	dtc_xU1		GRP_RADX;
+	dtc_xCn		PGM_CHAR;
+	dtc_xCn		RTN_CHAR;
+	dtc_xCn		PGM_CHAL;
+	dtc_xCn		RTN_CHAL;
+} rec_plr;
+/* RDR: Retest Data Record [page 34] */
+typedef struct {
+	rec_header	header;
+	dtc_U2		NUM_BINS;
+	dtc_xU2		RTST_BIN;
+} rec_rdr;
+/* SDR: Site Description Record [page 35] */
+typedef struct {
+	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_GRP;
+	dtc_U1		SITE_CNT;
+	dtc_xU1		SITE_NUM;
+	dtc_Cn		HAND_TYP;
+	dtc_Cn		HAND_ID;
+	dtc_Cn		CARD_TYP;
+	dtc_Cn		CARD_ID;
+	dtc_Cn		LOAD_TYP;
+	dtc_Cn		LOAD_ID;
+	dtc_Cn		DIB_TYP;
+	dtc_Cn		DIB_ID;
+	dtc_Cn		CABL_TYP;
+	dtc_Cn		CABL_ID;
+	dtc_Cn		CONT_TYP;
+	dtc_Cn		CONT_ID;
+	dtc_Cn		LASR_TYP;
+	dtc_Cn		LASR_ID;
+	dtc_Cn		EXTR_TYP;
+	dtc_Cn		EXTR_ID;
+} rec_sdr;
+/* WIR: Wafer Information Record [page 37] */
 typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
@@ -221,6 +282,7 @@ typedef struct {
 	dtc_U4		START_T;
 	dtc_Cn		WAFER_ID;
 } rec_wir;
+/* WRR: Wafer Results Record [page 38] */
 typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
@@ -238,6 +300,7 @@ typedef struct {
 	dtc_Cn		USR_DESC;
 	dtc_Cn		EXC_DESC;
 } rec_wrr;
+/* WCR: Wafer Configuration Record [page 40] */
 typedef struct {
 	rec_header	header;
 	dtc_R4		WAFR_SIZ;
@@ -250,11 +313,13 @@ typedef struct {
 	dtc_C1		POS_X;
 	dtc_C1		POS_Y;
 } rec_wcr;
+/* PIR: Part Information Record [page 42] */
 typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_NUM;
 } rec_pir;
+/* PRR: Part Results Record [page 43] */
 typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
@@ -270,6 +335,7 @@ typedef struct {
 	dtc_Cn		PART_TXT;
 	dtc_Bn		PART_FIX;
 } rec_prr;
+/* TSR: Test Synopsis Record [page 45] */
 typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
@@ -289,6 +355,7 @@ typedef struct {
 	dtc_R4		TST_SUMS;
 	dtc_R4		TST_SQRS;
 } rec_tsr;
+/* PTR: Parametric Test Record [page 47] */
 typedef struct {
 	rec_header	header;
 	dtc_U4		TEST_NUM;
@@ -312,20 +379,85 @@ typedef struct {
 	dtc_R4		LO_SPEC;
 	dtc_R4		HI_SPEC;
 } rec_ptr;
-/*
-rec_mpr
-rec_ftr
-*/
+/* MPR: Multiple-Result Parametric Record [page 53] */
+typedef struct {
+	rec_header	header;
+	dtc_U4		TEST_NUM;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_B1		TEST_FLG;
+	dtc_B1		PARM_FLG;
+	dtc_U2		RTN_ICNT;
+	dtc_U2		RSLT_CNT;
+/*	dtc_xN1		RTN_STAT;*/
+	dtc_xR4		RTN_RSLT;
+	dtc_Cn		TEST_TXT;
+	dtc_Cn		ALARM_ID;
+	dtc_B1		OPT_FLAG;
+	dtc_I1		RES_SCAL;
+	dtc_I1		LLM_SCAL;
+	dtc_I1		HLM_SCAL;
+	dtc_R4		LO_LIMIT;
+	dtc_R4		HI_LIMIT;
+	dtc_R4		START_IN;
+	dtc_R4		INCR_IN;
+	dtc_xU2		RTN_INDX;
+	dtc_Cn		UNITS;
+	dtc_Cn		UNITS_IN;
+	dtc_Cn		C_RESFMT;
+	dtc_Cn		C_LLMFMT;
+	dtc_Cn		C_HLMFMT;
+	dtc_R4		LO_SPEC;
+	dtc_R4		HI_SPEC;
+} rec_mpr;
+/* FTR: Functional Test Record [page 57] */
+typedef struct {
+	rec_header header;
+	dtc_U4		TEST_NUM;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_B1		TEST_FLG;
+	dtc_B1		PARM_FLG;
+	dtc_U4		CYCL_CNT;
+	dtc_U4		REL_VADR;
+	dtc_U4		REPT_CNT;
+	dtc_U4		NUM_FAIL;
+	dtc_I4		XFAIL_AD;
+	dtc_I4		YFAIL_AD;
+	dtc_I2		VECT_OFF;
+	dtc_U2		RTN_ICNT;
+	dtc_U2		PGM_ICNT;
+	dtc_xU2		RTN_INDX;
+/*	dtc_xN1		RTN_STAT;*/
+	dtc_xU2		PGM_INDX;
+/*	dtc_xN1		PGM_STAT;*/
+/*	dtc_Dn		FAIL_PIN;*/
+	dtc_Cn		VECT_NAM;
+	dtc_Cn		TIME_SET;
+	dtc_Cn		OP_CODE;
+	dtc_Cn		TEST_TXT;
+	dtc_Cn		ALARM_ID;
+	dtc_Cn		PROG_TXT;
+	dtc_Cn		RSLT_TXT;
+	dtc_U1		PATG_NUM;
+/*	dtc_Dn		SPIN_MAP;*/
+} rec_ftr;
+/* BPS: Begin Program Section [page 62] */
 typedef struct {
 	rec_header	header;
 	dtc_Cn		SEQ_NAME;
 } rec_bps;
+/* EPS: End Program Section [page 63] */
 typedef struct {
 	rec_header	header;
 } rec_eps;
-/*
-rec_gdr
-*/
+/* GDR: Generic Data Record [page 64] */
+typedef struct {
+	rec_header	header;
+	dtc_U2		FLD_CNT;
+/*	dtc_Vn		GEN_DATA;*/
+} rec_gdr;
+/* DTR: Datalog Text Record [page 66] */
 typedef struct {
 	rec_header	header;
 	dtc_Cn		TEXT_DAT;
