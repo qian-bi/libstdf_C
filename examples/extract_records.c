@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 	printf("Record Extractor\n"
 	       "Source: '%s'\n"
 	       "Output: '%s'\n"
-	       "Options: [Y]es [N]o [A]ll [Q]uit\n",
+	       "Options: [Y]es [N]o [A]ll ne[V]er [Q]uit\n",
 	       filename_in, filename_out);
 
 	input = calloc(stdf_rec_to_idx_max(), sizeof(char));
@@ -73,12 +73,12 @@ int main(int argc, char *argv[])
 		parsed_rec = stdf_parse_raw_record(raw_rec);
 
 		in = &(input[stdf_rec_to_idx(parsed_rec)]);
-		if (*in != 'A') {
-			printf("\nFound a %s, extract? ", stdf_get_rec_name_from_rec(parsed_rec));
+		if (*in != 'A' && *in != 'V') {
+			printf("Found a %s, extract? ", stdf_get_rec_name_from_rec(parsed_rec));
 			do {
 				scanf("%c", in);
 				*in = toupper(*in);
-			} while (strchr("YNAQ", *in) == NULL);
+			} while (strchr("YNAVQ", *in) == NULL);
 		}
 
 		if (*in == 'Y' || *in == 'A') {
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 	}
-	printf("\nExtracted %li records\n", count);
+	printf("\n\nExtracted %li records\n", count);
 
 	free(input);
 
