@@ -14,53 +14,70 @@
 #include "dtc.h"
 #include "rec.h"
 
-void stdf_get_rec_name_r(rec_typ type, rec_sub sub, char *buf)
+char *stdf_rec_names[] = {
+	"???",
+	"FAR", "ATR", "MIR", "MRR", "PCR", "HBR",
+	"SBR", "PMR", "PGR", "PLR", "RDR", "SDR",
+	"WIR", "WRR", "WCR", "PIR", "PRR",
+	"PDR", "FDR",
+	"TSR", "PTR", "MPR", "FTR", "BPS", "EPS",
+	"SHB", "SSB", "STS", "SCR",
+	"GDR", "DTR"
+};
+
+inline int _stdf_header_to_idx(rec_typ type, rec_sub sub)
 {
 	switch (MAKE_REC(type, sub)) {
-		case REC_FAR: memcpy(buf, "FAR", 3); break;
-		case REC_ATR: memcpy(buf, "ATR", 3); break;
-		case REC_MIR: memcpy(buf, "MIR", 3); break;
-		case REC_MRR: memcpy(buf, "MRR", 3); break;
-		case REC_PCR: memcpy(buf, "PCR", 3); break;
-		case REC_HBR: memcpy(buf, "HBR", 3); break;
-		case REC_SBR: memcpy(buf, "SBR", 3); break;
-		case REC_PMR: memcpy(buf, "PMR", 3); break;
-		case REC_PGR: memcpy(buf, "PGR", 3); break;
-		case REC_PLR: memcpy(buf, "PLR", 3); break;
-		case REC_RDR: memcpy(buf, "RDR", 3); break;
-		case REC_SDR: memcpy(buf, "SDR", 3); break;
-		case REC_WIR: memcpy(buf, "WIR", 3); break;
-		case REC_WRR: memcpy(buf, "WRR", 3); break;
-		case REC_WCR: memcpy(buf, "WCR", 3); break;
-		case REC_PIR: memcpy(buf, "PIR", 3); break;
-		case REC_PRR: memcpy(buf, "PRR", 3); break;
+		case REC_FAR:	return 1;
+		case REC_ATR:	return 2;
+		case REC_MIR:	return 3;
+		case REC_MRR:	return 4;
+		case REC_PCR:	return 5;
+		case REC_HBR:	return 6;
+		case REC_SBR:	return 7;
+		case REC_PMR:	return 8;
+		case REC_PGR:	return 9;
+		case REC_PLR:	return 10;
+		case REC_RDR:	return 11;
+		case REC_SDR:	return 12;
+		case REC_WIR:	return 13;
+		case REC_WRR:	return 14;
+		case REC_WCR:	return 15;
+		case REC_PIR:	return 16;
+		case REC_PRR:	return 17;
 #ifdef STDF_VER3
-		case REC_PDR: memcpy(buf, "PDR", 3); break;
-		case REC_FDR: memcpy(buf, "FDR", 3); break;
+		case REC_PDR:	return 18;
+		case REC_FDR:	return 19;
 #endif
-		case REC_TSR: memcpy(buf, "TSR", 3); break;
-		case REC_PTR: memcpy(buf, "PTR", 3); break;
-		case REC_MPR: memcpy(buf, "MPR", 3); break;
-		case REC_FTR: memcpy(buf, "FTR", 3); break;
-		case REC_BPS: memcpy(buf, "BPS", 3); break;
-		case REC_EPS: memcpy(buf, "EPS", 3); break;
+		case REC_TSR:	return 20;
+		case REC_PTR:	return 21;
+		case REC_MPR:	return 22;
+		case REC_FTR:	return 23;
+		case REC_BPS:	return 24;
+		case REC_EPS:	return 25;
 #ifdef STDF_VER3
-		case REC_SHB: memcpy(buf, "SHB", 3); break;
-		case REC_SSB: memcpy(buf, "SSB", 3); break;
-		case REC_STS: memcpy(buf, "STS", 3); break;
-		case REC_SCR: memcpy(buf, "SCR", 3); break;
+		case REC_SHB:	return 26;
+		case REC_SSB:	return 27;
+		case REC_STS:	return 28;
+		case REC_SCR:	return 29;
 #endif
-		case REC_GDR: memcpy(buf, "GDR", 3); break;
-		case REC_DTR: memcpy(buf, "DTR", 3); break;
-		default:      memcpy(buf, "???", 3); break;
+		case REC_GDR:	return 30;
+		case REC_DTR:	return 31;
+		case REC_UNKNOWN:
+		default:		return 0;
 	}
-	buf[3] = '\0';
+}
+int stdf_rec_to_idx_count()
+{
+	return 32;
+}
+int stdf_rec_to_idx(rec_unknown *rec)
+{
+	return _stdf_header_to_idx(rec->header.REC_TYP, rec->header.REC_SUB);
 }
 char* stdf_get_rec_name(rec_typ type, rec_sub sub)
 {
-	static char name[4];
-	stdf_get_rec_name_r(type, sub, name);
-	return name;
+	return stdf_rec_names[_stdf_header_to_idx(type, sub)];
 }
 
 #if WARN_UNTESTED

@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 	       "Options: [Y]es [N]o [A]ll ne[V]er [Q]uit\n",
 	       filename_in, filename_out);
 
-	input = calloc(stdf_rec_to_idx_max(), sizeof(char));
+	input = calloc(stdf_rec_to_idx_count(), sizeof(char));
 	count = 1;
 
 	printf("\nAuto saving the FAR record\n");
@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
 		parsed_rec = stdf_parse_raw_record(raw_rec);
 
 		in = &(input[stdf_rec_to_idx(parsed_rec)]);
+printf("%i\n", stdf_rec_to_idx(parsed_rec));
 		if (*in != 'A' && *in != 'V') {
 			printf("Found a %s, extract? ", stdf_get_rec_name_from_rec(parsed_rec));
 			do {
