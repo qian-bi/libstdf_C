@@ -8,4 +8,4 @@ libstdf_la_SOURCES = \
 	libstdf.c \
 	dtc.c \
 	rec.c
-#libstdf_la_LDFLAGS = -version-info
+libstdf_la_LDFLAGS = -version-info 0:1:0
