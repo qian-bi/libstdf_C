@@ -15,6 +15,11 @@
 
 unknown:
 
+ - read in data from the STDF files in larger chunks than just 1 record at 
+   a time ... since files can easily have 50000+ records, we could cut the 
+   # of filesystem reads down by more than a factor of 10 with buffers of 
+   512/1024/etc... bytes
+
  - test dtc_xCn / dtc_xN1 types which means testing PLR / MPR / FTR records
 
  - ATDF support
