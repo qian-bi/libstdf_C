@@ -1,4 +1,4 @@
-AC_INIT
+AC_INIT(libstdf, 0.1, [vapier@gmail.com])
 AM_INIT_AUTOMAKE(libstdf, 0.1)
 AM_CONFIG_HEADER(include/libstdf_sys_config.h)
 
