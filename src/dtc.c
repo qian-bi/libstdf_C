@@ -151,7 +151,7 @@ void _stdf_read_dtc_xCn(stdf_file *f, dtc_xCn *xCn, dtc_U2 cnt)
 	(*xCn) = (dtc_xCn)calloc(cnt, sizeof(Cn));
 	while (i < cnt) {
 		_stdf_read_dtc_Cn(f, &Cn);
-		xCn[i++] = &Cn;
+		(*xCn)[i++] = Cn;
 	}
 }
 
