@@ -10,7 +10,8 @@ AM_ENABLE_STATIC
 AC_CHECK_HEADERS([ \
 stdint.h inttypes.h sys/types.h sys/stat.h \
 unistd.h fcntl.h stdio.h stdlib.h \
-string.h endian.h sys/endian.h \
+string.h endian.h sys/endian.h machine/endian.h \
+cmplrs/host.h \
 ])
 
 CFLAGS="$CFLAGS -Wall -Werror"
