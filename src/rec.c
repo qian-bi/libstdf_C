@@ -694,9 +694,10 @@ void stdf_free_record(rec_unknown *rec)
 	}
 
 	switch (HEAD_TO_REC(rec->header)) {
-		case REC_FAR:
+		case REC_FAR: {
 			free(rec);
 			break;
+		}
 		case REC_ATR: {
 			rec_atr *atr = (rec_atr*)rec;
 			free(atr->CMD_LINE);
@@ -766,9 +767,10 @@ void stdf_free_record(rec_unknown *rec)
 			free(rec);
 			break;
 		}
-		case REC_PCR:
+		case REC_PCR: {
 			free(rec);
 			break;
+		}
 		case REC_HBR: {
 			rec_hbr *hbr = (rec_hbr*)rec;
 			free(hbr->HBIN_NAM);
@@ -862,9 +864,10 @@ void stdf_free_record(rec_unknown *rec)
 			free(rec);
 			break;
 		}
-		case REC_WCR:
+		case REC_WCR: {
 			free(rec);
 			break;
+		}
 		case REC_PIR: {
 #ifdef STDF_VER3
 			rec_pir *pir = (rec_pir*)rec;
@@ -960,9 +963,10 @@ void stdf_free_record(rec_unknown *rec)
 			free(rec);
 			break;
 		}
-		case REC_EPS:
+		case REC_EPS: {
 			free(rec);
 			break;
+		}
 #ifdef STDF_VER3
 		case REC_SHB: {
 			rec_shb *shb = (rec_shb*)rec;
@@ -1001,14 +1005,16 @@ void stdf_free_record(rec_unknown *rec)
 			free(rec);
 			break;
 		}
-		case REC_UNKNOWN:
+		case REC_UNKNOWN: {
 			if (rec->data) free(rec->data);
 			free(rec);
 			break;
-		default:
+		}
+		default: {
 			fprintf(stderr, "Memory leak: unhandled record type (%s) in stdf_free_record()!\n",
 			       stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB));
 			break;
+		}
 	}
 
 	rec = NULL;
