@@ -199,11 +199,11 @@ int main(int argc, char *argv[])
 
 		while ((raw_rec=stdf_read_record_raw(f)) != NULL) {
 			write_rec(out, &(f->header), type);
+			stdf_free_record(raw_rec);
 			if (--rec_count == 0)
 				break;
 			if (++rec_rot > MAX_REC_STYLES)
 				rec_rot = 1;
-			stdf_free_record(raw_rec);
 		}
 		if (width != 0)
 			fprintf(out, "</tr>\n");
