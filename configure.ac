@@ -31,10 +31,8 @@ enable_example_programs="yes"
 AC_MSG_CHECKING(whether example programs should be built)
 AC_ARG_ENABLE(examples, [  --disable-examples      disable building the example apps], [
 	if test "x$enableval" = "xyes" ; then
-		AC_MSG_RESULT(yes)
 		enable_example_programs="yes"
 	else
-		AC_MSG_RESULT(no)
 		enable_example_programs="no"
 	fi
 	]
