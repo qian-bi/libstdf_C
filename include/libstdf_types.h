@@ -134,10 +134,14 @@ typedef	dtc_Vn_ele*		dtc_Vn;
 
 /* Definitions for Record Types [page 15+] */
 typedef struct {
+	void		*stdf_file;
+	dtc_B1		state;
 	dtc_U2		REC_LEN;
 	dtc_U1		REC_TYP;
 	dtc_U1		REC_SUB;
 } rec_header;
+#define	REC_HEADER_RAW		0x01
+#define	REC_HEADER_PARSED	0x02
 /* generic record ... just enough to get at the header */
 typedef struct {
 	rec_header	header;
