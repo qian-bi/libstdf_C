@@ -15,9 +15,8 @@
 # include <getopt.h>
 #endif
 
-#define	MAX_WIDTH		25
 #define	MAX_REC_STYLES	4
-int width, rec_rot;
+int max_width, width, rec_rot;
 unsigned char *recbuff;
 
 #define	OUT_HEX			1
@@ -35,7 +34,7 @@ void write_rec(FILE *f, rec_header *h, int type)
 	tagged = 0;
 
 	do {
-		towrite = MAX_WIDTH - width;
+		towrite = max_width - width;
 		if (h->REC_LEN < written + towrite)
 			towrite = h->REC_LEN - written;
 		for (i=0; i<towrite; ++i) {
@@ -71,7 +70,7 @@ void write_rec(FILE *f, rec_header *h, int type)
 		width += towrite;
 		rec += towrite;
 		written += towrite;
-		if (width == MAX_WIDTH) {
+		if (width == max_width) {
 			fprintf(f, "</tr>\n<tr>");
 			width = 0;
 		}
@@ -85,6 +84,7 @@ void usage(char *prog)
 	       "Options:\n"
 	       "\t-h\tthis screen\n"
 	       "\t-c\t# of records to output (default is 25; 0 to show all)\n"
+	       "\t-w\twidth of output (default is 25)\n"
 #else
 	       "\nin the excellent words of netcat:\n"
 	       "/* If your shitbox doesn't have getopt, step into the nineties already. */\n\n"
@@ -103,11 +103,15 @@ int main(int argc, char *argv[])
 	int x, rec_count, max_recs, type;
 
 	max_recs = 25;
+	max_width = 25;
 #if defined(HAVE_GETOPT_H)
-	while ((x=getopt(argc, argv, "c:h")) != EOF) {
+	while ((x=getopt(argc, argv, "c:w:h")) != EOF) {
 		switch (x) {
 			case 'c':
 				max_recs = atoi(optarg);
+				break;
+			case 'w':
+				max_width = atoi(optarg);
 				break;
 			case 'h':
 				usage(argv[0]);
@@ -192,7 +196,7 @@ int main(int argc, char *argv[])
 		rec_rot = 1;
 
 		fprintf(out, "<td><table>\n<tr>");
-		for (width=0; width<MAX_WIDTH; ++width)
+		for (width=0; width<max_width; ++width)
 			if (type == OUT_HEX)
 				fprintf(out, "<th>%.2X</th>", width);
 			else
