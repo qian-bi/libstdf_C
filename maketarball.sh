@@ -20,8 +20,17 @@ if [ "${VER}" == "test" ] ; then
 else
 	cd ..
 
+	echo -e "\n\n\n"
 	tar -jcf libstdf-${VER}.tar.bz2 libstdf-${VER}
-
 	ls -l libstdf-${VER}.tar.bz2
 	md5sum libstdf-${VER}.tar.bz2
+
+	echo -e "\n\n\n"
+	echo "https://sourceforge.net/project/admin/editpackages.php?group_id=56856"
+
+	echo -e "\n\n\n"
+	echo "ftp -p upload.sourceforge.net"
+	echo "cd /incoming"
+	echo "lcd .."
+	echo "put libstdf-${VER}.tar.bz2"
 fi
