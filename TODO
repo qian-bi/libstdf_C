@@ -1,6 +1,6 @@
 0.4:
 
- - track down possible memory leaks with the GDR record type
+ + track down possible memory leaks with the GDR record type
 
  - ATDF support
 

@@ -212,7 +212,14 @@ void _stdf_read_dtc_Vn(stdf_file *f, dtc_Vn *pVn, dtc_U2 cnt)
 
 void free_Vn(dtc_Vn Vn, dtc_U2 cnt)
 {
-	while (cnt-- > 0)
+	while (cnt-- > 0) {
+		switch (Vn[cnt].type) {
+			case GDR_Cn: free(*((dtc_Cn*)Vn[cnt].data)); break;
+			case GDR_Bn: free(*((dtc_Bn*)Vn[cnt].data)); break;
+			case GDR_Dn: free(*((dtc_Dn*)Vn[cnt].data)); break;
+			default:;
+		}
 		free(Vn[cnt].data);
+	}
 	free(Vn);
 }
