@@ -68,4 +68,9 @@
 # define HAVE_NO_COMPRESSION	1
 #endif
 
+/* i'll see you in hell windows */
+#ifndef O_BINARY
+# define O_BINARY 0x00
+#endif
+
 #endif /* _LIBSTDF_SYSTEMS_H */

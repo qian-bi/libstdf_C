@@ -74,7 +74,7 @@ static int __stdf_open_reg(void *data)
 	if (stdf->filename[0] == '-' && stdf->filename[1] == '\0')
 		stdf->fd = 0;
 	else
-		stdf->fd = open(stdf->filename, O_RDONLY);
+		stdf->fd = open(stdf->filename, O_RDONLY | O_BINARY);
 
 	return stdf->fd;
 }
