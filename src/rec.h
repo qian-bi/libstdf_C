@@ -11,7 +11,7 @@
 
 #include <libstdf.h>
 
-extern rec_unknown* stdf_read_rec_unknown(stdf_file*, rec_header*);
+extern rec_unknown* stdf_read_rec_unknown(stdf_file*);
 extern rec_far* stdf_read_rec_far(stdf_file*);
 extern rec_atr* stdf_read_rec_atr(stdf_file*);
 extern rec_mir* stdf_read_rec_mir(stdf_file*);

@@ -16,8 +16,6 @@
 #include <fcntl.h>
 /* for printf(3) */
 #include <stdio.h>
-/* for va args stuff */
-#include <stdarg.h>
 /* for close(2) / read(2) */
 #include <unistd.h>
 /* for malloc(3) */
@@ -26,8 +24,6 @@
 #include <string.h>
 /* for BYTE_ORDER defines */
 #include <endian.h>
-/* for bswap() functions */
-#include <byteswap.h>
 
 void __stdf_init(stdf_file *f, char src_cpu)
 {
@@ -39,6 +35,12 @@ void __stdf_init(stdf_file *f, char src_cpu)
 		case CPU_TYPE_X86:		f->byte_order = LITTLE_ENDIAN; break;
 		default:				f->byte_order = __STDF_HOST_BYTE_ORDER; break;
 	}
+	f->__data = NULL;
+#ifndef __STDF_READ_ONE_RECORD
+	f->__data_end = NULL;
+#endif
+	f->rec_pos = NULL;
+	f->rec_end = NULL;
 }
 
 stdf_file* stdf_open_ex(char *pathname, int flags)
@@ -69,6 +71,9 @@ stdf_file* stdf_open(char *pathname)
 int stdf_close(stdf_file *file)
 {
 	int ret = close(file->fd);
+#ifndef __STDF_READ_ONE_RECORD
+	free(file->__data);
+#endif
 	free(file);
 	return ret;
 }
@@ -77,11 +82,59 @@ rec_unknown* stdf_read_record(stdf_file *file)
 {
 	rec_unknown *rec = NULL;
 
+#ifdef __STDF_READ_ONE_RECORD
+	/* read the record header to find out how big this next record is */
 	if (read(file->fd, &(file->header), 4) != 4)
 		return rec;
 	_stdf_byte_order_to_host(file, &(file->header.REC_LEN), sizeof(dtc_U2));
-	file->pos = lseek(file->fd, 0, SEEK_CUR);
-	file->rec_end = file->pos + file->header.REC_LEN;
+	/* buffer the whole record in memory */
+	file->__data = (void*)malloc(file->header.REC_LEN);
+	read(file->fd, file->__data, file->header.REC_LEN);
+	file->rec_pos = file->__data;
+	file->rec_end = file->rec_pos + file->header.REC_LEN;
+#else
+	/* initialize the buffer since we haven't read anything yet */
+	if (file->__data == NULL) {
+		file->__data = (void*)malloc(__STDF_READ_SIZE);
+		file->__data_end = file->__data + __STDF_READ_SIZE;
+		file->rec_end = file->__data;
+	}
+	/* see if we've read everything there is to read */
+	if (file->rec_pos >= file->__data_end)
+		return rec;
+
+	/* update the position to the end of the last record and grab the next
+	   header ... this way we can screw up the reading of one record and
+	   not have it affect any subsequent record reads */
+	file->rec_pos = file->rec_end;
+	memcpy(&(file->header), file->rec_pos, 4);
+	_stdf_byte_order_to_host(file, &(file->header.REC_LEN), sizeof(dtc_U2));
+	file->rec_pos += 4;
+	file->rec_end = file->rec_pos + file->header.REC_LEN;
+
+	/* make sure existing buffer contains at least the next record */
+	if (file->__data_end < file->rec_end + 4) {
+		void *tmp;
+		long num_bytes_to_save, new_data_size;
+
+		num_bytes_to_save = file->__data_end - file->rec_pos;
+		new_data_size = __STDF_READ_SIZE + num_bytes_to_save;
+		if (__STDF_READ_SIZE < file->header.REC_LEN)
+			new_data_size += file->header.REC_LEN;
+
+		tmp = (void*)malloc(new_data_size);
+		memcpy(tmp, file->rec_pos, num_bytes_to_save);
+		free(file->__data);
+		file->__data = tmp;
+		tmp += num_bytes_to_save;
+		if (read(file->fd, tmp, (new_data_size - num_bytes_to_save)) == 0)
+			return rec;
+
+		file->__data_end = file->__data + new_data_size;
+		file->rec_pos = file->__data;
+		file->rec_end = file->rec_pos + file->header.REC_LEN;
+	}
+#endif
 
 	switch (HEAD_TO_REC(file->header)) {
 		case REC_FAR: rec = (rec_unknown*)stdf_read_rec_far(file); break;
@@ -110,12 +163,16 @@ rec_unknown* stdf_read_record(stdf_file *file)
 		case REC_GDR: rec = (rec_unknown*)stdf_read_rec_gdr(file); break;
 		case REC_DTR: rec = (rec_unknown*)stdf_read_rec_dtr(file); break;
 		default:
-			rec = stdf_read_rec_unknown(file, &(file->header));
+			rec = stdf_read_rec_unknown(file);
 			file->header.REC_TYP = REC_TYP_UNKNOWN;
 			file->header.REC_SUB = REC_SUB_UNKNOWN;
 			break;
 	}
+
 	memcpy(&(rec->header), &(file->header), sizeof(rec_header));
+#ifdef __STDF_READ_ONE_RECORD
+	free(file->__data);
+#endif
 
 	return rec;
 }

@@ -10,24 +10,12 @@
 #include "dtc.h"
 #include "rec.h"
 
-/* for open(2) */
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 /* for printf(3) */
 #include <stdio.h>
-/* for va args stuff */
-#include <stdarg.h>
-/* for close(2) / read(2) */
-#include <unistd.h>
 /* for malloc(3) */
 #include <stdlib.h>
 /* for memcpy(3) */
 #include <string.h>
-/* for BYTE_ORDER defines */
-#include <endian.h>
-/* for bswap() functions */
-#include <byteswap.h>
 
 char* stdf_get_rec_name(int type, int subtype)
 {
@@ -76,16 +64,16 @@ char* stdf_get_rec_name(int type, int subtype)
 	} while (0)
 
 #define __malloc_rec(r) ((r*)malloc(sizeof(r)))
-rec_unknown* stdf_read_rec_unknown(stdf_file *file, rec_header *h)
+rec_unknown* stdf_read_rec_unknown(stdf_file *file)
 {
 	rec_unknown *rec = __malloc_rec(rec_unknown);
 #if 0
-	rec->data = (void*)malloc(h->REC_LEN);
-	read(file->fd, rec->data, h->REC_LEN);
+	rec->data = (void*)malloc(file->header.REC_LEN);
+	memcpy(rec->data, file->rec_data, file->header.REC_LEN);
 #else
 	rec->data = NULL;
-	lseek(file->fd, h->REC_LEN, SEEK_CUR);
 #endif
+	file->rec_pos += file->header.REC_LEN;
 	return rec;
 }
 rec_far* stdf_read_rec_far(stdf_file *file)

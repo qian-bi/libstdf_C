@@ -22,9 +22,10 @@ extern void _stdf_read_dtc_Dn(stdf_file*, dtc_Dn*);
 
 #define	_stdf_read_dtc(f, var, dtc, def) \
 	do { \
-		if (f->pos < f->rec_end) \
-			f->pos += read(f->fd, var, sizeof(dtc)); \
-		else \
+		if (f->rec_pos < f->rec_end) { \
+			memcpy(var, f->rec_pos, sizeof(dtc)); \
+			f->rec_pos += sizeof(dtc); \
+		} else \
 			*var = def; \
 	} while (0)
 

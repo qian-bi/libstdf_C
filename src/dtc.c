@@ -12,8 +12,6 @@
 
 /* for printf(3) */
 #include <stdio.h>
-/* for close(2) / read(2) */
-#include <unistd.h>
 /* for malloc(3) */
 #include <stdlib.h>
 /* for memcpy(3) */
@@ -44,47 +42,58 @@ void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int 
 void _stdf_read_dtc_Cn(stdf_file *f, dtc_Cn *Cn)
 {
 	unsigned char len;
-	if (f->pos == f->rec_end) {
+	if (f->rec_pos == f->rec_end) {
 		(*Cn) = (dtc_Cn)malloc(sizeof(dtc_C1) * 1);
 		(*Cn)[0] = 0;
 		return;
 	}
-	f->pos += read(f->fd, &len, 1);
+	len = f->rec_pos[0];
+	f->rec_pos++;
 	(*Cn) = (dtc_Cn)malloc(sizeof(dtc_C1) * len + 2);
 	(*Cn)[0] = len;
-	f->pos += read(f->fd, (*Cn)+1, len);
+	memcpy((*Cn)+1, f->rec_pos, len);
+	f->rec_pos += len;
 	(*Cn)[len+1] = '\0';
 }
 
 void _stdf_read_dtc_Dn(stdf_file *f, dtc_Dn *Dn)
 {
-	dtc_U4 bit_cnt;
+	dtc_U2 bit_cnt;
 	unsigned int len;
-	if (f->pos == f->rec_end) {
+
+	if (f->rec_pos == f->rec_end) {
 		(*Dn) = (dtc_Dn)malloc(2);
-		((dtc_U4*)(*Dn))[0] = 0;
+		((dtc_U2*)(*Dn))[0] = 0;
 		return;
 	}
-	f->pos += read(f->fd, &bit_cnt, 2);
+
+	memcpy(&bit_cnt, f->rec_pos, 2);
+	f->rec_pos += 2;
+	_stdf_byte_order_to_host(f, &bit_cnt, 2);
+
 	len = bit_cnt / (sizeof(dtc_B1) * 8);
 	if (bit_cnt % 8) ++len;
 	(*Dn) = (dtc_Dn)malloc(len + 3);
-	((dtc_U4*)(*Dn))[0] = bit_cnt;
-	f->pos += read(f->fd, (*Dn)+2, len);
-	(*Dn)[len+2] = 0x00;
+	((dtc_U2*)(*Dn))[0] = bit_cnt;
+	memcpy(((byte_t*)(*Dn))+2, f->rec_pos, len);
+	f->rec_pos += len;
+	((byte_t*)(*Dn))[len+2] = 0x00;
 }
 
 void _stdf_read_dtc_xN1(stdf_file *f, dtc_xN1 *xN1, dtc_U2 cnt)
 {
 	unsigned int len = cnt / 2 + cnt % 2;
 	(*xN1) = (dtc_xN1)malloc(len);
-	f->pos += read(f->fd, (*xN1), len);
+	memcpy((*xN1), f->rec_pos, len);
+	f->rec_pos += len;
 }
 
 void __stdf_read_dtc_x(stdf_file *f, void *in, dtc_U2 cnt, int in_size)
 {
+	/* maybe be rewritten to work in a for loop so we can do byte swapping ? */
 	in = malloc(in_size * cnt);
-	f->pos += read(f->fd, in, in_size * cnt);
+	memcpy(in, f->rec_pos, in_size * cnt);
+	f->rec_pos += in_size * cnt;
 }
 
 void _stdf_read_dtc_xCn(stdf_file *f, dtc_xCn *xCn, dtc_U2 cnt)
