@@ -137,21 +137,29 @@ typedef struct {
 } dtc_Vn_ele;
 typedef	dtc_Vn_ele*		dtc_Vn;
 
-/* Definitions for Record Types [page 15+] */
+/**
+ * The typical header found with every record in a STDF file.  
+ * See the Definitions for Record Types [page 15+] of the spec
+ * file for more information
+ */
 typedef struct {
 	void		*stdf_file;
 	dtc_B1		state;
-	dtc_U2		REC_LEN;
-	dtc_U1		REC_TYP;
-	dtc_U1		REC_SUB;
+	dtc_U2		REC_LEN;		/**< Record length (in bytes) */
+	dtc_U1		REC_TYP;		/**< The 'type' of record (class) */
+	dtc_U1		REC_SUB;		/**< The 'sub type' of record */
 } rec_header;
-#define	REC_HEADER_RAW		0x01
-#define	REC_HEADER_PARSED	0x02
-/* generic record ... just enough to get at the header */
+/**
+ * The basic record type.  Figure out what kind of record this
+ * really represents by looking at the header.  Then simply
+ * cast it as the appropriate record type.
+ */
 typedef struct {
 	rec_header	header;
 	void		*data;
 } rec_unknown;
+#define	REC_HEADER_RAW		0x01
+#define	REC_HEADER_PARSED	0x02
 /* FAR: File Attributes Record [page 18] */
 typedef struct {
 	rec_header	header;

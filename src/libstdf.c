@@ -225,9 +225,6 @@ static __stdf_fops __stdf_fops_bzip2 = {
 };
 #endif
 
-/**
- * @brief Open a stdf file.
- */
 stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
 {
 	char temp[4];
