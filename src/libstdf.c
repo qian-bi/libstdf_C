@@ -1,4 +1,8 @@
-/* libstdf.c
+/**
+ * @internal
+ * @file libstdf.c
+ * @brief Implementation of all the public libstdf functions.
+ *
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
@@ -9,17 +13,6 @@
 #include <libstdf.h>
 #include "dtc.h"
 #include "rec.h"
-
-/* for open(2) */
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-/* for printf(3) */
-#include <stdio.h>
-/* for malloc(3) */
-#include <stdlib.h>
-/* for memcpy(3) */
-#include <string.h>
 
 int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, uint32_t opts)
 {
