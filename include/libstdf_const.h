@@ -13,6 +13,7 @@
 #define	CPU_TYPE_DEC		0
 #define	CPU_TYPE_SPARC		1
 #define	CPU_TYPE_X86		2
+#define	CPU_TYPE_UNKNOWN	123	/* really reserved for Teradyne ... but screw them */
 
 /* MIR: Master Information Record [page 20] */
 #define	MODE_AEL			'A'

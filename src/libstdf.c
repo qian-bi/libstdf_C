@@ -25,9 +25,9 @@
 /* for BYTE_ORDER defines */
 #include <endian.h>
 
-void __stdf_init(stdf_file *f, char src_cpu)
+int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, long opts)
 {
-	switch (src_cpu) {
+	switch (cpu_type) {
 		case CPU_TYPE_DEC:		f->byte_order = PDP_ENDIAN;
 			fprintf(stderr, "byte_order: CPU_TYPE_DEC (PDP_ENDIAN) has no implementation\n");
 			break;
@@ -35,37 +35,64 @@ void __stdf_init(stdf_file *f, char src_cpu)
 		case CPU_TYPE_X86:		f->byte_order = LITTLE_ENDIAN; break;
 		default:				f->byte_order = __STDF_HOST_BYTE_ORDER; break;
 	}
+	if ((opts & STDF_OPTS_FORCE_V4) || (opts & STDF_OPTS_FORCE) || stdf_ver == 4) {
+		f->ver = 4;
+#ifdef STDF_VER3
+	} else if ((opts & STDF_OPTS_FORCE_V3) || stdf_ver == 3) {
+		f->ver = 3;
+#endif
+	} else {
+		fprintf(stderr, "Unable to handle STDF ver%i !\n", stdf_ver);
+		return 1;
+	}
+	f->opts = opts;
+
 	f->__data = NULL;
 #ifndef __STDF_READ_ONE_RECORD
 	f->__data_end = NULL;
 #endif
 	f->rec_pos = NULL;
 	f->rec_end = NULL;
+
+	return 0;
 }
 
-stdf_file* stdf_open_ex(char *pathname, int flags)
+stdf_file* stdf_open_ex(char *pathname, int opts)
 {
 	stdf_file *ret = (stdf_file*)malloc(sizeof(stdf_file));
-	ret->fd = open(pathname, flags);
+	ret->fd = open(pathname, O_RDONLY);
 	if (ret->fd == -1) {
 		free(ret);
 		ret = NULL;
 	} else {
-		char temp[6];
-		if (read(ret->fd, temp, 6) != 6) {
-			close(ret->fd);
-			free(ret);
-			ret = NULL;
+		/* try to peek at the FAR record to figure out the CPU type/STDF ver */
+		if (read(ret->fd, &(ret->header), sizeof(rec_header)) != sizeof(rec_header)) {
+			goto out_err;
 		} else {
-			__stdf_init(ret, temp[4]);
+			char temp[2];
+			/* STDF v3 can have either a FAR or a MIR record */
+			if ((HEAD_TO_REC(ret->header) == REC_FAR)
+#ifdef STDF_VER3
+				|| (HEAD_TO_REC(ret->header) == REC_MIR)
+#endif
+				)
+				read(ret->fd, temp, 2);
+			else
+				goto out_err;
+			if (__stdf_init(ret, temp[0], temp[1], opts))
+				goto out_err;
 			lseek(ret->fd, 0, SEEK_SET);
 		}
 	}
 	return ret;
+out_err:
+	close(ret->fd);
+	free(ret);
+	return NULL;
 }
 stdf_file* stdf_open(char *pathname)
 {
-	return stdf_open_ex(pathname, O_RDONLY);
+	return stdf_open_ex(pathname, STDF_OPTS_DEFAULT);
 }
 
 int stdf_close(stdf_file *file)

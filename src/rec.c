@@ -38,12 +38,22 @@ char* stdf_get_rec_name(int type, int subtype)
 		case REC_WCR: memcpy(name, "WCR", 3); break;
 		case REC_PIR: memcpy(name, "PIR", 3); break;
 		case REC_PRR: memcpy(name, "PRR", 3); break;
+#ifdef STDF_VER3
+		case REC_PDR: memcpy(name, "PDR", 3); break;
+		case REC_FDR: memcpy(name, "FDR", 3); break;
+#endif
 		case REC_TSR: memcpy(name, "TSR", 3); break;
 		case REC_PTR: memcpy(name, "PTR", 3); break;
 		case REC_MPR: memcpy(name, "MPR", 3); break;
 		case REC_FTR: memcpy(name, "FTR", 3); break;
 		case REC_BPS: memcpy(name, "BPS", 3); break;
 		case REC_EPS: memcpy(name, "EPS", 3); break;
+#ifdef STDF_VER3
+		case REC_SHB: memcpy(name, "SHB", 3); break;
+		case REC_SSB: memcpy(name, "SSB", 3); break;
+		case REC_STS: memcpy(name, "STS", 3); break;
+		case REC_SCR: memcpy(name, "SCR", 3); break;
+#endif
 		case REC_GDR: memcpy(name, "GDR", 3); break;
 		case REC_DTR: memcpy(name, "DTR", 3); break;
 		default:      memcpy(name, "???", 3); break;

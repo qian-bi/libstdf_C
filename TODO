@@ -11,3 +11,5 @@
    clear on the xU2, xCn, etc... types and the only way to *really* 
    test them would be if i had a real data file ... anyone willing to 
    donate one or two ? :)
+
+- should stdfv3 even bother being supported ?

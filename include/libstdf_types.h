@@ -149,6 +149,12 @@ typedef struct {
 /* MIR: Master Information Record [page 20] */
 typedef struct {
 	rec_header	header;
+#ifdef STDF_VER3
+	dtc_U1		CPU_TYPE;
+	dtc_U1		STDF_VER;
+	dtc_Cn		HAND_ID;
+	dtc_Cn		PRB_CARD;
+#endif
 	dtc_U4		SETUP_T;
 	dtc_U4		START_T;
 	dtc_U1		STAT_NUM;
@@ -195,6 +201,13 @@ typedef struct {
 	dtc_C1		DISP_COD;
 	dtc_Cn		USR_DESC;
 	dtc_Cn		EXC_DESC;
+#ifdef STDF_VER3
+	dtc_U4		PART_CNT;
+	dtc_U4		RTST_CNT;
+	dtc_U4		ABRT_CNT;
+	dtc_U4		GOOD_CNT;
+	dtc_U4		FUNC_CNT;
+#endif
 } rec_mrr;
 /* PCR: Part Count Record [page 24] */
 typedef struct {
@@ -293,6 +306,9 @@ typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_GRP;
+#ifdef STDF_VER3
+	dtc_C1		PAD_BYTE;
+#endif
 	dtc_U4		START_T;
 	dtc_Cn		WAFER_ID;
 } rec_wir;
@@ -301,12 +317,19 @@ typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_GRP;
+#ifdef STDF_VER3
+	dtc_C1		PAD_BYTE;
+#endif
 	dtc_U4		FINISH_T;
 	dtc_U4		PART_CNT;
 	dtc_U4		RTST_CNT;
 	dtc_U4		ABRT_CNT;
 	dtc_U4		GOOD_CNT;
 	dtc_U4		FUNC_CNT;
+#ifdef STDF_VER3
+	dtc_Cn		HAND_ID;
+	dtc_Cn		PRB_CARD;
+#endif
 	dtc_Cn		WAFER_ID;
 	dtc_Cn		FABWF_ID;
 	dtc_Cn		FRAME_ID;
@@ -332,12 +355,20 @@ typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_NUM;
+#ifdef STDF_VER3
+	dtc_I2		X_COORD;
+	dtc_I2		Y_COORD;
+	dtc_Cn		PART_ID;
+#endif
 } rec_pir;
 /* PRR: Part Results Record [page 43] */
 typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_NUM;
+#ifdef STDF_VER3
+	dtc_C1		PAD_BYTE;
+#endif
 	dtc_B1		PART_FLG;
 	dtc_U2		NUM_TEST;
 	dtc_U2		HARD_BIN;
@@ -364,6 +395,11 @@ typedef struct {
 	rec_header	header;
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_NUM;
+#ifdef STDF_VER3
+	dtc_C1		PAD_BYTE;
+	dtc_R4		TEST_MEAN;
+	dtc_R4		TEST_SDEV;
+#endif
 	dtc_C1		TEST_TYP;
 	dtc_U4		TEST_NUM;
 	dtc_U4		EXEC_CNT;
