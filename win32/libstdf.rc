@@ -1,0 +1,50 @@
+/**
+ * @internal
+ * @file libstdf.rc
+ * @brief RC file to build the win32 dll with nice things.
+ *
+ * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
+ * Released under the BSD license.  For more information,
+ * please see: http://opensource.org/licenses/bsd-license.php
+ *
+ * $Header$
+ */
+
+#include <windows.h>
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,3,0,0
+ PRODUCTVERSION 0,3,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "\0"
+            VALUE "CompanyName", "libstdf\0"
+            VALUE "FileDescription", "libstdf dll\0"
+            VALUE "FileVersion", " 0.3\0"
+            VALUE "InternalName", "libstdf\0"
+            VALUE "LegalCopyright", "Copyright © 2004\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "libstdf.rc\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "libstdf\0"
+            VALUE "ProductVersion", " 0.3\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

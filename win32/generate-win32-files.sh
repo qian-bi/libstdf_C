@@ -8,10 +8,11 @@
 name=libstdf
 NAME="`echo ${name} | tr '[a-z]' '[A-Z]'`"
 
-dsp="${PWD}/${name}.dsp"
-dsw="${PWD}/${name}.dsw"
-def="${PWD}/${name}.def"
-mak="${PWD}/${name}.mak"
+dsp="${name}.dsp"
+dsw="${name}.dsw"
+def="${name}.def"
+mak="${name}.mak"
+rc="${name}.rc"
 srcdir=..
 
 ####################################################################
@@ -20,7 +21,7 @@ srcdir=..
 sed \
 	-e "s:PROJ_LCASE_NAME:${name}:g" \
 	-e "s:PROJ_UCASE_NAME:${NAME}:g" \
-	"${dsp}".in > "${dsp}"
+	./in/"${dsp}".in > "${dsp}"
 src_files="
 # Begin Source File
 SOURCE=${name}.def
@@ -62,7 +63,7 @@ unix2dos "${dsp}"
 sed \
 	-e "s:PROJ_LCASE_NAME:${name}:g" \
 	-e "s:PROJ_DSP_FILE:$(basename ${dsp}):g" \
-	"${dsw}".in > "${dsw}"
+	./in/"${dsw}".in > "${dsw}"
 unix2dos "${dsw}"
 
 
@@ -86,5 +87,18 @@ sed \
 	-e "s:PROJ_SRC_FILES:${src_files}:g" \
 	-e "s:PROJ_EXE_FILES:${exe_files}:g" \
 	-e "s:PROJ_INC_DIR:${srcdir}/include:g" \
-	"${mak}".in > "${mak}"
+	./in/"${mak}".in > "${mak}"
 unix2dos "${mak}"
+
+
+####################################################################
+# RC
+####################################################################
+ver=$(head -n 1 "${srcdir}"/configure.ac | cut -d, -f2)
+ver_mangled=$(echo ${ver} | sed 's:\.:,:g'),0,0
+sed \
+	-e "s:PROJ_LCASE_NAME:${name}:g" \
+	-e "s:PROJ_VER_MANGLED:${ver_mangled}:" \
+	-e "s:PROJ_VER:${ver}:" \
+	./in/"${rc}".in > "${rc}"
+unix2dos "${rc}"
