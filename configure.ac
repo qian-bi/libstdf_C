@@ -1,5 +1,4 @@
 AC_INIT
-AC_CANONICAL_HOST
 AM_INIT_AUTOMAKE(libstdf, 0.1)
 AM_CONFIG_HEADER(include/libstdf_sys_config.h)
 

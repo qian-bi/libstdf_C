@@ -520,18 +520,53 @@ typedef struct {
 /* SHB: Site-Specific Hardware Bin Record */
 typedef struct {
 	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_U2		HBIN_NUM;
+	dtc_U4		HBIN_CNT;
+	dtc_Cn		HBIN_NAM;
 } rec_shb;
 /* SSB: Site-Specific Software Bin Record */
 typedef struct {
 	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_U2		SBIN_NUM;
+	dtc_U4		SBIN_CNT;
+	dtc_Cn		SBIN_NAM;
 } rec_ssb;
 /* STS: Site-Specific Test Synopsis Record */
 typedef struct {
 	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_U4		TEST_NUM;
+	dtc_I4		EXEC_CNT;
+	dtc_I4		FAIL_CNT;
+	dtc_I4		ALRM_CNT;
+	dtc_B1		OPT_FLAG;
+	dtc_B1		PAD_BYTE;
+	dtc_R4		TEST_MIN;
+	dtc_R4		TEST_MAX;
+	dtc_R4		TST_MEAN;
+	dtc_R4		TST_SDEV;
+	dtc_R4		TST_SUMS;
+	dtc_R4		TST_SQRS;
+	dtc_Cn		TEST_NAM;
+	dtc_Cn		SEQ_NAME;
+	dtc_Cn		TEST_LBL;
 } rec_sts;
 /* SCR: Site-Specific Part Count Record */
 typedef struct {
 	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_U4		FINISH_T;
+	dtc_U4		PART_CNT;
+	dtc_I4		RTST_CNT;
+	dtc_I4		ABRT_CNT;
+	dtc_I4		GOOD_CNT;
+	dtc_I4		FUNC_CNT;
 } rec_scr;
 #endif
 /* GDR: Generic Data Record [page 64] */

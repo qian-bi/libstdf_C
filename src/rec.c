@@ -466,25 +466,56 @@ rec_eps* stdf_read_rec_eps(stdf_file *file)
 rec_shb* stdf_read_rec_shb(stdf_file *file)
 {
 	rec_shb *shb = __malloc_rec(rec_shb);
-	warn_not_coded("SHB [stdf ver3]");
+	_stdf_read_dtc_U1(file, &(shb->HEAD_NUM));
+	_stdf_read_dtc_U1(file, &(shb->SITE_NUM));
+	_stdf_read_dtc_U2(file, &(shb->HBIN_NUM));
+	_stdf_read_dtc_U4(file, &(shb->HBIN_CNT));
+	_stdf_read_dtc_Cn(file, &(shb->HBIN_NAM));
 	return shb;
 }
 rec_ssb* stdf_read_rec_ssb(stdf_file *file)
 {
 	rec_ssb *ssb = __malloc_rec(rec_ssb);
-	warn_not_coded("SSB [stdf ver3]");
+	_stdf_read_dtc_U1(file, &(ssb->HEAD_NUM));
+	_stdf_read_dtc_U1(file, &(ssb->SITE_NUM));
+	_stdf_read_dtc_U2(file, &(ssb->SBIN_NUM));
+	_stdf_read_dtc_U4(file, &(ssb->SBIN_CNT));
+	_stdf_read_dtc_Cn(file, &(ssb->SBIN_NAM));
 	return ssb;
 }
 rec_sts* stdf_read_rec_sts(stdf_file *file)
 {
 	rec_sts *sts = __malloc_rec(rec_sts);
-	warn_not_coded("STS [stdf ver3]");
+	_stdf_read_dtc_U1(file, &(sts->HEAD_NUM));
+	_stdf_read_dtc_U1(file, &(sts->SITE_NUM));
+	_stdf_read_dtc_U4(file, &(sts->TEST_NUM));
+	_stdf_read_dtc_I4(file, &(sts->EXEC_CNT));
+	_stdf_read_dtc_I4(file, &(sts->FAIL_CNT));
+	_stdf_read_dtc_I4(file, &(sts->ALRM_CNT));
+	_stdf_read_dtc_B1(file, &(sts->OPT_FLAG));
+	_stdf_read_dtc_B1(file, &(sts->PAD_BYTE));
+	_stdf_read_dtc_R4(file, &(sts->TEST_MIN));
+	_stdf_read_dtc_R4(file, &(sts->TEST_MAX));
+	_stdf_read_dtc_R4(file, &(sts->TST_MEAN));
+	_stdf_read_dtc_R4(file, &(sts->TST_SDEV));
+	_stdf_read_dtc_R4(file, &(sts->TST_SUMS));
+	_stdf_read_dtc_R4(file, &(sts->TST_SQRS));
+	_stdf_read_dtc_Cn(file, &(sts->TEST_NAM));
+	_stdf_read_dtc_Cn(file, &(sts->SEQ_NAME));
+	_stdf_read_dtc_Cn(file, &(sts->TEST_LBL));
 	return sts;
 }
 rec_scr* stdf_read_rec_scr(stdf_file *file)
 {
 	rec_scr *scr = __malloc_rec(rec_scr);
-	warn_not_coded("SCR [stdf ver3]");
+	_stdf_read_dtc_U1(file, &(scr->HEAD_NUM));
+	_stdf_read_dtc_U1(file, &(scr->SITE_NUM));
+	_stdf_read_dtc_U4(file, &(scr->FINISH_T));
+	_stdf_read_dtc_U4(file, &(scr->PART_CNT));
+	_stdf_read_dtc_I4(file, &(scr->RTST_CNT));
+	_stdf_read_dtc_I4(file, &(scr->ABRT_CNT));
+	_stdf_read_dtc_I4(file, &(scr->GOOD_CNT));
+	_stdf_read_dtc_I4(file, &(scr->FUNC_CNT));
 	return scr;
 }
 #endif

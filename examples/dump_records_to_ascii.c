@@ -387,6 +387,57 @@ for (i=1; i<argc; ++i) {
 				/*rec_eps *eps = (rec_eps*)rec;*/
 				break;
 			}
+			case REC_SHB: {
+				rec_shb *shb = (rec_shb*)rec;
+				print_int("HEAD_NUM", shb->HEAD_NUM);
+				print_int("SITE_NUM", shb->SITE_NUM);
+				print_int("HBIN_NUM", shb->HBIN_NUM);
+				print_int("HBIN_CNT", shb->HBIN_CNT);
+				print_str("HBIN_NAM", shb->HBIN_NAM);
+				break;
+			}
+			case REC_SSB: {
+				rec_ssb *ssb = (rec_ssb*)rec;
+				print_int("HEAD_NUM", ssb->HEAD_NUM);
+				print_int("SITE_NUM", ssb->SITE_NUM);
+				print_int("SBIN_NUM", ssb->SBIN_NUM);
+				print_int("SBIN_CNT", ssb->SBIN_CNT);
+				print_str("SBIN_NAM", ssb->SBIN_NAM);
+				break;
+			}
+			case REC_STS: {
+				rec_sts *sts = (rec_sts*)rec;
+				print_int("HEAD_NUM", sts->HEAD_NUM);
+				print_int("SITE_NUM", sts->SITE_NUM);
+				print_int("TEST_NUM", sts->TEST_NUM);
+				print_int("EXEC_CNT", sts->EXEC_CNT);
+				print_int("FAIL_CNT", sts->FAIL_CNT);
+				print_int("ALRM_CNT", sts->ALRM_CNT);
+				print_hex("OPT_FLAG", sts->OPT_FLAG);
+				print_hex("PAD_BYTE", sts->PAD_BYTE);
+				print_rel("TEST_MIN", sts->TEST_MIN);
+				print_rel("TEST_MAX", sts->TEST_MAX);
+				print_rel("TST_MEAN", sts->TST_MEAN);
+				print_rel("TST_SDEV", sts->TST_SDEV);
+				print_rel("TST_SUMS", sts->TST_SUMS);
+				print_rel("TST_SQRS", sts->TST_SQRS);
+				print_str("TEST_NAM", sts->TEST_NAM);
+				print_str("SEQ_NAME", sts->SEQ_NAME);
+				print_str("TEST_LBL", sts->TEST_LBL);
+				break;
+			}
+			case REC_SCR: {
+				rec_scr *scr = (rec_scr*)rec;
+				print_int("HEAD_NUM", scr->HEAD_NUM);
+				print_int("SITE_NUM", scr->SITE_NUM);
+				print_int("FINISH_T", scr->FINISH_T);
+				print_int("PART_CNT", scr->PART_CNT);
+				print_int("RTST_CNT", scr->RTST_CNT);
+				print_int("ABRT_CNT", scr->ABRT_CNT);
+				print_int("GOOD_CNT", scr->GOOD_CNT);
+				print_int("FUNC_CNT", scr->FUNC_CNT);
+				break;
+			}
 			case REC_GDR: {
 				/*rec_gdr *gdr = (rec_gdr*)rec;*/
 				print_UNK("GEN_DATA");
