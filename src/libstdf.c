@@ -438,3 +438,49 @@ rec_unknown* stdf_read_record(stdf_file *file)
 
 	return rec;
 }
+
+int stdf_rec_to_idx(rec_unknown *rec)
+{
+	switch (HEAD_TO_REC(rec->header)) {
+		case REC_FAR:	return 1;
+		case REC_ATR:	return 2;
+		case REC_MIR:	return 3;
+		case REC_MRR:	return 4;
+		case REC_PCR:	return 5;
+		case REC_HBR:	return 6;
+		case REC_SBR:	return 7;
+		case REC_PMR:	return 8;
+		case REC_PGR:	return 9;
+		case REC_PLR:	return 10;
+		case REC_RDR:	return 11;
+		case REC_SDR:	return 12;
+		case REC_WIR:	return 13;
+		case REC_WRR:	return 14;
+		case REC_WCR:	return 15;
+		case REC_PIR:	return 16;
+		case REC_PRR:	return 17;
+#ifdef STDF_VER3
+		case REC_PDR:	return 18;
+		case REC_FDR:	return 19;
+#endif
+		case REC_TSR:	return 20;
+		case REC_PTR:	return 21;
+		case REC_MPR:	return 22;
+		case REC_FTR:	return 23;
+		case REC_BPS:	return 24;
+		case REC_EPS:	return 25;
+#ifdef STDF_VER36
+		case REC_SHB:	return 26;
+		case REC_SSB:	return 27;
+		case REC_STS:	return 28;
+		case REC_SCR:	return 29;
+#endif
+		case REC_GDR:	return 30;
+		case REC_DTR:	return 31;
+		default:		return 0;
+	}
+}
+int stdf_rec_to_idx_max()
+{
+	return 31;
+}
