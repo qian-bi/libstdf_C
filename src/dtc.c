@@ -1,4 +1,8 @@
-/* dtc.c
+/**
+ * @internal
+ * @file dtc.c
+ * @brief Data type specific function implementations.
+ *
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
@@ -9,13 +13,6 @@
 #include <libstdf.h>
 #include "dtc.h"
 #include "rec.h"
-
-/* for printf(3) */
-#include <stdio.h>
-/* for malloc(3) */
-#include <stdlib.h>
-/* for memcpy(3) */
-#include <string.h>
 
 void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int len)
 {
@@ -181,77 +178,29 @@ void _stdf_read_dtc_Vn(stdf_file *f, dtc_Vn *pVn, dtc_U2 cnt)
 		return;
 	}
 
+#	define	___do_Vn(func, type) \
+		Vn->data = (void*)malloc(sizeof(type)); \
+		func(f, ((type*)Vn->data));
+
 	(*pVn) = (dtc_Vn)malloc(sizeof(dtc_Vn_ele) * cnt);
 	Vn = *pVn;
 	while (cnt-- > 0) {
 		Vn->type = *(f->rec_pos);
 		f->rec_pos++;
 		switch (Vn->type) {
-			case GDR_B0: {
-				Vn->data = (void*)malloc(1);
-				memset(Vn->data, 0x00, 1);
-				break;
-			}
-			case GDR_U1: {
-				Vn->data = (void*)malloc(sizeof(dtc_U1));
-				_stdf_read_dtc_U1(f, ((dtc_U1*)Vn->data));
-				break;
-			}
-			case GDR_U2: {
-				Vn->data = (void*)malloc(sizeof(dtc_U2));
-				_stdf_read_dtc_U2(f, ((dtc_U2*)Vn->data));
-				break;
-			}
-			case GDR_U4: {
-				Vn->data = (void*)malloc(sizeof(dtc_U4));
-				_stdf_read_dtc_U4(f, ((dtc_U4*)Vn->data));
-				break;
-			}
-			case GDR_I1: {
-				Vn->data = (void*)malloc(sizeof(dtc_I1));
-				_stdf_read_dtc_I1(f, ((dtc_I1*)Vn->data));
-				break;
-			}
-			case GDR_I2: {
-				Vn->data = (void*)malloc(sizeof(dtc_I2));
-				_stdf_read_dtc_I2(f, ((dtc_I2*)Vn->data));
-				break;
-			}
-			case GDR_I4: {
-				Vn->data = (void*)malloc(sizeof(dtc_I4));
-				_stdf_read_dtc_I4(f, ((dtc_I4*)Vn->data));
-				break;
-			}
-			case GDR_R4: {
-				Vn->data = (void*)malloc(sizeof(dtc_R4));
-				_stdf_read_dtc_R4(f, ((dtc_R4*)Vn->data));
-				break;
-			}
-			case GDR_R8: {
-				Vn->data = (void*)malloc(sizeof(dtc_R8));
-				_stdf_read_dtc_R8(f, ((dtc_R8*)Vn->data));
-				break;
-			}
-			case GDR_Cn: {
-				Vn->data = (void*)malloc(sizeof(dtc_Cn));
-				_stdf_read_dtc_Cn(f, ((dtc_Cn*)Vn->data));
-				break;
-			}
-			case GDR_Bn: {
-				Vn->data = (void*)malloc(sizeof(dtc_Bn));
-				_stdf_read_dtc_Bn(f, ((dtc_Bn*)Vn->data));
-				break;
-			}
-			case GDR_Dn: {
-				Vn->data = (void*)malloc(sizeof(dtc_Dn));
-				_stdf_read_dtc_Dn(f, ((dtc_Dn*)Vn->data));
-				break;
-			}
-			case GDR_N1: {
-				Vn->data = (void*)malloc(sizeof(dtc_N1));
-				_stdf_read_dtc_N1(f, ((dtc_N1*)Vn->data));
-				break;
-			}
+			case GDR_B0: ___do_Vn(_stdf_read_dtc_B1, dtc_B1); break;
+			case GDR_U1: ___do_Vn(_stdf_read_dtc_U1, dtc_U1); break;
+			case GDR_U2: ___do_Vn(_stdf_read_dtc_U2, dtc_U2); break;
+			case GDR_U4: ___do_Vn(_stdf_read_dtc_U4, dtc_U4); break;
+			case GDR_I1: ___do_Vn(_stdf_read_dtc_I1, dtc_I1); break;
+			case GDR_I2: ___do_Vn(_stdf_read_dtc_I2, dtc_I2); break;
+			case GDR_I4: ___do_Vn(_stdf_read_dtc_I4, dtc_I4); break;
+			case GDR_R4: ___do_Vn(_stdf_read_dtc_R4, dtc_R4); break;
+			case GDR_R8: ___do_Vn(_stdf_read_dtc_R8, dtc_R8); break;
+			case GDR_Cn: ___do_Vn(_stdf_read_dtc_Cn, dtc_Cn); break;
+			case GDR_Bn: ___do_Vn(_stdf_read_dtc_Bn, dtc_Bn); break;
+			case GDR_Dn: ___do_Vn(_stdf_read_dtc_Dn, dtc_Dn); break;
+			case GDR_N1: ___do_Vn(_stdf_read_dtc_N1, dtc_N1); break;
 			default: {
 				fprintf(stderr, "_stdf_read_dtc_Vn(): unknown type '%i'\n", Vn->type);
 				Vn->data = NULL;
