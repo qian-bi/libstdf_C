@@ -19,10 +19,19 @@
 /* STDF File structure */
 #define	__STDF_HOST_BYTE_ORDER		BYTE_ORDER
 typedef	uint8_t						byte_t;
+
+typedef struct {
+	int		(*open)(void*);
+	int		(*read)(void*, void*, long);
+	int		(*close)(void*);
+	int		(*reopen)(void*);
+} __stdf_fops;
+
 typedef struct {
 	rec_header	header;
 
 	int			fd;
+	union {
 #if HAVE_ZIP
 	ZZIP_FILE	*fd_zip;
 #endif
@@ -32,11 +41,14 @@ typedef struct {
 #if HAVE_BZIP2
 	BZFILE		*fd_bzip2;
 #endif
+	};
+	char		*filename;
+	byte_t		file_format;
+	__stdf_fops	*fops;
 
 	int			byte_order;
 	uint32_t	opts;
 	dtc_U1		ver;
-	byte_t		file_format;
 
 	byte_t		*__data;
 #ifndef __STDF_READ_ONE_RECORD
