@@ -14,22 +14,21 @@
 
 int main(int argc, char *argv[])
 {
-    stdf_file *f;
+	stdf_file *f;
 	rec_unknown *r;
 
-    if (argc != 2)
-        return EXIT_FAILURE;
+	if (argc != 2)
+		return EXIT_FAILURE;
 
-    f = stdf_open(argv[1]);
+	f = stdf_open(argv[1]);
 	if (!f)
 		return EXIT_FAILURE;
 
 	while ((r=stdf_read_record(f)) != NULL) {
-		/* do stuff */
 		stdf_free_record(r);
 	}
 
 	stdf_close(f);
 
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
