@@ -11,9 +11,9 @@ rm -rf libstdf-${VER}
 cp -r libstdf libstdf-${VER} || exit 1
 cd libstdf-${VER} || exit 1
 ./clean.sh || exit 1
+rm -rf clean.sh maketarball.sh test.sh
 ./autogen.sh || exit 1
 rm -rf `find -name CVS`
-rm -rf clean.sh maketarball.sh test.sh
 
 if [ "${VER}" == "test" ] ; then
 	./configure && make -j
