@@ -1,3 +1,5 @@
+0.2:
+
  - stop thrashing the file system so damned hard ... read in the STDF 
    in as chunks of XXX bytes and then have the dtc functions run off 
    that buffer in memory
@@ -15,6 +17,15 @@
    do no real work except to move the data pointer ahead the correct
    number of bytes ... :(
 
- - STDF writing support
+ - STDFv3 as best as i can
 
- - should stdfv3 even bother being supported ?
+0.3:
+
+ - zip/gzip/bzip reading support so people don't have to unpack before
+   sending the files through the library
+
+unknown:
+
+ - ATDF support
+
+ - STDF writing support
