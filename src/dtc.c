@@ -32,6 +32,37 @@ void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int 
 	}
 }
 
+#define MAKE_BYTE_FUNC(DTC, DEFAULT) \
+void _stdf_read_ ## DTC(stdf_file *f, DTC *dtc) \
+{ \
+	if (f->rec_pos < f->rec_end) \
+		*dtc = *f->rec_pos++; \
+	else \
+		*dtc = DEFAULT; \
+}
+MAKE_BYTE_FUNC(dtc_U1, 0)
+MAKE_BYTE_FUNC(dtc_I1, 0)
+MAKE_BYTE_FUNC(dtc_C1, ' ')
+MAKE_BYTE_FUNC(dtc_B1, 0x00)
+MAKE_BYTE_FUNC(dtc_N1, 0x00)
+
+#define MAKE_NUM_FUNC(DTC) \
+void _stdf_read_ ## DTC(stdf_file *f, DTC *dtc) \
+{ \
+	if (f->rec_pos < f->rec_end) { \
+		memcpy(dtc, f->rec_pos, sizeof(DTC)); \
+		f->rec_pos += sizeof(DTC); \
+	} else \
+		*dtc = 0; \
+	_stdf_byte_order_to_host(f, dtc, sizeof(DTC)); \
+}
+MAKE_NUM_FUNC(dtc_U2)
+MAKE_NUM_FUNC(dtc_U4)
+MAKE_NUM_FUNC(dtc_I2)
+MAKE_NUM_FUNC(dtc_I4)
+MAKE_NUM_FUNC(dtc_R4)
+MAKE_NUM_FUNC(dtc_R8)
+
 void _stdf_read_dtc_Cx(stdf_file *f, dtc_Cn *Cn, int len)
 {
 	/* does this even work ?
@@ -97,37 +128,21 @@ void _stdf_read_dtc_xN1(stdf_file *f, dtc_xN1 *xN1, dtc_U2 cnt)
 	f->rec_pos += len;
 }
 
-/*
-TODO: is there any way i can make this not frickin ugly ?
-
-void _stdf_read_dtc_xU1(stdf_file *f, dtc_xU1 *xU1, dtc_U2 cnt)
-{
-	int i;
-	if (cnt == 0) {
-		xU1 = NULL;
-		return;
-	}
-
-	(*xU1) = (dtc_xU1)malloc(sizeof(dtc_U1) * cnt);
-	for (i=0; i<cnt; ++i)
-		_stdf_read_dtc_U1(f, &((*xU1)[i]));
+#define MAKE_X_FUNC(DTC) \
+void _stdf_read_dtc_x ## DTC(stdf_file *f, dtc_x ## DTC *x, dtc_U2 cnt) \
+{ \
+	int i; \
+	if (cnt == 0) { \
+		(*x) = NULL; \
+		return; \
+	} \
+	(*x) = (dtc_x ## DTC)malloc(sizeof(dtc_ ## DTC) * cnt); \
+	for (i=0; i<cnt; ++i) \
+		_stdf_read_dtc_ ## DTC(f, &((*x)[i])); \
 }
-*/
-#define	__stdf_read_dtc_x(bFunc, xFunc, bType, xType) \
-	void bFunc(stdf_file *f, xType *x, dtc_U2 cnt) \
-	{ \
-		int i; \
-		if (cnt == 0) { \
-			(*x) = NULL; \
-			return; \
-		} \
-		(*x) = (xType)malloc(sizeof(bType) * cnt); \
-		for (i=0; i<cnt; ++i) \
-			xFunc(f, &((*x)[i])); \
-	}
-__stdf_read_dtc_x(_stdf_read_dtc_xU1,  _stdf_read_dtc_U1, dtc_U1, dtc_xU1)
-__stdf_read_dtc_x(_stdf_read_dtc_xU2,  _stdf_read_dtc_U2, dtc_U2, dtc_xU2)
-__stdf_read_dtc_x(_stdf_read_dtc_xR4,  _stdf_read_dtc_R4, dtc_R4, dtc_xR4)
+MAKE_X_FUNC(U1)
+MAKE_X_FUNC(U2)
+MAKE_X_FUNC(R4)
 
 void _stdf_read_dtc_xCn(stdf_file *f, dtc_xCn *xCn, dtc_U2 cnt)
 {
@@ -147,25 +162,29 @@ void free_xCn(dtc_xCn xCn, dtc_U2 cnt)
 	free(xCn);
 }
 
+void stdf_get_Vn_name_r(int type, char *buf)
+{
+	switch (type) {
+		case GDR_B0: memcpy(buf, "B0", 2); break;
+		case GDR_U1: memcpy(buf, "U1", 2); break;
+		case GDR_U2: memcpy(buf, "U2", 2); break;
+		case GDR_U4: memcpy(buf, "U4", 2); break;
+		case GDR_I1: memcpy(buf, "I1", 2); break;
+		case GDR_I2: memcpy(buf, "I2", 2); break;
+		case GDR_I4: memcpy(buf, "I4", 2); break;
+		case GDR_R4: memcpy(buf, "R4", 2); break;
+		case GDR_R8: memcpy(buf, "R8", 2); break;
+		case GDR_Cn: memcpy(buf, "Cn", 2); break;
+		case GDR_Bn: memcpy(buf, "Bn", 2); break;
+		case GDR_Dn: memcpy(buf, "Dn", 2); break;
+		case GDR_N1: memcpy(buf, "N1", 2); break;
+	}
+	buf[2] = '\0';
+}
 char* stdf_get_Vn_name(int type)
 {
 	static char name[3];
-	switch (type) {
-		case GDR_B0: memcpy(name, "B0", 2); break;
-		case GDR_U1: memcpy(name, "U1", 2); break;
-		case GDR_U2: memcpy(name, "U2", 2); break;
-		case GDR_U4: memcpy(name, "U4", 2); break;
-		case GDR_I1: memcpy(name, "I1", 2); break;
-		case GDR_I2: memcpy(name, "I2", 2); break;
-		case GDR_I4: memcpy(name, "I4", 2); break;
-		case GDR_R4: memcpy(name, "R4", 2); break;
-		case GDR_R8: memcpy(name, "R8", 2); break;
-		case GDR_Cn: memcpy(name, "Cn", 2); break;
-		case GDR_Bn: memcpy(name, "Bn", 2); break;
-		case GDR_Dn: memcpy(name, "Dn", 2); break;
-		case GDR_N1: memcpy(name, "N1", 2); break;
-	}
-	name[2] = '\0';
+	stdf_get_Vn_name_r(type, name);
 	return name;
 }
 
@@ -178,9 +197,9 @@ void _stdf_read_dtc_Vn(stdf_file *f, dtc_Vn *pVn, dtc_U2 cnt)
 		return;
 	}
 
-#	define	___do_Vn(func, type) \
-		Vn->data = (void*)malloc(sizeof(type)); \
-		func(f, ((type*)Vn->data));
+#define DO_VN(DTC) \
+		Vn->data = (void*)malloc(sizeof(DTC)); \
+		_stdf_read_ ## DTC(f, ((DTC*)Vn->data));
 
 	(*pVn) = (dtc_Vn)malloc(sizeof(dtc_Vn_ele) * cnt);
 	Vn = *pVn;
@@ -188,19 +207,19 @@ void _stdf_read_dtc_Vn(stdf_file *f, dtc_Vn *pVn, dtc_U2 cnt)
 		Vn->type = *(f->rec_pos);
 		f->rec_pos++;
 		switch (Vn->type) {
-			case GDR_B0: ___do_Vn(_stdf_read_dtc_B1, dtc_B1); break;
-			case GDR_U1: ___do_Vn(_stdf_read_dtc_U1, dtc_U1); break;
-			case GDR_U2: ___do_Vn(_stdf_read_dtc_U2, dtc_U2); break;
-			case GDR_U4: ___do_Vn(_stdf_read_dtc_U4, dtc_U4); break;
-			case GDR_I1: ___do_Vn(_stdf_read_dtc_I1, dtc_I1); break;
-			case GDR_I2: ___do_Vn(_stdf_read_dtc_I2, dtc_I2); break;
-			case GDR_I4: ___do_Vn(_stdf_read_dtc_I4, dtc_I4); break;
-			case GDR_R4: ___do_Vn(_stdf_read_dtc_R4, dtc_R4); break;
-			case GDR_R8: ___do_Vn(_stdf_read_dtc_R8, dtc_R8); break;
-			case GDR_Cn: ___do_Vn(_stdf_read_dtc_Cn, dtc_Cn); break;
-			case GDR_Bn: ___do_Vn(_stdf_read_dtc_Bn, dtc_Bn); break;
-			case GDR_Dn: ___do_Vn(_stdf_read_dtc_Dn, dtc_Dn); break;
-			case GDR_N1: ___do_Vn(_stdf_read_dtc_N1, dtc_N1); break;
+			case GDR_B0: DO_VN(dtc_B1); break;
+			case GDR_U1: DO_VN(dtc_U1); break;
+			case GDR_U2: DO_VN(dtc_U2); break;
+			case GDR_U4: DO_VN(dtc_U4); break;
+			case GDR_I1: DO_VN(dtc_I1); break;
+			case GDR_I2: DO_VN(dtc_I2); break;
+			case GDR_I4: DO_VN(dtc_I4); break;
+			case GDR_R4: DO_VN(dtc_R4); break;
+			case GDR_R8: DO_VN(dtc_R8); break;
+			case GDR_Cn: DO_VN(dtc_Cn); break;
+			case GDR_Bn: DO_VN(dtc_Bn); break;
+			case GDR_Dn: DO_VN(dtc_Dn); break;
+			case GDR_N1: DO_VN(dtc_N1); break;
 			default: {
 				fprintf(stderr, "_stdf_read_dtc_Vn(): unknown type '%i'\n", Vn->type);
 				Vn->data = NULL;

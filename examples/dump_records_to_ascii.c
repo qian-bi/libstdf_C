@@ -23,21 +23,21 @@
 #define print_hex(n,h) print_fmt(n, "%X\n", h)
 #define print_rel(n,r) print_fmt(n, "%f\n", r)
 
-#define print_x(xFunc, xType, format) \
-	void xFunc(char *n, xType u, int c) \
-	{ \
-		int i; \
-		--c; \
-		printf("\t%s: ", n); \
-		for (i=0; i<=c; ++i) { \
-			printf(format, u[i]); \
-			if (i < c) printf(", "); \
-		} \
-		printf("\n"); \
-	}
-print_x(print_xU1, dtc_xU1, "%i")
-print_x(print_xU2, dtc_xU2, "%i")
-print_x(print_xR4, dtc_xR4, "%f")
+#define MAKE_PRINT_X(DTC, FORMAT) \
+void print_x ## DTC(char *n, dtc_x ## DTC u, int c) \
+{ \
+	int i; \
+	--c; \
+	printf("\t%s: ", n); \
+	for (i=0; i<=c; ++i) { \
+		printf(FORMAT, u[i]); \
+		if (i < c) printf(", "); \
+	} \
+	printf("\n"); \
+}
+MAKE_PRINT_X(U1, "%i")
+MAKE_PRINT_X(U2, "%i")
+MAKE_PRINT_X(R4, "%f")
 
 void print_Vn(char *n, dtc_Vn v, int c)
 {

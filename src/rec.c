@@ -14,48 +14,52 @@
 #include "dtc.h"
 #include "rec.h"
 
+void stdf_get_rec_name_r(rec_typ type, rec_sub sub, char *buf)
+{
+	switch (MAKE_REC(type, sub)) {
+		case REC_FAR: memcpy(buf, "FAR", 3); break;
+		case REC_ATR: memcpy(buf, "ATR", 3); break;
+		case REC_MIR: memcpy(buf, "MIR", 3); break;
+		case REC_MRR: memcpy(buf, "MRR", 3); break;
+		case REC_PCR: memcpy(buf, "PCR", 3); break;
+		case REC_HBR: memcpy(buf, "HBR", 3); break;
+		case REC_SBR: memcpy(buf, "SBR", 3); break;
+		case REC_PMR: memcpy(buf, "PMR", 3); break;
+		case REC_PGR: memcpy(buf, "PGR", 3); break;
+		case REC_PLR: memcpy(buf, "PLR", 3); break;
+		case REC_RDR: memcpy(buf, "RDR", 3); break;
+		case REC_SDR: memcpy(buf, "SDR", 3); break;
+		case REC_WIR: memcpy(buf, "WIR", 3); break;
+		case REC_WRR: memcpy(buf, "WRR", 3); break;
+		case REC_WCR: memcpy(buf, "WCR", 3); break;
+		case REC_PIR: memcpy(buf, "PIR", 3); break;
+		case REC_PRR: memcpy(buf, "PRR", 3); break;
+#ifdef STDF_VER3
+		case REC_PDR: memcpy(buf, "PDR", 3); break;
+		case REC_FDR: memcpy(buf, "FDR", 3); break;
+#endif
+		case REC_TSR: memcpy(buf, "TSR", 3); break;
+		case REC_PTR: memcpy(buf, "PTR", 3); break;
+		case REC_MPR: memcpy(buf, "MPR", 3); break;
+		case REC_FTR: memcpy(buf, "FTR", 3); break;
+		case REC_BPS: memcpy(buf, "BPS", 3); break;
+		case REC_EPS: memcpy(buf, "EPS", 3); break;
+#ifdef STDF_VER3
+		case REC_SHB: memcpy(buf, "SHB", 3); break;
+		case REC_SSB: memcpy(buf, "SSB", 3); break;
+		case REC_STS: memcpy(buf, "STS", 3); break;
+		case REC_SCR: memcpy(buf, "SCR", 3); break;
+#endif
+		case REC_GDR: memcpy(buf, "GDR", 3); break;
+		case REC_DTR: memcpy(buf, "DTR", 3); break;
+		default:      memcpy(buf, "???", 3); break;
+	}
+	buf[3] = '\0';
+}
 char* stdf_get_rec_name(rec_typ type, rec_sub sub)
 {
 	static char name[4];
-	switch (MAKE_REC(type, sub)) {
-		case REC_FAR: memcpy(name, "FAR", 3); break;
-		case REC_ATR: memcpy(name, "ATR", 3); break;
-		case REC_MIR: memcpy(name, "MIR", 3); break;
-		case REC_MRR: memcpy(name, "MRR", 3); break;
-		case REC_PCR: memcpy(name, "PCR", 3); break;
-		case REC_HBR: memcpy(name, "HBR", 3); break;
-		case REC_SBR: memcpy(name, "SBR", 3); break;
-		case REC_PMR: memcpy(name, "PMR", 3); break;
-		case REC_PGR: memcpy(name, "PGR", 3); break;
-		case REC_PLR: memcpy(name, "PLR", 3); break;
-		case REC_RDR: memcpy(name, "RDR", 3); break;
-		case REC_SDR: memcpy(name, "SDR", 3); break;
-		case REC_WIR: memcpy(name, "WIR", 3); break;
-		case REC_WRR: memcpy(name, "WRR", 3); break;
-		case REC_WCR: memcpy(name, "WCR", 3); break;
-		case REC_PIR: memcpy(name, "PIR", 3); break;
-		case REC_PRR: memcpy(name, "PRR", 3); break;
-#ifdef STDF_VER3
-		case REC_PDR: memcpy(name, "PDR", 3); break;
-		case REC_FDR: memcpy(name, "FDR", 3); break;
-#endif
-		case REC_TSR: memcpy(name, "TSR", 3); break;
-		case REC_PTR: memcpy(name, "PTR", 3); break;
-		case REC_MPR: memcpy(name, "MPR", 3); break;
-		case REC_FTR: memcpy(name, "FTR", 3); break;
-		case REC_BPS: memcpy(name, "BPS", 3); break;
-		case REC_EPS: memcpy(name, "EPS", 3); break;
-#ifdef STDF_VER3
-		case REC_SHB: memcpy(name, "SHB", 3); break;
-		case REC_SSB: memcpy(name, "SSB", 3); break;
-		case REC_STS: memcpy(name, "STS", 3); break;
-		case REC_SCR: memcpy(name, "SCR", 3); break;
-#endif
-		case REC_GDR: memcpy(name, "GDR", 3); break;
-		case REC_DTR: memcpy(name, "DTR", 3); break;
-		default:      memcpy(name, "???", 3); break;
-	}
-	name[3] = '\0';
+	stdf_get_rec_name_r(type, sub, name);
 	return name;
 }
 

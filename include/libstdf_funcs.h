@@ -26,7 +26,9 @@ extern void stdf_free_record(rec_unknown*);					/**< Free a record  */
 extern char* stdf_get_rec_name(rec_typ, rec_sub);			/**< Translate a record into the 3 letter spec name */
 #define	stdf_get_rec_name_from_head(h) stdf_get_rec_name(h.REC_TYP, h.REC_SUB)
 #define	stdf_get_rec_name_from_rec(r) stdf_get_rec_name(r->header.REC_TYP, r->h.REC_SUB)
+extern void stdf_get_rec_name_r(rec_typ, rec_sub, char*);	/**< Translate a record into the 3 letter spec name (reentrant version) */
 
 extern char* stdf_get_Vn_name(int);							/**< Translate a Vn type into the 2 letter spec name */
+extern void stdf_get_Vn_name_r(int, char*);					/**< Translate a Vn type into the 2 letter spec name (reentrant version) */
 
 #endif /* _LIBSTDF_FUNCS_H */

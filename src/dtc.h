@@ -27,35 +27,17 @@ extern void _stdf_read_dtc_Cn(stdf_file*, dtc_Cn*);
 #define	_stdf_read_dtc_Bn(f, Bn) _stdf_read_dtc_Cn(f, (dtc_Cn*)Bn)
 extern void _stdf_read_dtc_Dn(stdf_file*, dtc_Dn*);
 
-#define	_stdf_read_byte(f, var, def) \
-	do { \
-		if (f->rec_pos < f->rec_end) { \
-			*var = *f->rec_pos++; \
-		} else \
-			*var = def; \
-	} while (0)
-
-#define	_stdf_read_dtc_num(f, var, dtc) \
-	do { \
-		if (f->rec_pos < f->rec_end) { \
-			memcpy(var, f->rec_pos, sizeof(dtc)); \
-			f->rec_pos += sizeof(dtc); \
-		} else \
-			*var = 0; \
-		_stdf_byte_order_to_host(f, var, sizeof(dtc)); \
-	} while (0)
-#define	_stdf_read_dtc_U1(f, var) _stdf_read_byte(f, var, 0)
-#define	_stdf_read_dtc_U2(f, var) _stdf_read_dtc_num(f, var, dtc_U2)
-#define	_stdf_read_dtc_U4(f, var) _stdf_read_dtc_num(f, var, dtc_U4)
-#define	_stdf_read_dtc_I1(f, var) _stdf_read_byte(f, var, 0)
-#define	_stdf_read_dtc_I2(f, var) _stdf_read_dtc_num(f, var, dtc_I2)
-#define	_stdf_read_dtc_I4(f, var) _stdf_read_dtc_num(f, var, dtc_I4)
-#define	_stdf_read_dtc_R4(f, var) _stdf_read_dtc_num(f, var, dtc_R4)
-#define	_stdf_read_dtc_R8(f, var) _stdf_read_dtc_num(f, var, dtc_R8)
-
-#define	_stdf_read_dtc_C1(f, var) _stdf_read_byte(f, var, ' ')
-#define	_stdf_read_dtc_B1(f, var) _stdf_read_byte(f, var, 0x00)
-#define	_stdf_read_dtc_N1(f, var) _stdf_read_byte(f, var, 0x00)
+extern void _stdf_read_dtc_C1(stdf_file*, dtc_C1*);
+extern void _stdf_read_dtc_B1(stdf_file*, dtc_B1*);
+extern void _stdf_read_dtc_N1(stdf_file*, dtc_N1*);
+extern void _stdf_read_dtc_U1(stdf_file*, dtc_U1*);
+extern void _stdf_read_dtc_U2(stdf_file*, dtc_U2*);
+extern void _stdf_read_dtc_U4(stdf_file*, dtc_U4*);
+extern void _stdf_read_dtc_I1(stdf_file*, dtc_I1*);
+extern void _stdf_read_dtc_I2(stdf_file*, dtc_I2*);
+extern void _stdf_read_dtc_I4(stdf_file*, dtc_I4*);
+extern void _stdf_read_dtc_R4(stdf_file*, dtc_R4*);
+extern void _stdf_read_dtc_R8(stdf_file*, dtc_R8*);
 
 extern void _stdf_read_dtc_xN1(stdf_file*, dtc_xN1*, dtc_U2);
 extern void _stdf_read_dtc_xU1(stdf_file*, dtc_xU1*, dtc_U2);
