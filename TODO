@@ -1,6 +1,6 @@
 0.3:
 
- - zip/gzip/bzip reading support so people don't have to unpack before
+ + zip/gzip/bzip reading support so people don't have to unpack before
    sending the files through the library
 
  - doxygenify the sources and post results to the website
@@ -15,6 +15,12 @@
 
 unknown:
 
+ - allow for stdf_open to accept a file descriptor ... would allow for
+   reading from sockets and all that fun stuff :)
+   zziplib reading atm prevents this ... zip has no way of accepting a file
+   descriptor, just a filename ... perhaps patch the library and get it
+   added in their project ? ;)
+
  - read in data from the STDF files in larger chunks than just 1 record at 
    a time ... since files can easily have 50000+ records, we could cut the 
    # of filesystem reads down by more than a factor of 10 with buffers of 
@@ -24,7 +30,7 @@ unknown:
 
  - ATDF support
 
- - STDF writing support
+ - writing support
 
  - STDF 'lint' remover to 'shrink' STDF files ...
    - check if PTR records repeat the entries for limits, test name, etc...
