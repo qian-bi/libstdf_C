@@ -13,7 +13,7 @@ cd libstdf-${VER} || exit 1
 ./clean.sh || exit 1
 rm -rf clean.sh maketarball.sh test.sh
 ./autogen.sh || exit 1
-rm -rf `find -name CVS`
+rm -rf autom4te.cache `find -name CVS`
 
 if [ "${VER}" == "test" ] ; then
 	./configure && make -j
