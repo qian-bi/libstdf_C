@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 		return -2;
 
 	while ((rec=stdf_read_record(stdf)) != NULL) {
-		/* do stuff */
+		// do stuff
 		stdf_free_record(rec);
 	}
 
