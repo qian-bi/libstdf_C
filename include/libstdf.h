@@ -18,11 +18,6 @@ typedef struct {
 	rec_header	header;
 	off_t		pos;
 	off_t		rec_end;
-/*	struct byte_order {
-		int		src;
-		void	(*to_host)(int,byte_t*,long);
-		void	(*to_src)(int,byte_t*,long);
-	} bo;*/
 } stdf_file;
 
 #include <libstdf_funcs.h>
