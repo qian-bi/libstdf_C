@@ -25,7 +25,8 @@ dnl ********************************************************
 enable_annoy_untested="yes"
 AC_MSG_CHECKING(whether to annoy you about untested code)
 AC_ARG_ENABLE(warn-untested,
-	AC_HELP_STRING([--disable-warn-untested],[don't complain about unimplemented code @<:@default=warn@:>@]),
+	AC_HELP_STRING([--enable-warn-untested],[don't warn about untested code @<:@default=warn@:>@]),
+	[
 	if test "x$enableval" = "xyes" ; then
 		enable_annoy_untested="yes"
 	else
@@ -43,7 +44,9 @@ dnl *                 SDTF v3 [stdf-ver3]                  *
 dnl ********************************************************
 enable_stdf_ver3_support="no"
 AC_MSG_CHECKING(whether STDFv3 support should be enabled)
-AC_ARG_ENABLE(stdf-ver3, [  --enable-stdf-ver3      enable support for version 3 of STDF @<:@default=v4 only@:>@], [
+AC_ARG_ENABLE(stdf-ver3,
+	AC_HELP_STRING([--enable-stdf-ver3],[enable support for STDFv3 @<:@default=v4 only@:>@]),
+	[
 	if test "x$enableval" = "xyes" ; then
 		enable_stdf_ver3_support="yes"
 	else
@@ -61,7 +64,9 @@ dnl *                     zip [zziplib]                    *
 dnl ********************************************************
 enable_zip_compression="maybe"
 AC_MSG_CHECKING(whether zip support should be enabled)
-AC_ARG_ENABLE(zip, [  --enable-zip            enable support for zip (zlib) @<:@default=auto@:>@], [
+AC_ARG_ENABLE(zip,
+	AC_HELP_STRING([--enable-zip],[enable support for zip (zlib) @<:@default=auto@:>@]),
+	[
 	if test "x$enableval" = "xyes" ; then
 		enable_zip_compression="yes"
 	else
@@ -102,7 +107,9 @@ dnl *                     gzip [zlib]                      *
 dnl ********************************************************
 enable_gzip_compression="maybe"
 AC_MSG_CHECKING(whether gzip support should be enabled)
-AC_ARG_ENABLE(gzip, [  --enable-gzip           enable support for gzip (zlib) @<:@default=auto@:>@], [
+AC_ARG_ENABLE(gzip,
+	AC_HELP_STRING([--enable-gzip],[enable support for gzip (zlib) @<:@default=auto@:>@]),
+	[
 	if test "x$enableval" = "xyes" ; then
 		enable_gzip_compression="yes"
 	else
@@ -146,7 +153,9 @@ dnl *                     bzip2                            *
 dnl ********************************************************
 enable_bzip2_compression="maybe"
 AC_MSG_CHECKING(whether bzip2 support should be enabled)
-AC_ARG_ENABLE(bzip2, [  --enable-bzip2          enable support for bzip2 files @<:@default=auto@:>@], [
+AC_ARG_ENABLE(bzip2,
+	AC_HELP_STRING([--enable-bzip2],[enable support for bzip2 files @<:@default=auto@:>@]),
+	[
 	if test "x$enableval" = "xyes" ; then
 		enable_bzip2_compression="yes"
 	else
@@ -190,7 +199,9 @@ dnl *                 Example Apps [examples]              *
 dnl ********************************************************
 enable_example_programs="yes"
 AC_MSG_CHECKING(whether example programs should be built)
-AC_ARG_ENABLE(examples, [  --disable-examples      disable building the example apps @<:@default=build@:>@], [
+AC_ARG_ENABLE(examples,
+	AC_HELP_STRING([--disable-examples],[disable building the examples @<:@default=build@:>@]),
+	[
 	if test "x$enableval" = "xyes" ; then
 		enable_example_programs="yes"
 	else
@@ -229,7 +240,9 @@ dnl *                     docs [doxygen]                   *
 dnl ********************************************************
 enable_doxygen="no"
 AC_MSG_CHECKING(whether to build documentation with doxygen)
-AC_ARG_ENABLE(docs, [  --enable-docs           generate a lot of docs with doxygen @<:@default=no@:>@], [
+AC_ARG_ENABLE(docs,
+	AC_HELP_STRING([--enable-docs],[generate a lot of API docs @<:@default=no@:>@]),
+	[
 	if test "x$enableval" = "xyes" ; then
 		enable_doxygen="yes"
 	else
