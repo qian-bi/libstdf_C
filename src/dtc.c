@@ -27,9 +27,9 @@ void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int 
 	}
 
 	switch (len) {
-		case 2:	*((uint16_t*)in) = bswap_16(*((uint16_t*)in)); break;
-		case 4:	*((uint32_t*)in) = bswap_32(*((uint32_t*)in)); break;
-		case 8:	*((uint64_t*)in) = bswap_64(*((uint64_t*)in)); break;
+		case 2:	stdf_bswap_16(*((uint16_t*)in)); break;
+		case 4:	stdf_bswap_32(*((uint32_t*)in)); break;
+		case 8:	stdf_bswap_64(*((uint64_t*)in)); break;
 		default:
 			fprintf(stderr, "__byte_order_change(): byte len of %i has no implementation\n", len);
 	}

@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
 
 		while (read(in, &h, 4) == 4) {
 			if (byte_order != BYTE_ORDER)
-				h.REC_LEN = bswap_16(h.REC_LEN);
+				stdf_bswap_16(h.REC_LEN);
 			lseek(in, -4, SEEK_CUR);
 			h.REC_LEN += 4;
 			read(in, recbuff, h.REC_LEN);
