@@ -1,0 +1,50 @@
+# Howto build:
+# from a command prompt, cd to the PROJ_LCASE_NAME main dir.
+# then run 'nmake -f win32/Makefile.msc'
+
+STATICLIB	= PROJ_LCASE_NAME.lib
+SHAREDLIB	= PROJ_LCASE_NAME.dll
+IMPORTLIB	= PROJ_LCASE_NAME-import.lib
+
+CC			= cl.exe
+LD			= link.exe
+AR			= lib.exe
+RC			= rc.exe
+
+CFLAGS		= /nologo /MD /W3 /O2 /I PROJ_INC_DIR /DWIN32
+LDFLAGS		= /nologo /release /machine:I386
+ARFLAGS		= /nologo
+RCFLAGS		= /r /dNDEBUG
+
+DEFFILE		= PROJ_LCASE_NAME.def
+RCFILE		= PROJ_LCASE_NAME.rc
+RESFILE		= PROJ_LCASE_NAME.res
+OBJS		= PROJ_SRC_FILES
+
+all: $(STATICLIB) $(SHAREDLIB)
+
+$(STATICLIB): $(OBJS) $(DEFFILE)
+	$(AR) $(ARFLAGS) /out:$(STATICLIB) $(OBJS)
+
+$(SHAREDLIB): $(OBJS) $(DEFFILE) $(RESFILE)
+	$(LD) $(LDFLAGS) /def:$(DEFFILE) /dll /implib:$(IMPORTLIB) /out:$(SHAREDLIB) $(OBJS) $(RESFILE)
+
+.c.obj:
+	$(CC) $(CFLAGS) /c $< /Fo$@
+
+$(RESFILE): $(RCFILE)
+	$(RC) $(RCFLAGS) /fo $(RESFILE) $(RCFILE)
+
+EXAMPLES	= PROJ_EXE_FILES
+
+examples: $(EXAMPLES)
+.c.exe:
+	$(CC) $(CFLAGS) $(IMPORTLIB) $<
+
+clean:
+	-del $(STATICLIB)
+	-del $(SHAREDLIB)
+	-del $(IMPORTLIB)
+	-del src\*.obj
+	-del *.exe
+	-del $(RESFILE)
