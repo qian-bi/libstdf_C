@@ -14,6 +14,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+ * libhash
+ */
 #if HAVE_HASH_H
 #include <hash.h>
 #define HASH_VARS \
@@ -40,6 +43,36 @@
 	hash_iterator_deinitialise(&hash_table, &hit); \
 	hash_deinitialise(&hash_table);
 
+/*
+ * Ecore
+ */
+#elif HAVE_ECORE
+#include <Ecore.h>
+#define HASH_VARS \
+	Ecore_Hash *hash_table; \
+	long *stat;
+#define HASH_INIT \
+	hash_table = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+#define HASH_UPDATE \
+	stat = ecore_hash_get(hash_table, recname); \
+	if (!stat) { \
+		stat = (long*)malloc(sizeof(long)); \
+		*stat = 0; \
+		ecore_hash_set(hash_table, strdup(recname), stat); \
+	} \
+	(*stat)++;
+#define HASH_PRINT \
+	ecore_hash_for_each_node(hash_table, print_stat, NULL); \
+	ecore_hash_destroy(hash_table);
+void print_stat(void *value, void *user_data)
+{
+	Ecore_Hash_Node *node = ECORE_HASH_NODE(value);
+	printf("\t%s : %li\n", (char*)(node->key), *((long*)(node->value)));
+}
+
+/*
+ * glib
+ */
 #elif HAVE_GLIB
 #include <glib.h>
 #define HASH_VARS \

@@ -218,29 +218,46 @@ else
 fi
 
 dnl ********************************************************
-dnl *                     HASH [hash or glib]              *
+dnl *                     HASH [hash / ecore / glib]       *
 dnl ********************************************************
 if test "x$enable_example_programs" = "xyes" ; then
 dnl First check for libhash ...
 HASH_LIBS=""
-AC_CHECK_LIB(hash, hash_initialise,
+AC_CHECK_LIB(fhash, hash_initialise,
 	[
 		AC_CHECK_HEADERS([hash.h], [HASH_LIBS="-lhash"])
 	])
 AC_SUBST(HASH_LIBS)
+
+dnl If that fails, check for ecore ...
+ECORE_LIBS=""
+PKG_CHECK_MODULES(ECORE, ecore,
+[
+	AC_DEFINE(HAVE_ECORE, 1, [Has ecore support (used by example programs)])
+	AM_CONDITIONAL(HAVE_ECORE, true)
+],[
+	AM_CONDITIONAL(HAVE_ECORE, false)
+	ECORE_CFLAGS=""
+	ECORE_LIBS=""
+])
+if test "x$HASH_LIBS" != "x" ; then
+	ECORE_CFLAGS=""
+	ECORE_LIBS=""
+fi
+AC_SUBST(ECORE_CFLAGS)
+AC_SUBST(ECORE_LIBS)
 
 dnl If that fails, check for glib ...
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.0,
 [
 	AC_DEFINE(HAVE_GLIB, 1, [Has glib support (used by example programs)])
 	AM_CONDITIONAL(HAVE_GLIB, true)
-],
-[
+],[
 	AM_CONDITIONAL(HAVE_GLIB, false)
 	GLIB_CFLAGS=""
 	GLIB_LIBS=""
 ])
-if test "x$HASH_LIBS" != "x" ; then
+if test "x$HASH_LIBS" != "x" -o "x$ECORE_LIBS" != "x" ; then
 	GLIB_CFLAGS=""
 	GLIB_LIBS=""
 fi

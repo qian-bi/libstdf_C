@@ -12,7 +12,7 @@ else
 noinst_PROGRAMS =
 endif
 
-INCLUDES = -I$(top_builddir)/include @GLIB_CFLAGS@
+INCLUDES = -I$(top_builddir)/include @ECORE_CFLAGS@ @GLIB_CFLAGS@
 
 LDADD = $(top_builddir)/src/libstdf.la
-record_stats_LDADD = @HASH_LIBS@ @GLIB_LIBS@ $(LDADD)
+record_stats_LDADD = @HASH_LIBS@ @ECORE_LIBS@ @GLIB_LIBS@ $(LDADD)
