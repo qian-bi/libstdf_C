@@ -572,7 +572,7 @@ rec_ftr* stdf_read_rec_ftr(stdf_file *file)
 	_stdf_read_dtc_U1(file, &(ftr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(ftr->SITE_NUM));
 	_stdf_read_dtc_B1(file, &(ftr->TEST_FLG));
-	_stdf_read_dtc_B1(file, &(ftr->PARM_FLG));
+	_stdf_read_dtc_B1(file, &(ftr->OPT_FLG));
 	_stdf_read_dtc_U4(file, &(ftr->CYCL_CNT));
 	_stdf_read_dtc_U4(file, &(ftr->REL_VADR));
 	_stdf_read_dtc_U4(file, &(ftr->REPT_CNT));

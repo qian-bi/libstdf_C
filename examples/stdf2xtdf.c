@@ -563,7 +563,7 @@ for (i=1; i<argc; ++i) {
 				print_int("HEAD_NUM", ftr->HEAD_NUM);
 				print_int("SITE_NUM", ftr->SITE_NUM);
 				print_hex("TEST_FLG", ftr->TEST_FLG);
-				print_hex("PARM_FLG", ftr->PARM_FLG);
+				print_hex("OPT_FLG", ftr->OPT_FLG);
 				print_int("CYCL_CNT", ftr->CYCL_CNT);
 				print_int("REL_VADR", ftr->REL_VADR);
 				print_int("REPT_CNT", ftr->REPT_CNT);

@@ -528,7 +528,7 @@ typedef struct {
 	dtc_U1		HEAD_NUM;
 	dtc_U1		SITE_NUM;
 	dtc_B1		TEST_FLG;
-	dtc_B1		PARM_FLG;
+	dtc_B1		OPT_FLG;
 	dtc_U4		CYCL_CNT;
 	dtc_U4		REL_VADR;
 	dtc_U4		REPT_CNT;
