@@ -80,30 +80,36 @@ int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, long opts)
 stdf_file* stdf_open_ex(char *pathname, int opts)
 {
 	stdf_file *ret = (stdf_file*)malloc(sizeof(stdf_file));
-	ret->fd = open(pathname, O_RDONLY);
-	if (ret->fd == -1) {
-		free(ret);
-		ret = NULL;
-	} else {
-		/* try to peek at the FAR record to figure out the CPU type/STDF ver */
-		if (read(ret->fd, &(ret->header), sizeof(rec_header)) != sizeof(rec_header)) {
+
+	if (!pathname)
+		return NULL;
+	if (pathname[0] == '-')
+		ret->fd = 0;
+	else {
+		ret->fd = open(pathname, O_RDONLY);
+		if (ret->fd == -1)
 			goto out_err;
-		} else {
-			char temp[2];
-			if ((HEAD_TO_REC(ret->header) == REC_FAR)
-#ifdef STDF_VER3
-				/* STDF v3 can have either a FAR or a MIR record */
-				|| (HEAD_TO_REC(ret->header) == REC_MIR)
-#endif
-				)
-				read(ret->fd, temp, 2);
-			else
-				goto out_err;
-			if (__stdf_init(ret, temp[0], temp[1], opts))
-				goto out_err;
-			lseek(ret->fd, 0, SEEK_SET);
-		}
 	}
+
+	/* try to peek at the FAR record to figure out the CPU type/STDF ver */
+	if (read(ret->fd, &(ret->header), sizeof(rec_header)) != sizeof(rec_header)) {
+		goto out_err;
+	} else {
+		char temp[2];
+		if ((HEAD_TO_REC(ret->header) == REC_FAR)
+#ifdef STDF_VER3
+			/* STDF v3 can have either a FAR or a MIR record */
+			|| (HEAD_TO_REC(ret->header) == REC_MIR)
+#endif
+			)
+			read(ret->fd, temp, 2);
+		else
+			goto out_err;
+		if (__stdf_init(ret, temp[0], temp[1], opts))
+			goto out_err;
+		lseek(ret->fd, 0, SEEK_SET);
+	}
+
 	return ret;
 out_err:
 	close(ret->fd);
