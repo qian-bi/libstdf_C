@@ -2,6 +2,8 @@
  * @file libstdf.h
  * @brief Top level include and the main stdf structure definition.
  *
+ */
+/*
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
@@ -15,10 +17,6 @@
 #include <libstdf_types.h>
 #include <libstdf_const.h>
 
-/* Do we read one record at a time or a whole lot of data ? */
-#define	__STDF_READ_ONE_RECORD		1
-#define	__STDF_READ_SIZE			4096
-
 /* STDF File structure */
 #define	__STDF_HOST_BYTE_ORDER		BYTE_ORDER
 typedef	uint8_t						byte_t;
@@ -30,10 +28,13 @@ typedef struct {
 	int		(*reopen)(void*);
 } __stdf_fops;
 
+/**
+ * @brief The main STDF file structure.
+ */
 typedef struct {
-	rec_header	header;
+	rec_header	header;			/**< A processed version of the last record read */
 
-	int			fd;
+	int			fd;				/**< Actual file descriptor for the backing file */
 	union {
 #if HAVE_ZIP
 	ZZIP_FILE	*fd_zip;
@@ -45,18 +46,15 @@ typedef struct {
 	BZFILE		*fd_bzip2;
 #endif
 	};
-	char		*filename;
-	byte_t		file_format;
-	__stdf_fops	*fops;
+	byte_t		file_format;	/**< Compressed file format of the file */
+	char		*filename;		/**< Filename that was given to stdf_open() */
+	__stdf_fops	*fops;			/**< Virtual file i/o functions to hide compression details */
 
-	int			byte_order;
-	uint32_t	opts;
-	dtc_U1		ver;
+	int			byte_order;		/**< Byte order of the file */
+	uint32_t	opts;			/**< Misc options to control libstdf behavior */
+	dtc_U1		ver;			/**< Spec version of the file */
 
 	byte_t		*__data;
-#ifndef __STDF_READ_ONE_RECORD
-	byte_t		*__data_end;
-#endif
 	byte_t		*rec_pos;
 	byte_t		*rec_end;
 } stdf_file;

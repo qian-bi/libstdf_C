@@ -1,4 +1,7 @@
-/* dump_records_to_html.c
+/**
+ * @file dump_records_to_html.c
+ */
+/*
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
