@@ -5,6 +5,8 @@
  */
 
 #include <libstdf.h>
+#include "dtc.h"
+#include "rec.h"
 
 /* for printf(3) */
 #include <stdio.h>
@@ -41,19 +43,62 @@ void _stdf_read_dtc_Cn(stdf_file *f, dtc_Cn *Cn)
 {
 	unsigned char len;
 	if (f->pos == f->rec_end) {
-		(*Cn) = (dtc_Cn)malloc(sizeof(char) * 1);
+		(*Cn) = (dtc_Cn)malloc(sizeof(dtc_C1) * 1);
 		(*Cn)[0] = 0;
 		return;
 	}
 	f->pos += read(f->fd, &len, 1);
-	(*Cn) = (dtc_Cn)malloc(sizeof(char) * len + 2);
+	(*Cn) = (dtc_Cn)malloc(sizeof(dtc_C1) * len + 2);
 	(*Cn)[0] = len;
 	f->pos += read(f->fd, (*Cn)+1, len);
 	(*Cn)[len+1] = '\0';
+}
+
+void _stdf_read_dtc_Dn(stdf_file *f, dtc_Dn *Dn)
+{
+	dtc_U4 bit_cnt;
+	unsigned int len;
+	if (f->pos == f->rec_end) {
+		(*Dn) = (dtc_Dn)malloc(2);
+		((dtc_U4*)(*Dn))[0] = 0;
+		return;
+	}
+	f->pos += read(f->fd, &bit_cnt, 2);
+	len = bit_cnt / (sizeof(dtc_B1) * 8);
+	if (bit_cnt % 8) ++len;
+	(*Dn) = (dtc_Dn)malloc(len + 3);
+	((dtc_U4*)(*Dn))[0] = bit_cnt;
+	f->pos += read(f->fd, (*Dn)+2, len);
+	(*Dn)[len+2] = 0x00;
+}
+
+void _stdf_read_dtc_xN1(stdf_file *f, dtc_xN1 *xN1, dtc_U2 cnt)
+{
+	unsigned int len = cnt / 2 + cnt % 2;
+	(*xN1) = (dtc_xN1)malloc(len);
+	f->pos += read(f->fd, (*xN1), len);
 }
 
 void __stdf_read_dtc_x(stdf_file *f, void *in, dtc_U2 cnt, int in_size)
 {
 	in = malloc(in_size * cnt);
 	f->pos += read(f->fd, in, in_size * cnt);
+}
+
+void _stdf_read_dtc_xCn(stdf_file *f, dtc_xCn *xCn, dtc_U2 cnt)
+{
+	dtc_U2 i = 0;
+	dtc_Cn Cn;
+	(*xCn) = (dtc_xCn)malloc(sizeof(Cn) * cnt);
+	while (i < cnt) {
+		_stdf_read_dtc_Cn(f, &Cn);
+		xCn[i++] = &Cn;
+	}
+}
+
+void free_xCn(dtc_xCn xCn, dtc_U2 cnt)
+{
+	while (cnt-- > 0)
+		free(xCn[cnt]);
+	free(xCn);
 }

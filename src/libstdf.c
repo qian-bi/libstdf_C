@@ -101,15 +101,11 @@ rec_unknown* stdf_read_record(stdf_file *file)
 		case REC_PRR: rec = (rec_unknown*)stdf_read_rec_prr(file); break;
 		case REC_TSR: rec = (rec_unknown*)stdf_read_rec_tsr(file); break;
 		case REC_PTR: rec = (rec_unknown*)stdf_read_rec_ptr(file); break;
-/*
-		case REC_MPR:
-		case REC_FTR:
-*/
+		case REC_MPR: rec = (rec_unknown*)stdf_read_rec_mpr(file); break;
+		case REC_FTR: rec = (rec_unknown*)stdf_read_rec_ftr(file); break;
 		case REC_BPS: rec = (rec_unknown*)stdf_read_rec_bps(file); break;
 		case REC_EPS: rec = (rec_unknown*)stdf_read_rec_eps(file); break;
-/*
-		case REC_GDR:
-*/
+		case REC_GDR: rec = (rec_unknown*)stdf_read_rec_gdr(file); break;
 		case REC_DTR: rec = (rec_unknown*)stdf_read_rec_dtr(file); break;
 		default:
 			rec = stdf_read_rec_unknown(file, &(file->header));

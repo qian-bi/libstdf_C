@@ -363,7 +363,7 @@ rec_mpr* stdf_read_rec_mpr(stdf_file *file)
 	_stdf_read_dtc_B1(file, &(mpr->PARM_FLG));
 	_stdf_read_dtc_U2(file, &(mpr->RTN_ICNT));
 	_stdf_read_dtc_U2(file, &(mpr->RSLT_CNT));
-/*	_stdf_read_dtc_xN1(file, &(mpr->RTN_STAT), mpr->RTN_ICNT);*/
+	_stdf_read_dtc_xN1(file, &(mpr->RTN_STAT), mpr->RTN_ICNT);
 	_stdf_read_dtc_xR4(file, &(mpr->RTN_RSLT), mpr->RSLT_CNT);
 	_stdf_read_dtc_Cn(file, &(mpr->TEST_TXT));
 	_stdf_read_dtc_Cn(file, &(mpr->ALARM_ID));
@@ -403,10 +403,10 @@ rec_ftr* stdf_read_rec_ftr(stdf_file *file)
 	_stdf_read_dtc_U2(file, &(ftr->RTN_ICNT));
 	_stdf_read_dtc_U2(file, &(ftr->PGM_ICNT));
 	_stdf_read_dtc_xU2(file, &(ftr->RTN_INDX), ftr->RTN_ICNT);
-/*	_stdf_read_dtc_xN1(file, &(ftr->RTN_STAT), ftr->RTN_ICNT);*/
+	_stdf_read_dtc_xN1(file, &(ftr->RTN_STAT), ftr->RTN_ICNT);
 	_stdf_read_dtc_xU2(file, &(ftr->PGM_INDX), ftr->PGM_ICNT);
-/*	_stdf_read_dtc_xN1(file, &(ftr->PGM_STAT), ftr->PGM_ICNT);*/
-/*	_stdf_read_dtc_Dn(file, &(ftr->FAIL_PIN));*/
+	_stdf_read_dtc_xN1(file, &(ftr->PGM_STAT), ftr->PGM_ICNT);
+	_stdf_read_dtc_Dn(file, &(ftr->FAIL_PIN));
 	_stdf_read_dtc_Cn(file, &(ftr->VECT_NAM));
 	_stdf_read_dtc_Cn(file, &(ftr->TIME_SET));
 	_stdf_read_dtc_Cn(file, &(ftr->OP_CODE));
@@ -415,7 +415,7 @@ rec_ftr* stdf_read_rec_ftr(stdf_file *file)
 	_stdf_read_dtc_Cn(file, &(ftr->PROG_TXT));
 	_stdf_read_dtc_Cn(file, &(ftr->RSLT_TXT));
 	_stdf_read_dtc_U1(file, &(ftr->PATG_NUM));
-/*	_stdf_read_dtc_Dn(file, &(ftr->SPIN_MAP));*/
+	_stdf_read_dtc_Dn(file, &(ftr->SPIN_MAP));
 	return ftr;
 }
 rec_bps* stdf_read_rec_bps(stdf_file *file)
@@ -535,10 +535,10 @@ void stdf_free_record(rec_unknown *rec)
 			free(plr->GRP_INDX);
 			free(plr->GRP_MODE);
 			free(plr->GRP_RADX);
-			free_xCn(plr->PGM_CHAR);
-			free_xCn(plr->RTN_CHAR);
-			free_xCn(plr->PGM_CHAL);
-			free_xCn(plr->RTN_CHAL);
+			free_xCn(plr->PGM_CHAR, plr->GRP_CNT);
+			free_xCn(plr->RTN_CHAR, plr->GRP_CNT);
+			free_xCn(plr->PGM_CHAL, plr->GRP_CNT);
+			free_xCn(plr->RTN_CHAL, plr->GRP_CNT);
 			free(rec);
 			break;
 		}
@@ -622,7 +622,7 @@ void stdf_free_record(rec_unknown *rec)
 		}
 		case REC_MPR: {
 			rec_mpr *mpr = (rec_mpr*)rec;
-/*			free(mpr->RTN_STAT);*/
+			free(mpr->RTN_STAT);
 			free(mpr->RTN_RSLT);
 			free(mpr->TEST_TXT);
 			free(mpr->ALARM_ID);
@@ -638,10 +638,10 @@ void stdf_free_record(rec_unknown *rec)
 		case REC_FTR: {
 			rec_ftr *ftr = (rec_ftr*)rec;
 			free(ftr->RTN_INDX);
-/*			free(ftr->RTN_STAT);*/
+			free(ftr->RTN_STAT);
 			free(ftr->PGM_INDX);
-/*			free(ftr->PGM_STAT);*/
-/*			free(ftr->FAIL_PIN);*/
+			free(ftr->PGM_STAT);
+			free(ftr->FAIL_PIN);
 			free(ftr->VECT_NAM);
 			free(ftr->TIME_SET);
 			free(ftr->OP_CODE);
@@ -649,7 +649,7 @@ void stdf_free_record(rec_unknown *rec)
 			free(ftr->ALARM_ID);
 			free(ftr->PROG_TXT);
 			free(ftr->RSLT_TXT);
-/*			free(ftr->SPIN_MAP);*/
+			free(ftr->SPIN_MAP);
 			free(rec);
 			break;
 		}

@@ -94,17 +94,13 @@ typedef	char*			dtc_Vn;
 */
 typedef	char*			dtc_Bn;
 typedef	char			dtc_B1;
-/*
 typedef	char*			dtc_Dn;
 typedef	char			dtc_N1;
-*/
 typedef	dtc_Cn*			dtc_xCn;
 typedef	dtc_U1*			dtc_xU1;
 typedef	dtc_U2*			dtc_xU2;
 typedef	dtc_R4*			dtc_xR4;
-/*
 typedef	dtc_N1*			dtc_xN1;
-*/
 
 /* Definitions for Record Types [page 15+] */
 typedef struct {
@@ -389,7 +385,7 @@ typedef struct {
 	dtc_B1		PARM_FLG;
 	dtc_U2		RTN_ICNT;
 	dtc_U2		RSLT_CNT;
-/*	dtc_xN1		RTN_STAT;*/
+	dtc_xN1		RTN_STAT;
 	dtc_xR4		RTN_RSLT;
 	dtc_Cn		TEST_TXT;
 	dtc_Cn		ALARM_ID;
@@ -428,10 +424,10 @@ typedef struct {
 	dtc_U2		RTN_ICNT;
 	dtc_U2		PGM_ICNT;
 	dtc_xU2		RTN_INDX;
-/*	dtc_xN1		RTN_STAT;*/
+	dtc_xN1		RTN_STAT;
 	dtc_xU2		PGM_INDX;
-/*	dtc_xN1		PGM_STAT;*/
-/*	dtc_Dn		FAIL_PIN;*/
+	dtc_xN1		PGM_STAT;
+	dtc_Dn		FAIL_PIN;
 	dtc_Cn		VECT_NAM;
 	dtc_Cn		TIME_SET;
 	dtc_Cn		OP_CODE;
@@ -440,7 +436,7 @@ typedef struct {
 	dtc_Cn		PROG_TXT;
 	dtc_Cn		RSLT_TXT;
 	dtc_U1		PATG_NUM;
-/*	dtc_Dn		SPIN_MAP;*/
+	dtc_Dn		SPIN_MAP;
 } rec_ftr;
 /* BPS: Begin Program Section [page 62] */
 typedef struct {
