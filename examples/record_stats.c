@@ -62,7 +62,7 @@ for (i=1; i<argc; ++i) {
 		(*stat)++;
 #endif
 		cnt++;
-		stdf_free_record(f, rec);
+		stdf_free_record(rec);
 	}
 	stdf_close(f);
 #if HAVE_GLIB

@@ -54,13 +54,13 @@ for (i=1; i<argc; ++i) {
 		print_err("First record is not FAR!");
 		goto next_file;
 	}
-	stdf_free_record(f, rec);
+	stdf_free_record(rec);
 	/* Try to read all the ATR records (if they exist) */
 	while ((rec=stdf_read_record(f)) != NULL) {
 		if (HEAD_TO_REC(rec->header) != REC_ATR)
 			break;
 		else
-			stdf_free_record(f, rec);
+			stdf_free_record(rec);
 	}
 	if (rec == NULL) {
 		print_err("Initial sequence not found!");
@@ -72,13 +72,13 @@ for (i=1; i<argc; ++i) {
 		goto next_file;
 	}
 	/* Try to read the RDR record (if it exists) */
-	stdf_free_record(f, rec);
+	stdf_free_record(rec);
 	if ((rec=stdf_read_record(f)) == NULL) {
 		print_err("EOF found after initial sequence!");
 		goto next_file;
 	}
 	if (HEAD_TO_REC(rec->header) == REC_RDR) {
-		stdf_free_record(f, rec);
+		stdf_free_record(rec);
 		rec = stdf_read_record(f);
 		if (rec == NULL) {
 			print_err("EOF found after initial sequence!");
@@ -87,7 +87,7 @@ for (i=1; i<argc; ++i) {
 	}
 	/* Try to read the SDR records (if they exist) */
 	while (HEAD_TO_REC(rec->header) == REC_SDR) {
-		stdf_free_record(f, rec);
+		stdf_free_record(rec);
 		rec = stdf_read_record(f);
 		if (rec == NULL) {
 			print_err("EOF found after initial sequence!");
@@ -99,7 +99,7 @@ for (i=1; i<argc; ++i) {
 	rec_mrr_cnt = rec_pcr_cnt = rec_hbr_cnt = rec_sbr_cnt = rec_wcr_cnt = 0;
 	while (1) {
 		memcpy(&prev_rec, &rec->header, sizeof(rec_header));
-		stdf_free_record(f, rec);
+		stdf_free_record(rec);
 		rec = stdf_read_record(f);
 		if (rec == NULL)
 			break;
@@ -164,7 +164,7 @@ for (i=1; i<argc; ++i) {
 
 	print_msg("... is valid");
 next_file:
-	stdf_free_record(f, rec);
+	stdf_free_record(rec);
 	stdf_close(f);
 }
 	return EXIT_SUCCESS;
