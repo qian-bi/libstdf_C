@@ -35,7 +35,7 @@ dnl *                     zip [zziplib]                    *
 dnl ********************************************************
 enable_zip_compression="maybe"
 AC_MSG_CHECKING(whether zip support should be enabled)
-AC_ARG_ENABLE(zip, [  --enable-zip           enable support for zip (zlib) @<:@default=auto@:>@], [
+AC_ARG_ENABLE(zip, [  --enable-zip            enable support for zip (zlib) @<:@default=auto@:>@], [
 	if test "x$enableval" = "xyes" ; then
 		enable_zip_compression="yes"
 	else
@@ -196,6 +196,35 @@ PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.0,
 	])
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
+fi
+
+dnl ********************************************************
+dnl *                     docs [doxygen]                   *
+dnl ********************************************************
+enable_doxygen="no"
+AC_MSG_CHECKING(whether to build documentation with doxygen)
+AC_ARG_ENABLE(docs, [  --enable-docs           generate a lot of docs with doxygen @<:@default=no@:>@], [
+	if test "x$enableval" = "xyes" ; then
+		enable_doxygen="yes"
+	else
+		enable_doxygen="no"
+	fi
+	]
+)
+AC_MSG_RESULT($enable_doxygen)
+if test "x$enable_doxygen" = "xyes" ; then
+	AC_CHECK_PROG(enable_doxygen_detect, doxygen, yes, no)
+	if test "x$enable_doxygen_detect" = "xno" ; then
+		echo ""
+		echo "documentation building was requested by doxygen was not found!"
+		echo ""
+		echo "You can grab it from http://www.doxygen.org/"
+		echo ""
+ 		AC_MSG_ERROR([doxygen not found!])
+	fi
+	AM_CONDITIONAL(BUILD_DOCS, true)
+else
+	AM_CONDITIONAL(BUILD_DOCS, false)
 fi
 
 
