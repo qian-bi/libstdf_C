@@ -63,16 +63,20 @@ char* stdf_get_rec_name(rec_typ type, rec_sub sub)
 	return name;
 }
 
+#if WARN_UNTESTED
 #define	warn_untested(type) \
 	do { \
 		fprintf(stderr, "*********************************************\n"); \
 		fprintf(stderr, "This record type (" type ") has not been tested!\n"); \
 		fprintf(stderr, "Please consider sending this file to\n"); \
-		fprintf(stderr, "vapier@users.sourceforge.net to help out the\n"); \
+		fprintf(stderr, "vapier@gmail.com to help out the\n"); \
 		fprintf(stderr, "FreeSTDF project and make sure this code\n"); \
 		fprintf(stderr, "works exactly the way it should!\n"); \
 		fprintf(stderr, "*********************************************\n"); \
 	} while (0)
+#else
+#define warn_untested(type)
+#endif
 
 #define __malloc_rec(r) ((r*)malloc(sizeof(r)))
 rec_unknown* stdf_read_rec_unknown(stdf_file *file)
