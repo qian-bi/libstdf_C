@@ -14,7 +14,9 @@ extern stdf_file* stdf_open_ex(char*, uint32_t);
 extern int stdf_close(stdf_file*);
 
 extern rec_unknown* stdf_read_record(stdf_file*);
-extern void stdf_free_record(stdf_file*, rec_unknown*);
+extern rec_unknown* stdf_read_record_raw(stdf_file*);
+extern rec_unknown* stdf_parse_raw_record(rec_unknown*);
+extern void stdf_free_record(rec_unknown*);
 
 extern char* stdf_get_rec_name(int, int);
 #define	stdf_get_rec_name_from_head(h) stdf_get_rec_name(h.REC_TYP, h.REC_SUB)
