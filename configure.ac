@@ -13,21 +13,38 @@ AC_CHECK_HEADERS([endian.h sys/endian.h bswap.h byteswap.h])
 CFLAGS="$CFLAGS -Wall -Werror"
 
 enable_stdf_ver3_support="no"
-AC_ARG_ENABLE(stdf-ver3, [  --enable-stdf-ver3           enable support for version 3 of STDF \[default=no\]], [
-	if test "$enableval" = "yes" ; then
-		AC_MSG_RESULT(yes)
+AC_MSG_CHECKING(whether STDFv3 support should be enabled)
+AC_ARG_ENABLE(stdf-ver3, [  --enable-stdf-ver3      enable support for version 3 of STDF], [
+	if test "x$enableval" = "xyes" ; then
 		enable_stdf_ver3_support="yes"
 	else
-		AC_MSG_RESULT(no)
 		enable_stdf_ver3_support="no"
 	fi
-	],[
-	AC_MSG_RESULT($enable_stdf_ver3_support)
 	]
 )
 if test "x$enable_stdf_ver3_support" = "xyes" ; then
 	AC_DEFINE(STDF_VER3, 1, "Enable support for STDFv3")
 fi
+AC_MSG_RESULT($enable_stdf_ver3_support)
+
+enable_example_programs="yes"
+AC_MSG_CHECKING(whether example programs should be built)
+AC_ARG_ENABLE(examples, [  --disable-examples      disable building the example apps], [
+	if test "x$enableval" = "xyes" ; then
+		AC_MSG_RESULT(yes)
+		enable_example_programs="yes"
+	else
+		AC_MSG_RESULT(no)
+		enable_example_programs="no"
+	fi
+	]
+)
+if test "x$enable_example_programs" = "xyes" ; then
+	AM_CONDITIONAL(BUILD_EXAMPLES, true)
+else
+	AM_CONDITIONAL(BUILD_EXAMPLES, false)
+fi
+AC_MSG_RESULT($enable_example_programs)
 
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.0,
 	[
