@@ -8,12 +8,12 @@
 name=libstdf
 NAME="`echo ${name} | tr '[a-z]' '[A-Z]'`"
 
-dsp=${PWD}/${name}.dsp
-dsw=${PWD}/${name}.dsw
-def=${PWD}/${name}.def
+dsp="${PWD}/${name}.dsp"
+dsw="${PWD}/${name}.dsw"
+def="${PWD}/${name}.def"
 srcdir=../..
 
-cat << EOF > ${dsp}
+cat << EOF > "${dsp}"
 # Microsoft Developer Studio Project File - Name="${name}" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 
@@ -51,7 +51,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "${NAME}_EXPORTS" /FD /c
-# ADD CPP /nologo /Gz /MD /W3 /GX /O2 /I "..\include\" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "${NAME}_EXPORTS" /FD /c
+# ADD CPP /nologo /Gz /MD /W3 /GX /O2 /I "${srcdir//\//\\}\include\" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "${NAME}_EXPORTS" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -67,7 +67,7 @@ LINK32=link.exe
 # Name "${name} - Win32 Release"
 EOF
 
-cat << EOF >> ${dsp}
+cat << EOF >> "${dsp}"
 # Begin Group "Source Files"
 
 # PROP Default_Filter "c;rc;def"
@@ -76,48 +76,48 @@ SOURCE=${name}.def
 # End Source File
 EOF
 for f in ${srcdir}/src/*.c ; do
-cat << EOF >> ${dsp}
+cat << EOF >> "${dsp}"
 # Begin Source File
 SOURCE=${f//\//\\}
 # End Source File
 EOF
 done
-cat << EOF >> ${dsp}
+cat << EOF >> "${dsp}"
 # End Group
 EOF
 
-cat << EOF >> ${dsp}
+cat << EOF >> "${dsp}"
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h"
 EOF
 for f in ${srcdir}/src/*.h ; do
-cat << EOF >> ${dsp}
+cat << EOF >> "${dsp}"
 # Begin Source File
 SOURCE=${f//\//\\}
 # End Source File
 EOF
 done
-cat << EOF >> ${dsp}
+cat << EOF >> "${dsp}"
 # End Group
 EOF
 
-cat << EOF >> ${dsp}
+cat << EOF >> "${dsp}"
 # End Target
 # End Project
 EOF
-unix2dos ${dsp}
+unix2dos "${dsp}"
 
 
-cat << EOF > ${dsw}
+cat << EOF > "${dsw}"
 Microsoft Developer Studio Workspace File, Format Version 6.00
 Project: "${name}"="${name}.dsp"
 EOF
-unix2dos ${dsw}
+unix2dos "${dsw}"
 
 
-cat << EOF > ${def}
+cat << EOF > "${def}"
 EXPORTS
 $(grep ^extern ${srcdir}/include/libstdf_funcs.h | awk '{print $3}' | cut -d\( -f1)
 EOF
-unix2dos ${def}
+unix2dos "${def}"
