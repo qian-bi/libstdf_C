@@ -67,7 +67,7 @@ void _stdf_read_dtc_Cx(stdf_file *f, dtc_Cn *Cn, int len)
 {
 	/* does this even work ?
 	   need a file with a PLR record in it to test ... */
-	(*Cn) = (dtc_Cn)malloc(sizeof(dtc_C1) * 1 + len + 1);
+	(*Cn) = (dtc_Cn)calloc(len + 1, sizeof(dtc_C1));
 	(*Cn)[0] = len;
 	memset((*Cn)+1, 0x00, 1 + len + 1);
 	if (f->rec_pos == f->rec_end) {
@@ -81,13 +81,13 @@ void _stdf_read_dtc_Cn(stdf_file *f, dtc_Cn *Cn)
 {
 	unsigned char len;
 	if (f->rec_pos == f->rec_end) {
-		(*Cn) = (dtc_Cn)malloc(sizeof(dtc_C1) * 1);
+		(*Cn) = (dtc_Cn)malloc(sizeof(dtc_C1));
 		(*Cn)[0] = 0;
 		return;
 	}
 	len = f->rec_pos[0];
 	f->rec_pos++;
-	(*Cn) = (dtc_Cn)malloc(sizeof(dtc_C1) * len + 2);
+	(*Cn) = (dtc_Cn)calloc(len + 2, sizeof(dtc_C1));
 	(*Cn)[0] = len;
 	memcpy((*Cn)+1, f->rec_pos, len);
 	f->rec_pos += len;
@@ -136,7 +136,7 @@ void _stdf_read_dtc_x ## DTC(stdf_file *f, dtc_x ## DTC *x, dtc_U2 cnt) \
 		(*x) = NULL; \
 		return; \
 	} \
-	(*x) = (dtc_x ## DTC)malloc(sizeof(dtc_ ## DTC) * cnt); \
+	(*x) = (dtc_x ## DTC)calloc(cnt, sizeof(dtc_ ## DTC)); \
 	for (i=0; i<cnt; ++i) \
 		_stdf_read_dtc_ ## DTC(f, &((*x)[i])); \
 }
@@ -148,7 +148,7 @@ void _stdf_read_dtc_xCn(stdf_file *f, dtc_xCn *xCn, dtc_U2 cnt)
 {
 	dtc_U2 i = 0;
 	dtc_Cn Cn;
-	(*xCn) = (dtc_xCn)malloc(sizeof(Cn) * cnt);
+	(*xCn) = (dtc_xCn)calloc(cnt, sizeof(Cn));
 	while (i < cnt) {
 		_stdf_read_dtc_Cn(f, &Cn);
 		xCn[i++] = &Cn;
@@ -201,7 +201,7 @@ void _stdf_read_dtc_Vn(stdf_file *f, dtc_Vn *pVn, dtc_U2 cnt)
 		Vn->data = (void*)malloc(sizeof(DTC)); \
 		_stdf_read_ ## DTC(f, ((DTC*)Vn->data));
 
-	(*pVn) = (dtc_Vn)malloc(sizeof(dtc_Vn_ele) * cnt);
+	(*pVn) = (dtc_Vn)calloc(cnt, sizeof(dtc_Vn_ele));
 	Vn = *pVn;
 	while (cnt-- > 0) {
 		Vn->type = *(f->rec_pos);
