@@ -1,0 +1,15 @@
+AC_INIT
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+AM_INIT_AUTOMAKE(libstdf, 0.1)
+
+AC_PROG_CC
+AC_PROG_CXX
+
+AC_OUTPUT([
+Makefile
+src/Makefile
+libstdf-config
+libstdf.pc
+])
