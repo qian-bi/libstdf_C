@@ -226,6 +226,7 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts)
 		ret->fd = fd;
 	} else
 		ret->filename = strdup(pathname);
+	ret->fops = NULL;
 
 	if (opts & STDF_OPTS_ZIP)
 		ret->file_format = STDF_FORMAT_ZIP;
@@ -299,7 +300,8 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts)
 
 	return ret;
 out_err:
-	ret->fops->close(ret);
+	if (ret->fops)
+		ret->fops->close(ret);
 	free(ret->filename);
 	free(ret);
 	return NULL;
