@@ -127,8 +127,7 @@ for (i=1; i<argc; ++i) {
 
 	while ((rec=stdf_read_record(f)) != NULL) {
 		recname = stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB);
-		if (HEAD_TO_REC(rec->header) != REC_UNKNOWN)
-			printf("Record %s:\n", recname);
+		printf("Record %s:\n", recname);
 		switch (HEAD_TO_REC(rec->header)) {
 			case REC_FAR: {
 				rec_far *far = (rec_far*)rec;
@@ -658,6 +657,8 @@ for (i=1; i<argc; ++i) {
 				print_str("TEXT_DAT", dtr->TEXT_DAT);
 				break;
 			}
+			case REC_UNKNOWN:
+				printf("\tBytes: %i\n", f->header.REC_LEN);
 		}
 		stdf_free_record(rec);
 	}
