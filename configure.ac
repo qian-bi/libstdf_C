@@ -1,5 +1,5 @@
 AC_INIT(libstdf, 0.3, [vapier@gmail.com])
-AM_INIT_AUTOMAKE(libstdf, 0.3)
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(include/libstdf_sys_config.h)
 
 AC_PROG_CC
@@ -218,19 +218,32 @@ else
 fi
 
 dnl ********************************************************
-dnl *                     GLIB [glib]                      *
+dnl *                     HASH [hash or glib]              *
 dnl ********************************************************
 if test "x$enable_example_programs" = "xyes" ; then
-PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.0,
+dnl First check for libhash ...
+HASH_LIBS=""
+AC_CHECK_LIB(hash, hash_initialise,
 	[
-		AC_DEFINE(HAVE_GLIB, 1, [Has glib support (used by example programs)])
-		AM_CONDITIONAL(HAVE_GLIB, true)
-	],
-	[
-		AM_CONDITIONAL(HAVE_GLIB, false)
-		GLIB_CFLAGS=""
-		GLIB_LIBS=""
+		AC_CHECK_HEADERS([hash.h], [HASH_LIBS="-lhash"])
 	])
+AC_SUBST(HASH_LIBS)
+
+dnl If that fails, check for glib ...
+PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.0,
+[
+	AC_DEFINE(HAVE_GLIB, 1, [Has glib support (used by example programs)])
+	AM_CONDITIONAL(HAVE_GLIB, true)
+],
+[
+	AM_CONDITIONAL(HAVE_GLIB, false)
+	GLIB_CFLAGS=""
+	GLIB_LIBS=""
+])
+if test "x$HASH_LIBS" != "x" ; then
+	GLIB_CFLAGS=""
+	GLIB_LIBS=""
+fi
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 fi
