@@ -9,6 +9,8 @@
 #ifndef _LIBSTDF_TYPES_H
 #define _LIBSTDF_TYPES_H
 
+#include <libstdf_systems.h>
+
 /* Definitions for Record Types [page 7] */
 #define	REC_TYP_INFO		0
 #define	REC_TYP_PER_LOT		1
@@ -98,7 +100,6 @@
 #define	REC_UNKNOWN			MAKE_REC(REC_TYP_UNKNOWN, REC_SUB_UNKNOWN)
 
 /* Definitions for Data Type Codes and Representation [page 8] */
-#include <sys/types.h>
 typedef	char*			dtc_Cn;
 typedef	char*			dtc_Cf;
 typedef	char			dtc_C1;

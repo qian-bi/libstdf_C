@@ -16,14 +16,10 @@
 #include <fcntl.h>
 /* for printf(3) */
 #include <stdio.h>
-/* for close(2) / read(2) */
-#include <unistd.h>
 /* for malloc(3) */
 #include <stdlib.h>
 /* for memcpy(3) */
 #include <string.h>
-/* for BYTE_ORDER defines */
-#include <endian.h>
 
 int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, long opts)
 {

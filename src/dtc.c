@@ -16,10 +16,6 @@
 #include <stdlib.h>
 /* for memcpy(3) */
 #include <string.h>
-/* for BYTE_ORDER defines */
-#include <endian.h>
-/* for bswap() functions */
-#include <byteswap.h>
 
 void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int len)
 {
