@@ -121,7 +121,7 @@ void _stdf_read_dtc_xU1(stdf_file *f, dtc_xU1 *xU1, dtc_U2 cnt)
 	{ \
 		int i; \
 		if (cnt == 0) { \
-			x = NULL; \
+			(*x) = NULL; \
 			return; \
 		} \
 		(*x) = (xType)malloc(sizeof(bType) * cnt); \
