@@ -6,5 +6,5 @@ autoconf || exit 1
 automake -a -c || exit 1
 
 if [ -x ./test.sh ] ; then
-	exec ./test.sh
+	exec ./test.sh "$@"
 fi
