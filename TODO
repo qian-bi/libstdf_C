@@ -1,11 +1,8 @@
-0.3:
+0.4:
 
- + zip/gzip/bzip reading support so people don't have to unpack before
-   sending the files through the library
+ - track down possible memory leaks with the GDR record type
 
- + doxygenify the sources and post results to the website
-
- + generate some manpages automagically
+ - ATDF support
 
  - publish a cleaned up spec file containing all the info i have for
    STDFv[34] in html format and post to website
@@ -27,8 +24,6 @@ unknown:
    512/1024/etc... bytes
 
  - test dtc_xCn / dtc_xN1 types which means testing PLR / MPR / FTR records
-
- - ATDF support
 
  - writing support
 
