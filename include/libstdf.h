@@ -1,7 +1,6 @@
 /**
  * @file libstdf.h
  * @brief Top level include and the main stdf structure definition.
- *
  */
 /*
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>

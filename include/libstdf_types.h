@@ -1,7 +1,6 @@
 /**
  * @file libstdf_types.h
  * @brief Public types.
- *
  */
 /*
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>

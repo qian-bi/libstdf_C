@@ -1,7 +1,6 @@
 /**
  * @file libstdf_funcs.h
  * @brief Publicly exported functions.
- *
  */
 /*
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>

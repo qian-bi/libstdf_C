@@ -1,7 +1,6 @@
 /**
  * @file libstdf_systems.h
  * @brief System specific include files / features.
- *
  */
 /*
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>

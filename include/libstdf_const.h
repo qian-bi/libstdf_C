@@ -1,7 +1,6 @@
 /**
  * @file libstdf_const.h
  * @brief Constants for specific records/members.
- *
  */
 /*
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>

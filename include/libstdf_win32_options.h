@@ -1,7 +1,7 @@
 /**
  * @file libstdf_win32_options.h
  * @brief Enable/Disable libstdf features.
- *
+ * @internal
  */
 /*
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
