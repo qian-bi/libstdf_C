@@ -2,6 +2,8 @@
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
+ *
+ * $Header$
  */
 
 #include <libstdf.h>
@@ -61,6 +63,17 @@ char* stdf_get_rec_name(int type, int subtype)
 	name[3] = '\0';
 	return name;
 }
+
+#define	warn_untested(type) \
+	do { \
+		fprintf(stderr, "******************************************\n"); \
+		fprintf(stderr, "This record type (" type ") has not been tested!\n"); \
+		fprintf(stderr, "Please consider sending this file to\n"); \
+		fprintf(stderr, "vapier@users.sourceforge.net to help out the\n"); \
+		fprintf(stderr, "FreeSTDF project and make sure this code\n"); \
+		fprintf(stderr, "works exactly the way it should!\n"); \
+		fprintf(stderr, "******************************************\n"); \
+	} while (0)
 
 #define __malloc_rec(r) ((r*)malloc(sizeof(r)))
 rec_unknown* stdf_read_rec_unknown(stdf_file *file, rec_header *h)
@@ -190,6 +203,7 @@ rec_pmr* stdf_read_rec_pmr(stdf_file *file)
 rec_pgr* stdf_read_rec_pgr(stdf_file *file)
 {
 	rec_pgr *pgr = __malloc_rec(rec_pgr);
+	warn_untested("PGR");
 	_stdf_read_dtc_U2(file, &(pgr->GRP_INDX));
 	_stdf_read_dtc_Cn(file, &(pgr->GRP_NAM));
 	_stdf_read_dtc_U2(file, &(pgr->INDX_CNT));
@@ -199,6 +213,7 @@ rec_pgr* stdf_read_rec_pgr(stdf_file *file)
 rec_plr* stdf_read_rec_plr(stdf_file *file)
 {
 	rec_plr *plr = __malloc_rec(rec_plr);
+	warn_untested("PLR");
 	_stdf_read_dtc_U2(file, &(plr->GRP_CNT));
 	_stdf_read_dtc_xU2(file, &(plr->GRP_INDX), plr->GRP_CNT);
 	_stdf_read_dtc_xU2(file, &(plr->GRP_MODE), plr->GRP_CNT);
@@ -212,6 +227,7 @@ rec_plr* stdf_read_rec_plr(stdf_file *file)
 rec_rdr* stdf_read_rec_rdr(stdf_file *file)
 {
 	rec_rdr *rdr = __malloc_rec(rec_rdr);
+	warn_untested("RDR");
 	_stdf_read_dtc_U2(file, &(rdr->NUM_BINS));
 	_stdf_read_dtc_xU2(file, &(rdr->RTST_BIN), rdr->NUM_BINS);
 	return rdr;
@@ -219,6 +235,7 @@ rec_rdr* stdf_read_rec_rdr(stdf_file *file)
 rec_sdr* stdf_read_rec_sdr(stdf_file *file)
 {
 	rec_sdr *sdr = __malloc_rec(rec_sdr);
+	warn_untested("SDR");
 	_stdf_read_dtc_U1(file, &(sdr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(sdr->SITE_GRP));
 	_stdf_read_dtc_U1(file, &(sdr->SITE_CNT));
@@ -356,6 +373,7 @@ rec_ptr* stdf_read_rec_ptr(stdf_file *file)
 rec_mpr* stdf_read_rec_mpr(stdf_file *file)
 {
 	rec_mpr *mpr = __malloc_rec(rec_mpr);
+	warn_untested("MPR");
 	_stdf_read_dtc_U4(file, &(mpr->TEST_NUM));
 	_stdf_read_dtc_U1(file, &(mpr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(mpr->SITE_NUM));
@@ -388,6 +406,7 @@ rec_mpr* stdf_read_rec_mpr(stdf_file *file)
 rec_ftr* stdf_read_rec_ftr(stdf_file *file)
 {
 	rec_ftr *ftr = __malloc_rec(rec_ftr);
+	warn_untested("FTR");
 	_stdf_read_dtc_U4(file, &(ftr->TEST_NUM));
 	_stdf_read_dtc_U1(file, &(ftr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(ftr->SITE_NUM));
@@ -432,6 +451,7 @@ rec_eps* stdf_read_rec_eps(stdf_file *file)
 rec_gdr* stdf_read_rec_gdr(stdf_file *file)
 {
 	rec_gdr *gdr = __malloc_rec(rec_gdr);
+	warn_untested("GDR");
 	_stdf_read_dtc_U2(file, &(gdr->FLD_CNT));
 /*	_stdf_read_dtc_Vn(file, &(gdr->GEN_DATA), gdr->FLD_CNT);*/
 	return gdr;

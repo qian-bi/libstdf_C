@@ -1,3 +1,11 @@
+/* record_stats.c
+ * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
+ * Released under the BSD license.  For more information,
+ * please see: http://opensource.org/licenses/bsd-license.php
+ *
+ * $Header$
+ */
+
 #include <libstdf.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +17,7 @@
 #if HAVE_GLIB
 void print_stat(gpointer key, gpointer value, gpointer user_data)
 {
-	printf("Record %s appeared %li times\n", (char*)key, *((long*)value));
+	printf("\t%s : %li\n", (char*)key, *((long*)value));
 }
 #endif
 
@@ -22,13 +30,16 @@ int main(int argc, char *argv[])
 	GHashTable *hash_table;
 #endif
 	long *stat, cnt;
+	int i;
 
-	if (argc != 2) {
-		printf("Need a file to open!\n");
+	if (argc <= 1) {
+		printf("Need some files to open!\n");
 		return -1;
 	}
 
-	f = stdf_open(argv[1]);
+for (i=1; i<argc; ++i) {
+	printf("Analyzing %s\n", argv[i]);
+	f = stdf_open(argv[i]);
 	if (!f) {
 		perror("Could not open file");
 		return 1;
@@ -38,7 +49,6 @@ int main(int argc, char *argv[])
 	hash_table = g_hash_table_new(g_str_hash, g_str_equal);
 #endif
 	cnt = 0;
-	printf("Analyzing [%s]\n", argv[1]);
 	while ((rec=stdf_read_record(f)) != NULL) {
 		recname = stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB);
 #if HAVE_GLIB
@@ -58,6 +68,7 @@ int main(int argc, char *argv[])
 	g_hash_table_foreach(hash_table, print_stat, NULL);
 	g_hash_table_destroy(hash_table);
 #endif
-	printf("%li records found\n", cnt);
+	printf("\tTOTAL : %li\n", cnt);
+}
 	return 0;
 }

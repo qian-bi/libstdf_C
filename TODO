@@ -1,0 +1,13 @@
+ - stop thrashing the file system so damned hard ... read in the STDF 
+   in as chunks of XXX bytes and then have the dtc functions run off 
+   that buffer in memory
+
+ - add a win32 directory with a workspace so this will build in Visual 
+   Studio ?  guess that means figuring out how to make a proper .dll 
+   and making sure everything is portable as can be ...
+
+ - test the variable sized data types ... i can generate fake STDF 
+   files for the basic data types, but the descriptions aren't very 
+   clear on the xU2, xCn, etc... types and the only way to *really* 
+   test them would be if i had a real data file ... anyone willing to 
+   donate one or two ? :)

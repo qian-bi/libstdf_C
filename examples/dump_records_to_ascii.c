@@ -1,3 +1,11 @@
+/* dump_records_to_ascii.c
+ * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
+ * Released under the BSD license.  For more information,
+ * please see: http://opensource.org/licenses/bsd-license.php
+ *
+ * $Header$
+ */
+
 #include <libstdf.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,24 +20,37 @@
 #define print_hex(n,h) print_fmt(n, "%X\n", h)
 #define print_rel(n,r) print_fmt(n, "%f\n", r)
 
+#define	print_UNK(n) \
+	do { \
+		fprintf(stderr, "******************************************\n"); \
+		fprintf(stderr, "This field (" n ") has not been tested!\n"); \
+		fprintf(stderr, "Please consider sending this file to\n"); \
+		fprintf(stderr, "vapier@users.sourceforge.net to help out the\n"); \
+		fprintf(stderr, "FreeSTDF project and make sure this code\n"); \
+		fprintf(stderr, "works exactly the way it should!\n"); \
+		fprintf(stderr, "******************************************\n"); \
+	} while (0)
+
 int main(int argc, char *argv[])
 {
 	stdf_file *f;
 	char *recname;
 	rec_unknown *rec;
+	int i;
 
-	if (argc != 2) {
-		printf("Need a file to open!\n");
+	if (argc <= 1) {
+		printf("Need some files to open!\n");
 		return -1;
 	}
 
-	f = stdf_open(argv[1]);
+for (i=1; i<argc; ++i) {
+	printf("Dumping %s\n", argv[i]);
+	f = stdf_open(argv[i]);
 	if (!f) {
 		perror("Could not open file");
 		return 1;
 	}
 
-	printf("Dumping [%s]\n", argv[1]);
 	while ((rec=stdf_read_record(f)) != NULL) {
 		recname = stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB);
 		if (HEAD_TO_REC(rec->header) != REC_UNKNOWN)
@@ -139,12 +160,56 @@ int main(int argc, char *argv[])
 				print_int("SITE_NUM", pmr->SITE_NUM);
 				break;
 			}
-/*
-rec_pgr
-rec_plr
-rec_rdr
-rec_sdr
-*/
+			case REC_PGR: {
+				rec_pgr *pgr = (rec_pgr*)rec;
+				print_int("GRP_INDX", pgr->GRP_INDX);
+				print_str("GRP_NAM", pgr->GRP_NAM);
+				print_int("INDX_CNT", pgr->INDX_CNT);
+				print_UNK("PMR_INDX");
+				break;
+			}
+			case REC_PLR: {
+				rec_plr *plr = (rec_plr*)rec;
+				print_int("GRP_CNT", plr->GRP_CNT);
+				print_UNK("GRP_INDX");
+				print_UNK("GRP_MODE");
+				print_UNK("GRP_RADX");
+				print_UNK("PGM_CHAR");
+				print_UNK("RTN_CHAR");
+				print_UNK("PGM_CHAL");
+				print_UNK("RTN_CHAL");
+				break;
+			}
+			case REC_RDR: {
+				rec_rdr *rdr = (rec_rdr*)rec;
+				print_int("NUM_BINS", rdr->NUM_BINS);
+				print_UNK("RTST_BIN");
+				break;
+			}
+			case REC_SDR: {
+				rec_sdr *sdr = (rec_sdr*)rec;
+				print_int("HEAD_NUM", sdr->HEAD_NUM);
+				print_int("SITE_GRP", sdr->SITE_GRP);
+				print_int("SITE_CNT", sdr->SITE_CNT);
+				print_UNK("SITE_NUM");
+				print_str("HAND_TYP", sdr->HAND_TYP);
+				print_str("HAND_ID", sdr->HAND_ID);
+				print_str("CARD_TYP", sdr->CARD_TYP);
+				print_str("CARD_ID", sdr->CARD_ID);
+				print_str("LOAD_TYP", sdr->LOAD_TYP);
+				print_str("LOAD_ID", sdr->LOAD_ID);
+				print_str("DIB_TYP", sdr->DIB_TYP);
+				print_str("DIB_ID", sdr->DIB_ID);
+				print_str("CABL_TYP", sdr->CABL_TYP);
+				print_str("CABL_ID", sdr->CABL_ID);
+				print_str("CONT_TYP", sdr->CONT_TYP);
+				print_str("CONT_ID", sdr->CONT_ID);
+				print_str("LASR_TYP", sdr->LASR_TYP);
+				print_str("LASR_ID", sdr->LASR_ID);
+				print_str("EXTR_TYP", sdr->EXTR_TYP);
+				print_str("EXTR_ID", sdr->EXTR_ID);
+				break;
+			}
 			case REC_WIR: {
 				rec_wir *wir = (rec_wir*)rec;
 				print_int("HEAD_NUM", wir->HEAD_NUM);
@@ -203,7 +268,7 @@ rec_sdr
 				print_tim("TEST_T", prr->TEST_T);
 				print_str("PART_ID", prr->PART_ID);
 				print_str("PART_TXT", prr->PART_TXT);
-				/*print_hxs("PART_FIX", prr->*/
+				print_UNK("PART_FIX");
 				break;
 			}
 			case REC_TSR: {
@@ -250,10 +315,69 @@ rec_sdr
 				print_rel("HI_SPEC", ptr->HI_SPEC);
 				break;
 			}
-/*
-rec_mpr
-rec_ftr
-*/
+			case REC_MPR: {
+				rec_mpr *mpr = (rec_mpr*)rec;
+				print_int("TEST_NUM", mpr->TEST_NUM);
+				print_int("HEAD_NUM", mpr->HEAD_NUM);
+				print_int("SITE_NUM", mpr->SITE_NUM);
+				print_hex("TEST_FLG", mpr->TEST_FLG);
+				print_hex("PARM_FLG", mpr->PARM_FLG);
+				print_int("RTN_ICNT", mpr->RTN_ICNT);
+				print_int("RSLT_CNT", mpr->RSLT_CNT);
+				print_UNK("RTN_STAT");
+				print_UNK("RTN_RSLT");
+				print_str("TEST_TXT", mpr->TEST_TXT);
+				print_str("ALARM_ID", mpr->ALARM_ID);
+				print_hex("OPT_FLAG", mpr->OPT_FLAG);
+				print_int("RES_SCAL", mpr->RES_SCAL);
+				print_int("LLM_SCAL", mpr->LLM_SCAL);
+				print_int("HLM_SCAL", mpr->HLM_SCAL);
+				print_rel("LO_LIMIT", mpr->LO_LIMIT);
+				print_rel("HI_LIMIT", mpr->HI_LIMIT);
+				print_rel("START_IN", mpr->START_IN);
+				print_rel("INCR_IN", mpr->INCR_IN);
+				print_UNK("RTN_INDX");
+				print_str("UNITS", mpr->UNITS);
+				print_str("UNITS_IN", mpr->UNITS_IN);
+				print_str("C_RESFMT", mpr->C_RESFMT);
+				print_str("C_LLMFMT", mpr->C_LLMFMT);
+				print_str("C_HLMFMT", mpr->C_HLMFMT);
+				print_rel("LO_SPEC", mpr->LO_SPEC);
+				print_rel("HI_SPEC", mpr->HI_SPEC);
+				break;
+			}
+			case REC_FTR: {
+				rec_ftr *ftr = (rec_ftr*)rec;
+				print_int("TEST_NUM", ftr->TEST_NUM);
+				print_int("HEAD_NUM", ftr->HEAD_NUM);
+				print_int("SITE_NUM", ftr->SITE_NUM);
+				print_hex("TEST_FLG", ftr->TEST_FLG);
+				print_hex("PARM_FLG", ftr->PARM_FLG);
+				print_int("CYCL_CNT", ftr->CYCL_CNT);
+				print_int("REL_VADR", ftr->REL_VADR);
+				print_int("REPT_CNT", ftr->REPT_CNT);
+				print_int("NUM_FAIL", ftr->NUM_FAIL);
+				print_int("XFAIL_AD", ftr->XFAIL_AD);
+				print_int("YFAIL_AD", ftr->YFAIL_AD);
+				print_int("VECT_OFF", ftr->VECT_OFF);
+				print_int("RTN_ICNT", ftr->RTN_ICNT);
+				print_int("PGM_ICNT", ftr->PGM_ICNT);
+				print_UNK("RTN_INDX");
+				print_UNK("RTN_STAT");
+				print_UNK("PGM_INDX");
+				print_UNK("PGM_STAT");
+				print_UNK("FAIL_PIN");
+				print_str("VECT_NAM", ftr->VECT_NAM);
+				print_str("TIME_SET", ftr->TIME_SET);
+				print_str("OP_CODE", ftr->OP_CODE);
+				print_str("TEST_TXT", ftr->TEST_TXT);
+				print_str("ALARM_ID", ftr->ALARM_ID);
+				print_str("PROG_TXT", ftr->PROG_TXT);
+				print_str("RSLT_TXT", ftr->RSLT_TXT);
+				print_int("PATG_NUM", ftr->PATG_NUM);
+				print_UNK("SPIN_MAP");
+				break;
+			}
 			case REC_BPS: {
 				rec_bps *bps = (rec_bps*)rec;
 				print_str("SEQ_NAME", bps->SEQ_NAME);
@@ -263,9 +387,11 @@ rec_ftr
 				/*rec_eps *eps = (rec_eps*)rec;*/
 				break;
 			}
-/*
-rec_gdr
-*/
+			case REC_GDR: {
+				/*rec_gdr *gdr = (rec_gdr*)rec;*/
+				print_UNK("GEN_DATA");
+				break;
+			}
 			case REC_DTR: {
 				rec_dtr *dtr = (rec_dtr*)rec;
 				print_str("TEXT_DAT", dtr->TEXT_DAT);
@@ -275,5 +401,6 @@ rec_gdr
 		stdf_free_record(rec);
 	}
 	stdf_close(f);
+}
 	return 0;
 }
