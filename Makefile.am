@@ -1,4 +1,4 @@
-SUBDIRS = include src examples
+SUBDIRS = include src examples tests
 
 bin_SCRIPTS = libstdf-config
 
