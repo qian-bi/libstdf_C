@@ -54,6 +54,22 @@
 #if defined(HAVE_SYS_ENDIAN_H)
 # include <sys/endian.h>
 #endif
+#if defined(HAVE_MACHINE_ENDIAN_H)
+# include <machine/endian.h>
+#endif
+
+/* Support for Tru64 */
+#if defined(HAVE_CMPLRS_HOST_H)
+# include <cmplrs/host.h>
+typedef uint8 uint8_t;
+typedef uint16 uint16_t;
+typedef uint32 uint32_t;
+typedef uint64 uint64_t;
+typedef int8 int8_t;
+typedef int16 int16_t;
+typedef int32 int32_t;
+typedef int64 int64_t;
+#endif
 
 #if HAVE_ZIP
 # include <zzip/zzip.h>
