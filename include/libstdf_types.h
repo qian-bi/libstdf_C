@@ -18,6 +18,7 @@
 #define	REC_TYP_GENERIC		50
 #define	REC_TYP_RESV_IMAGE	180
 #define	REC_TYP_RESV_IG900	181
+#define	REC_TYP_UNKNOWN		0xFF
 /* Definitions for Record Subtypes [page 7] */
 #define	REC_SUB_FAR			10
 #define	REC_SUB_ATR			20
@@ -44,8 +45,10 @@
 #define	REC_SUB_EPS			20
 #define	REC_SUB_GDR			10
 #define	REC_SUB_DTR			30
+#define	REC_SUB_UNKNOWN		0xFF
 /* Definitions that combine Record Types with Subtypes */
 #define	MAKE_REC(typ,sub)	((typ << 8) + sub)
+#define	HEAD_TO_REC(h)		MAKE_REC(h.REC_TYP,h.REC_SUB)
 #define	REC_FAR				MAKE_REC(REC_TYP_INFO, REC_SUB_FAR)
 #define	REC_ATR				MAKE_REC(REC_TYP_INFO, REC_SUB_ATR)
 #define	REC_MIR				MAKE_REC(REC_TYP_PER_LOT, REC_SUB_MIR)
@@ -71,22 +74,261 @@
 #define	REC_EPS				MAKE_REC(REC_TYP_PER_PROG, REC_SUB_EPS)
 #define	REC_GDR				MAKE_REC(REC_TYP_GENERIC, REC_SUB_GDR)
 #define	REC_DTR				MAKE_REC(REC_TYP_GENERIC, REC_SUB_DTR)
+#define	REC_UNKNOWN			MAKE_REC(REC_TYP_UNKNOWN, REC_SUB_UNKNOWN)
 
 /* Definitions for Data Type Codes and Representation [page 8] */
 #include <sys/types.h>
 typedef	char*			dtc_Cn;
 typedef	char*			dtc_Cf;
+typedef	char			dtc_C1;
 typedef	__uint8_t		dtc_U1;
 typedef	__uint16_t		dtc_U2;
-typedef	__uint64_t		dtc_U4;
+typedef	__uint32_t		dtc_U4;
 typedef	__int8_t		dtc_I1;
 typedef	__int16_t		dtc_I2;
-typedef	__int64_t		dtc_I4;
+typedef	__int32_t		dtc_I4;
 typedef	float			dtc_R4;
 typedef	double			dtc_R8;
 typedef	char*			dtc_Vn;
 typedef	char*			dtc_Bn;
+typedef	char			dtc_B1;
 typedef	char*			dtc_Dn;
 typedef	char			dtc_N1;
+
+/* Definitions for Record Types [page 15+] */
+typedef struct {
+	dtc_U2		REC_LEN;
+	dtc_U1		REC_TYP;
+	dtc_U1		REC_SUB;
+} rec_header;
+/* generic record ... just enough to get at the header */
+typedef struct {
+	rec_header	header;
+	void		*data;
+} rec_unknown;
+/* FAR: File Attributes Record [page 18] */
+typedef struct {
+	rec_header	header;
+	dtc_U1		CPU_TYPE;
+	dtc_U1		STDF_VER;
+} rec_far;
+#define	CPU_TYPE_DEC		0
+#define	CPU_TYPE_SPARC		1
+#define	CPU_TYPE_X86		2
+/* ATR: Audit Trail Record [page 19] */
+typedef struct {
+	rec_header	header;
+	dtc_U4		MOD_TIM;
+	dtc_Cn		CMD_LINE;
+} rec_atr;
+/* MIR: Master Information Record (MIR) */
+typedef struct {
+	rec_header	header;
+	dtc_U4		SETUP_T;
+	dtc_U4		START_T;
+	dtc_U1		STAT_NUM;
+	dtc_C1		MODE_COD;
+	dtc_C1		RTST_COD;
+	dtc_C1		PROT_COD;
+	dtc_U2		BURN_TIM;
+	dtc_C1		CMOD_COD;
+	dtc_Cn		LOT_ID;
+	dtc_Cn		PART_TYP;
+	dtc_Cn		NODE_NAM;
+	dtc_Cn		TSTR_TYP;
+	dtc_Cn		JOB_NAM;
+	dtc_Cn		JOB_REV;
+	dtc_Cn		SBLOT_ID;
+	dtc_Cn		OPER_NAM;
+	dtc_Cn		EXEC_TYP;
+	dtc_Cn		EXEC_VER;
+	dtc_Cn		TEST_COD;
+	dtc_Cn		TST_TEMP;
+	dtc_Cn		USER_TXT;
+	dtc_Cn		AUX_FILE;
+	dtc_Cn		PKG_TYP;
+	dtc_Cn		FAMILY_ID;
+	dtc_Cn		DATE_COD;
+	dtc_Cn		FACIL_ID;
+	dtc_Cn		FLOOR_ID;
+	dtc_Cn		PROC_ID;
+	dtc_Cn		OPER_FRQ;
+	dtc_Cn		SPEC_NAM;
+	dtc_Cn		SPEC_VER;
+	dtc_Cn		FLOW_ID;
+	dtc_Cn		SETUP_ID;
+	dtc_Cn		DSGN_REV;
+	dtc_Cn		ENG_ID;
+	dtc_Cn		ROM_COD;
+	dtc_Cn		SERL_NUM;
+	dtc_Cn		SUPR_NAM;
+} rec_mir;
+typedef struct {
+	rec_header	header;
+	dtc_U4		FINISH_T;
+	dtc_C1		DISP_COD;
+	dtc_Cn		USR_DESC;
+	dtc_Cn		EXC_DESC;
+} rec_mrr;
+typedef struct {
+	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_U4		PART_CNT;
+	dtc_U4		RTST_CNT;
+	dtc_U4		ABRT_CNT;
+	dtc_U4		GOOD_CNT;
+	dtc_U4		FUNC_CNT;
+} rec_pcr;
+typedef struct {
+	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_U2		HBIN_NUM;
+	dtc_U4		HBIN_CNT;
+	dtc_C1		HBIN_PF;
+	dtc_Cn		HBIN_NAM;
+} rec_hbr;
+typedef struct {
+	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_U2		SBIN_NUM;
+	dtc_U4		SBIN_CNT;
+	dtc_C1		SBIN_PF;
+	dtc_Cn		SBIN_NAM;
+} rec_sbr;
+typedef struct {
+	rec_header	header;
+	dtc_U2		PMR_INDX;
+	dtc_U2		CHAN_TYP;
+	dtc_Cn		CHAN_NAM;
+	dtc_Cn		PHY_NAM;
+	dtc_Cn		LOG_NAM;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+} rec_pmr;
+/*
+rec_pgr
+rec_plr
+rec_rdr
+rec_sdr
+*/
+typedef struct {
+	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_GRP;
+	dtc_U4		START_T;
+	dtc_Cn		WAFER_ID;
+} rec_wir;
+typedef struct {
+	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_GRP;
+	dtc_U4		FINISH_T;
+	dtc_U4		PART_CNT;
+	dtc_U4		RTST_CNT;
+	dtc_U4		ABRT_CNT;
+	dtc_U4		GOOD_CNT;
+	dtc_U4		FUNC_CNT;
+	dtc_Cn		WAFER_ID;
+	dtc_Cn		FABWF_ID;
+	dtc_Cn		FRAME_ID;
+	dtc_Cn		MASK_ID;
+	dtc_Cn		USR_DESC;
+	dtc_Cn		EXC_DESC;
+} rec_wrr;
+typedef struct {
+	rec_header	header;
+	dtc_R4		WAFR_SIZ;
+	dtc_R4		DIE_HT;
+	dtc_R4		DIE_WID;
+	dtc_C1		WF_UNITS;
+	dtc_C1		WF_FLAT;
+	dtc_I2		CENTER_X;
+	dtc_I2		CENTER_Y;
+	dtc_C1		POS_X;
+	dtc_C1		POS_Y;
+} rec_wcr;
+typedef struct {
+	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+} rec_pir;
+typedef struct {
+	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_B1		PART_FLG;
+	dtc_U2		NUM_TEST;
+	dtc_U2		HARD_BIN;
+	dtc_U2		SOFT_BIN;
+	dtc_I2		X_COORD;
+	dtc_I2		Y_COORD;
+	dtc_U4		TEST_T;
+	dtc_Cn		PART_ID;
+	dtc_Cn		PART_TXT;
+	dtc_Bn		PART_FIX;
+} rec_prr;
+typedef struct {
+	rec_header	header;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_C1		TEST_TYP;
+	dtc_U4		TEST_NUM;
+	dtc_U4		EXEC_CNT;
+	dtc_U4		FAIL_CNT;
+	dtc_U4		ALRM_CNT;
+	dtc_Cn		TEST_NAM;
+	dtc_Cn		SEQ_NAME;
+	dtc_Cn		TEST_LBL;
+	dtc_B1		OPT_FLAG;
+	dtc_R4		TEST_TIM;
+	dtc_R4		TEST_MIN;
+	dtc_R4		TEST_MAX;
+	dtc_R4		TST_SUMS;
+	dtc_R4		TST_SQRS;
+} rec_tsr;
+typedef struct {
+	rec_header	header;
+	dtc_U4		TEST_NUM;
+	dtc_U1		HEAD_NUM;
+	dtc_U1		SITE_NUM;
+	dtc_B1		TEST_FLG;
+	dtc_B1		PARM_FLG;
+	dtc_R4		RESTULT;
+	dtc_Cn		TEST_TXT;
+	dtc_Cn		ALARM_ID;
+	dtc_B1		OPT_FLAG;
+	dtc_I1		RES_SCAL;
+	dtc_I1		LLM_SCAL;
+	dtc_I1		HLM_SCAL;
+	dtc_R4		LO_LIMIT;
+	dtc_R4		HI_LIMIT;
+	dtc_Cn		UNITS;
+	dtc_Cn		C_RESFMT;
+	dtc_Cn		C_LLMFMT;
+	dtc_Cn		C_HLMFMT;
+	dtc_R4		LO_SPEC;
+	dtc_R4		HI_SPEC;
+} rec_ptr;
+/*
+rec_mpr
+rec_ftr
+*/
+typedef struct {
+	rec_header	header;
+	dtc_Cn		SEQ_NAME;
+} rec_bps;
+typedef struct {
+	rec_header	header;
+} rec_eps;
+/*
+rec_gdr
+*/
+typedef struct {
+	rec_header	header;
+	dtc_Cn		TEXT_DAT;
+} rec_dtr;
 
 #endif /* _LIBSTDF_TYPES_H */

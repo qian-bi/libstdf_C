@@ -7,8 +7,24 @@
 #ifndef _LIBSTDF_H
 #define _LIBSTDF_H
 
-#include <libstdf_funcs.h>
 #include <libstdf_types.h>
 
+#include <sys/types.h>
+#define	__STDF_HOST_BYTE_ORDER		BYTE_ORDER
+typedef	__uint8_t		byte_t;
+typedef struct {
+	int			fd;
+	int			byte_order;
+	rec_header	header;
+	off_t		pos;
+	off_t		rec_end;
+/*	struct byte_order {
+		int		src;
+		void	(*to_host)(int,byte_t*,long);
+		void	(*to_src)(int,byte_t*,long);
+	} bo;*/
+} stdf_file;
+
+#include <libstdf_funcs.h>
 
 #endif /* _LIBSTDF_H */
