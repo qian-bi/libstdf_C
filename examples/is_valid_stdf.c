@@ -1,4 +1,4 @@
-/* dump_records_to_ascii.c
+/* is_valid_stdf.c
  * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
@@ -12,30 +12,14 @@
 #include <string.h>
 #include <time.h>
 
-#define print_fmt(n,f,v) printf("\t" n ": " f, v)
-#define print_int(n,i) print_fmt(n, "%i\n", i)
-#define print_str(n,s) print_fmt(n, "%s\n", (*s ? s+1 : NULL))
-#define print_chr(n,c) print_fmt(n, "%c\n", c)
-#define print_tim(n,d) print_fmt(n, "%s", ctime((time_t*)&d))
-#define print_hex(n,h) print_fmt(n, "%X\n", h)
-#define print_rel(n,r) print_fmt(n, "%f\n", r)
-
-#define	print_UNK(n) \
-	do { \
-		fprintf(stderr, "******************************************\n"); \
-		fprintf(stderr, "This field (" n ") has not been tested!\n"); \
-		fprintf(stderr, "Please consider sending this file to\n"); \
-		fprintf(stderr, "vapier@users.sourceforge.net to help out the\n"); \
-		fprintf(stderr, "FreeSTDF project and make sure this code\n"); \
-		fprintf(stderr, "works exactly the way it should!\n"); \
-		fprintf(stderr, "******************************************\n"); \
-	} while (0)
+#define	print_msg(m) printf("\t" m "\n");
 
 int main(int argc, char *argv[])
 {
 	stdf_file *f;
 	char *recname;
 	rec_unknown *rec;
+	rec_header prev_rec;
 	int i;
 
 	if (argc <= 1) {
@@ -44,15 +28,25 @@ int main(int argc, char *argv[])
 	}
 
 for (i=1; i<argc; ++i) {
-	printf("Dumping %s\n", argv[i]);
+	printf("Validating %s\n", argv[i]);
 	f = stdf_open(argv[i]);
 	if (!f) {
 		perror("Could not open file");
 		return EXIT_FAILURE;
 	}
 
+	rec = stdf_read_record(f);
+	if (rec == NULL || HEAD_TO_REC(rec->header) != REC_FAR) {
+		print_msg("First record is not FAR!");
+		stdf_close(f);
+		continue;
+	}
+	memcpy(&prev_rec, rec->header, sizeof(rec_header));
 	while ((rec=stdf_read_record(f)) != NULL) {
 		recname = stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB);
+		if (HEAD_TO_REC(rec->header) == REC_FAR) {
+			
+		}
 		if (HEAD_TO_REC(rec->header) != REC_UNKNOWN)
 			printf("Record %s:\n", recname);
 		switch (HEAD_TO_REC(rec->header)) {

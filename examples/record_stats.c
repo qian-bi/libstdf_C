@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
 	if (argc <= 1) {
 		printf("Need some files to open!\n");
-		return -1;
+		return EXIT_FAILURE;
 	}
 
 for (i=1; i<argc; ++i) {
@@ -42,7 +42,7 @@ for (i=1; i<argc; ++i) {
 	f = stdf_open(argv[i]);
 	if (!f) {
 		perror("Could not open file");
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 #if HAVE_GLIB
@@ -70,5 +70,5 @@ for (i=1; i<argc; ++i) {
 #endif
 	printf("\tTOTAL : %li\n", cnt);
 }
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -10,6 +10,7 @@
 #define _LIBSTDF_H
 
 #include <libstdf_types.h>
+#include <libstdf_const.h>
 
 /* Do we read one record at a time or a whole lot of data ? */
 #define	__STDF_READ_ONE_RECORD		1

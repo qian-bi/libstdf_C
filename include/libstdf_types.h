@@ -121,9 +121,6 @@ typedef struct {
 	dtc_U1		CPU_TYPE;
 	dtc_U1		STDF_VER;
 } rec_far;
-#define	CPU_TYPE_DEC		0
-#define	CPU_TYPE_SPARC		1
-#define	CPU_TYPE_X86		2
 /* ATR: Audit Trail Record [page 19] */
 typedef struct {
 	rec_header	header;
