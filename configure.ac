@@ -1,11 +1,11 @@
 AC_INIT(libstdf, 0.3, [vapier@gmail.com])
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER(include/libstdf_sys_config.h)
+AC_CONFIG_HEADER(include/libstdf_sys_config.h)
 
 AC_PROG_CC
-AM_PROG_LIBTOOL
-AM_ENABLE_SHARED
-AM_ENABLE_STATIC
+AC_PROG_LIBTOOL
+AC_ENABLE_SHARED
+AC_ENABLE_STATIC
 
 AC_CHECK_HEADERS([ \
 stdint.h inttypes.h sys/types.h sys/stat.h \
