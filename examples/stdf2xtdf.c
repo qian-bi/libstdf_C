@@ -23,7 +23,6 @@
 			print_fmt(n, "\"%s\"", s+1); \
 	} while (0)
 #define print_chr(n,c) print_fmt(n, "'%c'", c)
-/* #define print_tim(n,d) print_fmt(n, "%s", ctime((time_t*)&d)) */
 #define print_tim(n,d) print_int(n,d)
 #define print_hex(n,h) print_fmt(n, "%X", h)
 #define print_rel(n,r) print_fmt(n, "%f", r)

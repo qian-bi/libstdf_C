@@ -19,9 +19,10 @@
 #define print_int(n,i) print_fmt(n, "%i\n", i)
 #define print_str(n,s) print_fmt(n, "%s\n", (*s ? s+1 : "(null)"))
 #define print_chr(n,c) print_fmt(n, "%c\n", c)
-#define print_tim(n,d) print_fmt(n, "%s", ctime((time_t*)&d))
 #define print_hex(n,h) print_fmt(n, "%X\n", h)
 #define print_rel(n,r) print_fmt(n, "%f\n", r)
+#define print_tim(n,d) \
+	do { time_t t = d; print_fmt(n, "%s", ctime(&t)); } while(0)
 
 #define MAKE_PRINT_X(DTC, FORMAT) \
 void print_x ## DTC(char *n, dtc_x ## DTC u, int c) \
