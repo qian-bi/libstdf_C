@@ -24,12 +24,36 @@
 int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, long opts)
 {
 	switch (cpu_type) {
-		case CPU_TYPE_DEC:		f->byte_order = PDP_ENDIAN;
+		case CPU_TYPE_DEC:
+			f->byte_order = PDP_ENDIAN;
 			fprintf(stderr, "byte_order: CPU_TYPE_DEC (PDP_ENDIAN) has no implementation\n");
 			break;
-		case CPU_TYPE_SPARC:	f->byte_order = BIG_ENDIAN; break;
-		case CPU_TYPE_X86:		f->byte_order = LITTLE_ENDIAN; break;
-		default:				f->byte_order = __STDF_HOST_BYTE_ORDER; break;
+
+		/*case CPU_TYPE_SUN_680XX:*/
+		case CPU_TYPE_SPARC:
+			f->byte_order = BIG_ENDIAN;
+			break;
+
+		/*case CPU_TYPE_SUN_80386:*/
+		case CPU_TYPE_X86:
+			f->byte_order = LITTLE_ENDIAN;
+			break;
+
+#ifdef STDF_VER3
+		case CPU_TYPE_LTX:
+			if (stdf_ver == 3) {
+				fprintf(stderr, "byte_order: CPU_TYPE_LTX (???_ENDIAN) has no implementation\n");
+				break;
+			}
+		case CPU_TYPE_APOLLO:
+			if (stdf_ver == 3) {
+				fprintf(stderr, "byte_order: CPU_TYPE_APOLLO (???_ENDIAN) has no implementation\n");
+				break;
+			}
+#endif
+		default:
+			f->byte_order = __STDF_HOST_BYTE_ORDER;
+			break;
 	}
 	if ((opts & STDF_OPTS_FORCE_V4) || (opts & STDF_OPTS_FORCE) || stdf_ver == 4) {
 		f->ver = 4;
@@ -66,9 +90,9 @@ stdf_file* stdf_open_ex(char *pathname, int opts)
 			goto out_err;
 		} else {
 			char temp[2];
-			/* STDF v3 can have either a FAR or a MIR record */
 			if ((HEAD_TO_REC(ret->header) == REC_FAR)
 #ifdef STDF_VER3
+				/* STDF v3 can have either a FAR or a MIR record */
 				|| (HEAD_TO_REC(ret->header) == REC_MIR)
 #endif
 				)

@@ -105,6 +105,9 @@ rec_atr* stdf_read_rec_atr(stdf_file *file)
 rec_mir* stdf_read_rec_mir(stdf_file *file)
 {
 	rec_mir *mir = __malloc_rec(rec_mir);
+#ifdef STDF_VER3
+	if (file->ver == 4) {
+#endif
 	_stdf_read_dtc_U4(file, &(mir->SETUP_T));
 	_stdf_read_dtc_U4(file, &(mir->START_T));
 	_stdf_read_dtc_U1(file, &(mir->STAT_NUM));
@@ -143,12 +146,48 @@ rec_mir* stdf_read_rec_mir(stdf_file *file)
 	_stdf_read_dtc_Cn(file, &(mir->ROM_COD));
 	_stdf_read_dtc_Cn(file, &(mir->SERL_NUM));
 	_stdf_read_dtc_Cn(file, &(mir->SUPR_NAM));
+#ifdef STDF_VER3
+	} else {
+	_stdf_read_dtc_U1(file, &(mir->CPU_TYPE));
+	_stdf_read_dtc_U1(file, &(mir->STDF_VER));
+	_stdf_read_dtc_C1(file, &(mir->MODE_COD));
+	_stdf_read_dtc_U1(file, &(mir->STAT_NUM));
+	_stdf_read_dtc_Cx(file, &(mir->TEST_COD), 3);
+	_stdf_read_dtc_C1(file, &(mir->RTST_COD));
+	_stdf_read_dtc_C1(file, &(mir->PROT_COD));
+	_stdf_read_dtc_C1(file, &(mir->CMOD_COD));
+	_stdf_read_dtc_U4(file, &(mir->SETUP_T));
+	_stdf_read_dtc_U4(file, &(mir->START_T));
+	_stdf_read_dtc_Cn(file, &(mir->LOT_ID));
+	_stdf_read_dtc_Cn(file, &(mir->PART_TYP));
+	_stdf_read_dtc_Cn(file, &(mir->JOB_NAM));
+	_stdf_read_dtc_Cn(file, &(mir->OPER_NAM));
+	_stdf_read_dtc_Cn(file, &(mir->NODE_NAM));
+	_stdf_read_dtc_Cn(file, &(mir->TSTR_TYP));
+	_stdf_read_dtc_Cn(file, &(mir->EXEC_TYP));
+	_stdf_read_dtc_Cn(file, &(mir->SUPR_NAM));
+	_stdf_read_dtc_Cn(file, &(mir->HAND_ID));
+	_stdf_read_dtc_Cn(file, &(mir->SBLOT_ID));
+	_stdf_read_dtc_Cn(file, &(mir->JOB_REV));
+	_stdf_read_dtc_Cn(file, &(mir->PROC_ID));
+	_stdf_read_dtc_Cn(file, &(mir->PRB_CARD));
+	}
+#endif
 	return mir;
 }
 rec_mrr* stdf_read_rec_mrr(stdf_file *file)
 {
 	rec_mrr *mrr = __malloc_rec(rec_mrr);
 	_stdf_read_dtc_U4(file, &(mrr->FINISH_T));
+#ifdef STDF_VER3
+	if (file->ver == 3) {
+	_stdf_read_dtc_U4(file, &(mrr->PART_CNT));
+	_stdf_read_dtc_I4(file, &(mrr->RTST_CNT));
+	_stdf_read_dtc_I4(file, &(mrr->ABRT_CNT));
+	_stdf_read_dtc_I4(file, &(mrr->GOOD_CNT));
+	_stdf_read_dtc_I4(file, &(mrr->FUNC_CNT));
+	}
+#endif
 	_stdf_read_dtc_C1(file, &(mrr->DISP_COD));
 	_stdf_read_dtc_Cn(file, &(mrr->USR_DESC));
 	_stdf_read_dtc_Cn(file, &(mrr->EXC_DESC));
@@ -262,6 +301,11 @@ rec_wir* stdf_read_rec_wir(stdf_file *file)
 {
 	rec_wir *wir = __malloc_rec(rec_wir);
 	_stdf_read_dtc_U1(file, &(wir->HEAD_NUM));
+#ifdef STDF_VER3
+	if (file->ver == 3)
+	_stdf_read_dtc_U1(file, &(wir->PAD_BYTE));
+	else
+#endif
 	_stdf_read_dtc_U1(file, &(wir->SITE_GRP));
 	_stdf_read_dtc_U4(file, &(wir->START_T));
 	_stdf_read_dtc_Cn(file, &(wir->WAFER_ID));
@@ -270,18 +314,37 @@ rec_wir* stdf_read_rec_wir(stdf_file *file)
 rec_wrr* stdf_read_rec_wrr(stdf_file *file)
 {
 	rec_wrr *wrr = __malloc_rec(rec_wrr);
+#ifdef STDF_VER3
+	if (file->ver == 4) {
+#endif
 	_stdf_read_dtc_U1(file, &(wrr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(wrr->SITE_GRP));
 	_stdf_read_dtc_U4(file, &(wrr->FINISH_T));
+#ifdef STDF_VER3
+	} else {
+	_stdf_read_dtc_U4(file, &(wrr->FINISH_T));
+	_stdf_read_dtc_U1(file, &(wrr->HEAD_NUM));
+	_stdf_read_dtc_U1(file, &(wrr->PAD_BYTE));
+	}
+#endif
 	_stdf_read_dtc_U4(file, &(wrr->PART_CNT));
 	_stdf_read_dtc_U4(file, &(wrr->RTST_CNT));
 	_stdf_read_dtc_U4(file, &(wrr->ABRT_CNT));
 	_stdf_read_dtc_U4(file, &(wrr->GOOD_CNT));
 	_stdf_read_dtc_U4(file, &(wrr->FUNC_CNT));
 	_stdf_read_dtc_Cn(file, &(wrr->WAFER_ID));
+#ifdef STDF_VER3
+	if (file->ver == 4) {
+#endif
 	_stdf_read_dtc_Cn(file, &(wrr->FABWF_ID));
 	_stdf_read_dtc_Cn(file, &(wrr->FRAME_ID));
 	_stdf_read_dtc_Cn(file, &(wrr->MASK_ID));
+#ifdef STDF_VER3
+	} else {
+	_stdf_read_dtc_Cn(file, &(wrr->HAND_ID));
+	_stdf_read_dtc_Cn(file, &(wrr->PRB_CARD));
+	}
+#endif
 	_stdf_read_dtc_Cn(file, &(wrr->USR_DESC));
 	_stdf_read_dtc_Cn(file, &(wrr->EXC_DESC));
 	return wrr;
@@ -305,6 +368,13 @@ rec_pir* stdf_read_rec_pir(stdf_file *file)
 	rec_pir *pir = __malloc_rec(rec_pir);
 	_stdf_read_dtc_U1(file, &(pir->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(pir->SITE_NUM));
+#ifdef STDF_VER3
+	if (file->ver == 3) {
+	_stdf_read_dtc_I2(file, &(pir->X_COORD));
+	_stdf_read_dtc_I2(file, &(pir->Y_COORD));
+	_stdf_read_dtc_Cn(file, &(pir->PART_ID));
+	}
+#endif
 	return pir;
 }
 rec_prr* stdf_read_rec_prr(stdf_file *file)
@@ -312,12 +382,24 @@ rec_prr* stdf_read_rec_prr(stdf_file *file)
 	rec_prr *prr = __malloc_rec(rec_prr);
 	_stdf_read_dtc_U1(file, &(prr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(prr->SITE_NUM));
+#ifdef STDF_VER3
+	if (file->ver == 4)
+#endif
 	_stdf_read_dtc_B1(file, &(prr->PART_FLG));
 	_stdf_read_dtc_U2(file, &(prr->NUM_TEST));
 	_stdf_read_dtc_U2(file, &(prr->HARD_BIN));
 	_stdf_read_dtc_U2(file, &(prr->SOFT_BIN));
+#ifdef STDF_VER3
+	if (file->ver == 3) {
+	_stdf_read_dtc_B1(file, &(prr->PART_FLG));
+	_stdf_read_dtc_B1(file, &(prr->PAD_BYTE));
+	}
+#endif
 	_stdf_read_dtc_I2(file, &(prr->X_COORD));
 	_stdf_read_dtc_I2(file, &(prr->Y_COORD));
+#ifdef STDF_VER3
+	if (file->ver == 4)
+#endif
 	_stdf_read_dtc_U4(file, &(prr->TEST_T));
 	_stdf_read_dtc_Cn(file, &(prr->PART_ID));
 	_stdf_read_dtc_Cn(file, &(prr->PART_TXT));
@@ -328,13 +410,32 @@ rec_prr* stdf_read_rec_prr(stdf_file *file)
 rec_pdr* stdf_read_rec_pdr(stdf_file *file)
 {
 	rec_pdr *pdr = __malloc_rec(rec_pdr);
-	warn_not_coded("PDR [stdf ver3]");
+	_stdf_read_dtc_U4(file, &(pdr->TEST_NUM));
+	_stdf_read_dtc_B1(file, &(pdr->DESC_FLG));
+	_stdf_read_dtc_B1(file, &(pdr->OPT_FLAG));
+	_stdf_read_dtc_I1(file, &(pdr->RES_SCAL));
+	_stdf_read_dtc_Cx(file, &(pdr->UNITS), 7);
+	_stdf_read_dtc_U1(file, &(pdr->RES_LDIG));
+	_stdf_read_dtc_U1(file, &(pdr->RES_RDIG));
+	_stdf_read_dtc_I1(file, &(pdr->LLM_SCAL));
+	_stdf_read_dtc_I1(file, &(pdr->HLM_SCAL));
+	_stdf_read_dtc_U1(file, &(pdr->LLM_LDIG));
+	_stdf_read_dtc_U1(file, &(pdr->LLM_RDIG));
+	_stdf_read_dtc_U1(file, &(pdr->HLM_LDIG));
+	_stdf_read_dtc_U1(file, &(pdr->HLM_RDIG));
+	_stdf_read_dtc_R4(file, &(pdr->LO_LIMIT));
+	_stdf_read_dtc_R4(file, &(pdr->HI_LIMIT));
+	_stdf_read_dtc_Cn(file, &(pdr->TEST_NAM));
+	_stdf_read_dtc_Cn(file, &(pdr->SEQ_NAME));
 	return pdr;
 }
 rec_fdr* stdf_read_rec_fdr(stdf_file *file)
 {
 	rec_fdr *fdr = __malloc_rec(rec_fdr);
-	warn_not_coded("FDR [stdf ver3]");
+	_stdf_read_dtc_U4(file, &(fdr->TEST_NUM));
+	_stdf_read_dtc_B1(file, &(fdr->DESC_FLG));
+	_stdf_read_dtc_Cn(file, &(fdr->TEST_NAM));
+	_stdf_read_dtc_Cn(file, &(fdr->SEQ_NAME));
 	return fdr;
 }
 #endif
@@ -343,11 +444,17 @@ rec_tsr* stdf_read_rec_tsr(stdf_file *file)
 	rec_tsr *tsr = __malloc_rec(rec_tsr);
 	_stdf_read_dtc_U1(file, &(tsr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(tsr->SITE_NUM));
+#ifdef STDF_VER3
+	if (file->ver == 4)
+#endif
 	_stdf_read_dtc_C1(file, &(tsr->TEST_TYP));
 	_stdf_read_dtc_U4(file, &(tsr->TEST_NUM));
 	_stdf_read_dtc_U4(file, &(tsr->EXEC_CNT));
 	_stdf_read_dtc_U4(file, &(tsr->FAIL_CNT));
 	_stdf_read_dtc_U4(file, &(tsr->ALRM_CNT));
+#ifdef STDF_VER3
+	if (file->ver == 4) {
+#endif
 	_stdf_read_dtc_Cn(file, &(tsr->TEST_NAM));
 	_stdf_read_dtc_Cn(file, &(tsr->SEQ_NAME));
 	_stdf_read_dtc_Cn(file, &(tsr->TEST_LBL));
@@ -357,6 +464,20 @@ rec_tsr* stdf_read_rec_tsr(stdf_file *file)
 	_stdf_read_dtc_R4(file, &(tsr->TEST_MAX));
 	_stdf_read_dtc_R4(file, &(tsr->TST_SUMS));
 	_stdf_read_dtc_R4(file, &(tsr->TST_SQRS));
+#ifdef STDF_VER3
+	} else {
+	_stdf_read_dtc_B1(file, &(tsr->OPT_FLAG));
+	_stdf_read_dtc_B1(file, &(tsr->PAD_BYTE));
+	_stdf_read_dtc_R4(file, &(tsr->TEST_MIN));
+	_stdf_read_dtc_R4(file, &(tsr->TEST_MAX));
+	_stdf_read_dtc_R4(file, &(tsr->TST_MEAN));
+	_stdf_read_dtc_R4(file, &(tsr->TST_SDEV));
+	_stdf_read_dtc_R4(file, &(tsr->TST_SUMS));
+	_stdf_read_dtc_R4(file, &(tsr->TST_SQRS));
+	_stdf_read_dtc_Cn(file, &(tsr->TEST_NAM));
+	_stdf_read_dtc_Cn(file, &(tsr->SEQ_NAME));
+	}
+#endif
 	return tsr;
 }
 rec_ptr* stdf_read_rec_ptr(stdf_file *file)

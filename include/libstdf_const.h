@@ -14,6 +14,13 @@
 #define	CPU_TYPE_SPARC		1
 #define	CPU_TYPE_X86		2
 #define	CPU_TYPE_UNKNOWN	123	/* really reserved for Teradyne ... but screw them */
+#ifdef	STDF_VER3
+#define	CPU_TYPE_SUN_680XX	CPU_TYPE_SPARC
+#define	CPU_TYPE_SUN_80386	CPU_TYPE_X86
+/* wtf are these ?  LTX/Apollo ? */
+#define	CPU_TYPE_LTX		3
+#define	CPU_TYPE_APOLLO		4
+#endif
 
 /* MIR: Master Information Record [page 20] */
 #define	MODE_AEL			'A'

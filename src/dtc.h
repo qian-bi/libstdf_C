@@ -16,6 +16,9 @@ extern void __byte_order_change(int in, int out, byte_t *in_buf, int len);
 #define	__byte_order_to_src(b,p,l) __byte_order_change(__STDF_HOST_BYTE_ORDER, b, p, l)
 #define	_stdf_byte_order_to_host(f,v,l) __byte_order_to_host(f->byte_order, (byte_t*)(v), l);
 
+#ifdef	STDF_VER3
+extern void _stdf_read_dtc_Cx(stdf_file*, dtc_Cn*, int);
+#endif
 extern void _stdf_read_dtc_Cn(stdf_file*, dtc_Cn*);
 #define	_stdf_read_dtc_Bn(f, Bn) _stdf_read_dtc_Cn(f, (dtc_Cn*)Bn)
 extern void _stdf_read_dtc_Dn(stdf_file*, dtc_Dn*);

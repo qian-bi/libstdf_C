@@ -85,8 +85,10 @@
 #define	REC_WCR				MAKE_REC(REC_TYP_PER_WAFER, REC_SUB_WCR)
 #define	REC_PIR				MAKE_REC(REC_TYP_PER_PART, REC_SUB_PIR)
 #define	REC_PRR				MAKE_REC(REC_TYP_PER_PART, REC_SUB_PRR)
+#ifdef	STDF_VER3
 #define	REC_PDR				MAKE_REC(REC_TYP_PER_TEST, REC_SUB_PDR)
 #define	REC_FDR				MAKE_REC(REC_TYP_PER_TEST, REC_SUB_FDR)
+#endif
 #define	REC_TSR				MAKE_REC(REC_TYP_PER_TEST, REC_SUB_TSR)
 #define	REC_PTR				MAKE_REC(REC_TYP_PER_EXEC, REC_SUB_PTR)
 #define	REC_MPR				MAKE_REC(REC_TYP_PER_EXEC, REC_SUB_MPR)
@@ -105,7 +107,6 @@
 
 /* Definitions for Data Type Codes and Representation [page 8] */
 typedef	char*			dtc_Cn;
-typedef	char*			dtc_Cf;
 typedef	char			dtc_C1;
 typedef	uint8_t			dtc_U1;
 typedef	uint16_t		dtc_U2;
@@ -157,8 +158,6 @@ typedef struct {
 #ifdef STDF_VER3
 	dtc_U1		CPU_TYPE;
 	dtc_U1		STDF_VER;
-	dtc_Cn		HAND_ID;
-	dtc_Cn		PRB_CARD;
 #endif
 	dtc_U4		SETUP_T;
 	dtc_U4		START_T;
@@ -172,6 +171,10 @@ typedef struct {
 	dtc_Cn		PART_TYP;
 	dtc_Cn		NODE_NAM;
 	dtc_Cn		TSTR_TYP;
+#ifdef STDF_VER3
+	dtc_Cn		HAND_ID;
+	dtc_Cn		PRB_CARD;
+#endif
 	dtc_Cn		JOB_NAM;
 	dtc_Cn		JOB_REV;
 	dtc_Cn		SBLOT_ID;
@@ -203,9 +206,6 @@ typedef struct {
 typedef struct {
 	rec_header	header;
 	dtc_U4		FINISH_T;
-	dtc_C1		DISP_COD;
-	dtc_Cn		USR_DESC;
-	dtc_Cn		EXC_DESC;
 #ifdef STDF_VER3
 	dtc_U4		PART_CNT;
 	dtc_U4		RTST_CNT;
@@ -213,6 +213,9 @@ typedef struct {
 	dtc_U4		GOOD_CNT;
 	dtc_U4		FUNC_CNT;
 #endif
+	dtc_C1		DISP_COD;
+	dtc_Cn		USR_DESC;
+	dtc_Cn		EXC_DESC;
 } rec_mrr;
 /* PCR: Part Count Record [page 24] */
 typedef struct {
@@ -389,10 +392,31 @@ typedef struct {
 /* PDR: Parametric Test Description */
 typedef struct {
 	rec_header	header;
+	dtc_U4		TEST_NUM;
+	dtc_B1		DESC_FLG;
+	dtc_B1		OPT_FLAG;
+	dtc_I1		RES_SCAL;
+	dtc_Cn		UNITS;	/*dtc_C7*/
+	dtc_U1		RES_LDIG;
+	dtc_U1		RES_RDIG;
+	dtc_I1		LLM_SCAL;
+	dtc_I1		HLM_SCAL;
+	dtc_U1		LLM_LDIG;
+	dtc_U1		LLM_RDIG;
+	dtc_U1		HLM_LDIG;
+	dtc_U1		HLM_RDIG;
+	dtc_R4		LO_LIMIT;
+	dtc_R4		HI_LIMIT;
+	dtc_Cn		TEST_NAM;
+	dtc_Cn		SEQ_NAME;
 } rec_pdr;
 /* FDR: Functional Test Description */
 typedef struct {
 	rec_header	header;
+	dtc_U4		TEST_NUM;
+	dtc_B1		DESC_FLG;
+	dtc_Cn		TEST_NAM;
+	dtc_Cn		SEQ_NAME;
 } rec_fdr;
 #endif
 /* TSR: Test Synopsis Record [page 45] */
@@ -402,8 +426,8 @@ typedef struct {
 	dtc_U1		SITE_NUM;
 #ifdef STDF_VER3
 	dtc_C1		PAD_BYTE;
-	dtc_R4		TEST_MEAN;
-	dtc_R4		TEST_SDEV;
+	dtc_R4		TST_MEAN;
+	dtc_R4		TST_SDEV;
 #endif
 	dtc_C1		TEST_TYP;
 	dtc_U4		TEST_NUM;

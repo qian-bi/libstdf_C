@@ -35,6 +35,18 @@ void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int 
 	}
 }
 
+void _stdf_read_dtc_Cx(stdf_file *f, dtc_Cn *Cn, int len)
+{
+	(*Cn) = (dtc_Cn)malloc(sizeof(dtc_C1) * 1 + len + 1);
+	(*Cn)[0] = len;
+	memset((*Cn)+1, 0x00, 1 + len + 1);
+	if (f->rec_pos == f->rec_end) {
+		return;
+	}
+	memcpy((*Cn)+1, f->rec_pos, len);
+	f->rec_pos += len;
+}
+
 void _stdf_read_dtc_Cn(stdf_file *f, dtc_Cn *Cn)
 {
 	unsigned char len;
