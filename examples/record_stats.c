@@ -43,7 +43,7 @@ for (i=1; i<argc; ++i) {
 	f = stdf_open(argv[i]);
 	if (!f) {
 		perror("Could not open file");
-		return EXIT_FAILURE;
+		continue;
 	}
 
 #if HAVE_GLIB
