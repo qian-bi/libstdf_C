@@ -17,6 +17,7 @@
 
 #include <sys/types.h>
 
+#if !defined(__MINGW_H)
 typedef unsigned __int8		uint8_t;
 typedef unsigned __int16	uint16_t;
 typedef unsigned __int32	uint32_t;
@@ -25,6 +26,7 @@ typedef signed __int8		int8_t;
 typedef signed __int16		int16_t;
 typedef signed __int32		int32_t;
 typedef signed __int64		int64_t;
+#endif
 
 /* pos windows compiler doesnt like 'far' as a variable name */
 #define	far			_windows_is_a_pos_far
