@@ -5,7 +5,8 @@ noinst_PROGRAMS = \
 	dump_records_to_ascii \
 	dump_records_to_html \
 	is_valid_stdf \
-	stdf2xtdf
+	stdf2xtdf \
+	makestdf
 else
 noinst_PROGRAMS =
 endif
