@@ -394,42 +394,63 @@ rec_unknown* stdf_parse_raw_record(rec_unknown *raw_rec)
 	file->rec_pos = file->__data + 4;
 	file->rec_end = file->rec_pos + file->header.REC_LEN;
 
+	/* record order is based on frequency in 'standard' files
+	 * Note: keep order in sync with rec.c
+	 */
 	switch (HEAD_TO_REC(file->header)) {
-		case REC_FAR: rec = (rec_unknown*)stdf_read_rec_far(file); break;
-		case REC_ATR: rec = (rec_unknown*)stdf_read_rec_atr(file); break;
-		case REC_MIR: rec = (rec_unknown*)stdf_read_rec_mir(file); break;
-		case REC_MRR: rec = (rec_unknown*)stdf_read_rec_mrr(file); break;
-		case REC_PCR: rec = (rec_unknown*)stdf_read_rec_pcr(file); break;
-		case REC_HBR: rec = (rec_unknown*)stdf_read_rec_hbr(file); break;
-		case REC_SBR: rec = (rec_unknown*)stdf_read_rec_sbr(file); break;
-		case REC_PMR: rec = (rec_unknown*)stdf_read_rec_pmr(file); break;
-		case REC_PGR: rec = (rec_unknown*)stdf_read_rec_pgr(file); break;
-		case REC_PLR: rec = (rec_unknown*)stdf_read_rec_plr(file); break;
-		case REC_RDR: rec = (rec_unknown*)stdf_read_rec_rdr(file); break;
-		case REC_SDR: rec = (rec_unknown*)stdf_read_rec_sdr(file); break;
-		case REC_WIR: rec = (rec_unknown*)stdf_read_rec_wir(file); break;
-		case REC_WRR: rec = (rec_unknown*)stdf_read_rec_wrr(file); break;
-		case REC_WCR: rec = (rec_unknown*)stdf_read_rec_wcr(file); break;
+		/* REC_TYP_PER_EXEC */
+		case REC_PTR: rec = (rec_unknown*)stdf_read_rec_ptr(file); break;
+		case REC_FTR: rec = (rec_unknown*)stdf_read_rec_ftr(file); break;
+		case REC_MPR: rec = (rec_unknown*)stdf_read_rec_mpr(file); break;
+
+		/* REC_TYP_PER_PART */
 		case REC_PIR: rec = (rec_unknown*)stdf_read_rec_pir(file); break;
 		case REC_PRR: rec = (rec_unknown*)stdf_read_rec_prr(file); break;
+
+		/* REC_TYP_PER_TEST */
+		case REC_TSR: rec = (rec_unknown*)stdf_read_rec_tsr(file); break;
 #ifdef STDF_VER3
 		case REC_PDR: rec = (rec_unknown*)stdf_read_rec_pdr(file); break;
 		case REC_FDR: rec = (rec_unknown*)stdf_read_rec_fdr(file); break;
 #endif
-		case REC_TSR: rec = (rec_unknown*)stdf_read_rec_tsr(file); break;
-		case REC_PTR: rec = (rec_unknown*)stdf_read_rec_ptr(file); break;
-		case REC_MPR: rec = (rec_unknown*)stdf_read_rec_mpr(file); break;
-		case REC_FTR: rec = (rec_unknown*)stdf_read_rec_ftr(file); break;
+
+		/* REC_TYP_GENERIC */
+		case REC_DTR: rec = (rec_unknown*)stdf_read_rec_dtr(file); break;
+		case REC_GDR: rec = (rec_unknown*)stdf_read_rec_gdr(file); break;
+
+		/* REC_TYP_PER_PROG */
 		case REC_BPS: rec = (rec_unknown*)stdf_read_rec_bps(file); break;
 		case REC_EPS: rec = (rec_unknown*)stdf_read_rec_eps(file); break;
+
+		/* REC_TYP_PER_SITE */
 #ifdef STDF_VER3
 		case REC_SHB: rec = (rec_unknown*)stdf_read_rec_shb(file); break;
 		case REC_SSB: rec = (rec_unknown*)stdf_read_rec_ssb(file); break;
 		case REC_STS: rec = (rec_unknown*)stdf_read_rec_sts(file); break;
 		case REC_SCR: rec = (rec_unknown*)stdf_read_rec_scr(file); break;
 #endif
-		case REC_GDR: rec = (rec_unknown*)stdf_read_rec_gdr(file); break;
-		case REC_DTR: rec = (rec_unknown*)stdf_read_rec_dtr(file); break;
+
+		/* REC_TYP_PER_LOT */
+		case REC_PMR: rec = (rec_unknown*)stdf_read_rec_pmr(file); break;
+		case REC_PGR: rec = (rec_unknown*)stdf_read_rec_pgr(file); break;
+		case REC_HBR: rec = (rec_unknown*)stdf_read_rec_hbr(file); break;
+		case REC_SBR: rec = (rec_unknown*)stdf_read_rec_sbr(file); break;
+		case REC_PLR: rec = (rec_unknown*)stdf_read_rec_plr(file); break;
+		case REC_RDR: rec = (rec_unknown*)stdf_read_rec_rdr(file); break;
+		case REC_SDR: rec = (rec_unknown*)stdf_read_rec_sdr(file); break;
+		case REC_MIR: rec = (rec_unknown*)stdf_read_rec_mir(file); break;
+		case REC_MRR: rec = (rec_unknown*)stdf_read_rec_mrr(file); break;
+		case REC_PCR: rec = (rec_unknown*)stdf_read_rec_pcr(file); break;
+
+		/* REC_TYP_PER_WAFER */
+		case REC_WIR: rec = (rec_unknown*)stdf_read_rec_wir(file); break;
+		case REC_WRR: rec = (rec_unknown*)stdf_read_rec_wrr(file); break;
+		case REC_WCR: rec = (rec_unknown*)stdf_read_rec_wcr(file); break;
+
+		/* REC_TYP_INFO */
+		case REC_FAR: rec = (rec_unknown*)stdf_read_rec_far(file); break;
+		case REC_ATR: rec = (rec_unknown*)stdf_read_rec_atr(file); break;
+
 		default:
 			rec = stdf_read_rec_unknown(file);
 			file->header.REC_TYP = REC_TYP_UNKNOWN;

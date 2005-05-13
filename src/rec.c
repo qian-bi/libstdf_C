@@ -693,15 +693,225 @@ void stdf_free_record(rec_unknown *rec)
 		return;
 	}
 
+	/* record order is based on frequency in 'standard' files
+	 * Note: keep order in sync with libstdf.c
+	 */
 	switch (HEAD_TO_REC(rec->header)) {
-		case REC_FAR: {
+		/* REC_TYP_PER_EXEC */
+		case REC_PTR: {
+			rec_ptr *ptr = (rec_ptr*)rec;
+			free(ptr->TEST_TXT);
+			free(ptr->ALARM_ID);
+			free(ptr->UNITS);
+			free(ptr->C_RESFMT);
+			free(ptr->C_LLMFMT);
+			free(ptr->C_HLMFMT);
 			free(rec);
 			break;
 		}
-		case REC_ATR: {
-			rec_atr *atr = (rec_atr*)rec;
-			free(atr->CMD_LINE);
-			free(atr);
+		case REC_FTR: {
+			rec_ftr *ftr = (rec_ftr*)rec;
+			free_xU2(ftr->RTN_INDX);
+			free(ftr->RTN_STAT);
+			free_xU2(ftr->PGM_INDX);
+			free(ftr->PGM_STAT);
+			free(ftr->FAIL_PIN);
+			free(ftr->VECT_NAM);
+			free(ftr->TIME_SET);
+			free(ftr->OP_CODE);
+			free(ftr->TEST_TXT);
+			free(ftr->ALARM_ID);
+			free(ftr->PROG_TXT);
+			free(ftr->RSLT_TXT);
+			free(ftr->SPIN_MAP);
+			free(rec);
+			break;
+		}
+		case REC_MPR: {
+			rec_mpr *mpr = (rec_mpr*)rec;
+			free(mpr->RTN_STAT);
+			free_xR4(mpr->RTN_RSLT);
+			free(mpr->TEST_TXT);
+			free(mpr->ALARM_ID);
+			free_xU2(mpr->RTN_INDX);
+			free(mpr->UNITS);
+			free(mpr->UNITS_IN);
+			free(mpr->C_RESFMT);
+			free(mpr->C_LLMFMT);
+			free(mpr->C_HLMFMT);
+			free(rec);
+			break;
+		}
+
+		/* REC_TYP_PER_PART */
+		case REC_PIR: {
+#ifdef STDF_VER3
+			rec_pir *pir = (rec_pir*)rec;
+			if (file->ver == 3)
+			free(pir->PART_ID);
+#endif
+			free(rec);
+			break;
+		}
+		case REC_PRR: {
+			rec_prr *prr = (rec_prr*)rec;
+			free(prr->PART_ID);
+			free(prr->PART_TXT);
+			free(prr->PART_FIX);
+			free(rec);
+			break;
+		}
+
+		/* REC_TYP_PER_TEST */
+		case REC_TSR: {
+			rec_tsr *tsr = (rec_tsr*)rec;
+			free(tsr->TEST_NAM);
+			free(tsr->SEQ_NAME);
+#ifdef STDF_VER3
+			if (file->ver == 4)
+#endif
+			free(tsr->TEST_LBL);
+			free(rec);
+			break;
+		}
+#ifdef STDF_VER3
+		case REC_PDR: {
+			rec_pdr *pdr = (rec_pdr*)rec;
+			free(pdr->UNITS);
+			free(pdr->TEST_NAM);
+			free(pdr->SEQ_NAME);
+			free(rec);
+			break;
+		}
+		case REC_FDR: {
+			rec_fdr *fdr = (rec_fdr*)rec;
+			free(fdr->TEST_NAM);
+			free(fdr->SEQ_NAME);
+			free(rec);
+			break;
+		}
+#endif
+
+		/* REC_TYP_GENERIC */
+		case REC_DTR: {
+			rec_dtr *dtr = (rec_dtr*)rec;
+			free(dtr->TEXT_DAT);
+			free(rec);
+			break;
+		}
+		case REC_GDR: {
+			rec_gdr *gdr = (rec_gdr*)rec;
+			free_Vn(gdr->GEN_DATA, gdr->FLD_CNT);
+			free(rec);
+			break;
+		}
+
+		/* REC_TYP_PER_PROG */
+		case REC_BPS: {
+			rec_bps *bps = (rec_bps*)rec;
+			free(bps->SEQ_NAME);
+			free(rec);
+			break;
+		}
+		case REC_EPS: {
+			free(rec);
+			break;
+		}
+
+		/* REC_TYP_PER_SITE */
+#ifdef STDF_VER3
+		case REC_SHB: {
+			rec_shb *shb = (rec_shb*)rec;
+			free(shb->HBIN_NAM);
+			free(rec);
+			break;
+		}
+		case REC_SSB: {
+			rec_ssb *ssb = (rec_ssb*)rec;
+			free(ssb->SBIN_NAM);
+			free(rec);
+			break;
+		}
+		case REC_STS: {
+			rec_sts *sts = (rec_sts*)rec;
+			free(sts->TEST_NAM);
+			free(sts->SEQ_NAME);
+			free(sts->TEST_LBL);
+			free(rec);
+			break;
+		}
+		case REC_SCR: {
+			free(rec);
+			break;
+		}
+#endif
+
+		/* REC_TYP_PER_LOT */
+		case REC_PMR: {
+			rec_pmr *pmr = (rec_pmr*)rec;
+			free(pmr->CHAN_NAM);
+			free(pmr->PHY_NAM);
+			free(pmr->LOG_NAM);
+			free(rec);
+			break;
+		}
+		case REC_PGR: {
+			rec_pgr *pgr = (rec_pgr*)rec;
+			free(pgr->GRP_NAM);
+			free_xU2(pgr->PMR_INDX);
+			free(rec);
+			break;
+		}
+		case REC_HBR: {
+			rec_hbr *hbr = (rec_hbr*)rec;
+			free(hbr->HBIN_NAM);
+			free(rec);
+			break;
+		}
+		case REC_SBR: {
+			rec_sbr *sbr = (rec_sbr*)rec;
+			free(sbr->SBIN_NAM);
+			free(rec);
+			break;
+		}
+		case REC_PLR: {
+			rec_plr *plr = (rec_plr*)rec;
+			free_xU2(plr->GRP_INDX);
+			free_xU2(plr->GRP_MODE);
+			free_xU1(plr->GRP_RADX);
+			free_xCn(plr->PGM_CHAR, plr->GRP_CNT);
+			free_xCn(plr->RTN_CHAR, plr->GRP_CNT);
+			free_xCn(plr->PGM_CHAL, plr->GRP_CNT);
+			free_xCn(plr->RTN_CHAL, plr->GRP_CNT);
+			free(rec);
+			break;
+		}
+		case REC_RDR: {
+			rec_rdr *rdr = (rec_rdr*)rec;
+			free_xU2(rdr->RTST_BIN);
+			free(rec);
+			break;
+		}
+		case REC_SDR: {
+			rec_sdr *sdr = (rec_sdr*)rec;
+			free_xU1(sdr->SITE_NUM);
+			free(sdr->HAND_TYP);
+			free(sdr->HAND_ID);
+			free(sdr->CARD_TYP);
+			free(sdr->CARD_ID);
+			free(sdr->LOAD_TYP);
+			free(sdr->LOAD_ID);
+			free(sdr->DIB_TYP);
+			free(sdr->DIB_ID);
+			free(sdr->CABL_TYP);
+			free(sdr->CABL_ID);
+			free(sdr->CONT_TYP);
+			free(sdr->CONT_ID);
+			free(sdr->LASR_TYP);
+			free(sdr->LASR_ID);
+			free(sdr->EXTR_TYP);
+			free(sdr->EXTR_ID);
+			free(rec);
 			break;
 		}
 		case REC_MIR: {
@@ -771,73 +981,8 @@ void stdf_free_record(rec_unknown *rec)
 			free(rec);
 			break;
 		}
-		case REC_HBR: {
-			rec_hbr *hbr = (rec_hbr*)rec;
-			free(hbr->HBIN_NAM);
-			free(rec);
-			break;
-		}
-		case REC_SBR: {
-			rec_sbr *sbr = (rec_sbr*)rec;
-			free(sbr->SBIN_NAM);
-			free(rec);
-			break;
-		}
-		case REC_PMR: {
-			rec_pmr *pmr = (rec_pmr*)rec;
-			free(pmr->CHAN_NAM);
-			free(pmr->PHY_NAM);
-			free(pmr->LOG_NAM);
-			free(rec);
-			break;
-		}
-		case REC_PGR: {
-			rec_pgr *pgr = (rec_pgr*)rec;
-			free(pgr->GRP_NAM);
-			free_xU2(pgr->PMR_INDX);
-			free(rec);
-			break;
-		}
-		case REC_PLR: {
-			rec_plr *plr = (rec_plr*)rec;
-			free_xU2(plr->GRP_INDX);
-			free_xU2(plr->GRP_MODE);
-			free_xU1(plr->GRP_RADX);
-			free_xCn(plr->PGM_CHAR, plr->GRP_CNT);
-			free_xCn(plr->RTN_CHAR, plr->GRP_CNT);
-			free_xCn(plr->PGM_CHAL, plr->GRP_CNT);
-			free_xCn(plr->RTN_CHAL, plr->GRP_CNT);
-			free(rec);
-			break;
-		}
-		case REC_RDR: {
-			rec_rdr *rdr = (rec_rdr*)rec;
-			free_xU2(rdr->RTST_BIN);
-			free(rec);
-			break;
-		}
-		case REC_SDR: {
-			rec_sdr *sdr = (rec_sdr*)rec;
-			free_xU1(sdr->SITE_NUM);
-			free(sdr->HAND_TYP);
-			free(sdr->HAND_ID);
-			free(sdr->CARD_TYP);
-			free(sdr->CARD_ID);
-			free(sdr->LOAD_TYP);
-			free(sdr->LOAD_ID);
-			free(sdr->DIB_TYP);
-			free(sdr->DIB_ID);
-			free(sdr->CABL_TYP);
-			free(sdr->CABL_ID);
-			free(sdr->CONT_TYP);
-			free(sdr->CONT_ID);
-			free(sdr->LASR_TYP);
-			free(sdr->LASR_ID);
-			free(sdr->EXTR_TYP);
-			free(sdr->EXTR_ID);
-			free(rec);
-			break;
-		}
+
+		/* REC_TYP_PER_WAFER */
 		case REC_WIR: {
 			rec_wir *wir = (rec_wir*)rec;
 			free(wir->WAFER_ID);
@@ -868,143 +1013,20 @@ void stdf_free_record(rec_unknown *rec)
 			free(rec);
 			break;
 		}
-		case REC_PIR: {
-#ifdef STDF_VER3
-			rec_pir *pir = (rec_pir*)rec;
-			if (file->ver == 3)
-			free(pir->PART_ID);
-#endif
+
+		/* REC_TYP_INFO */
+		case REC_FAR: {
 			free(rec);
 			break;
 		}
-		case REC_PRR: {
-			rec_prr *prr = (rec_prr*)rec;
-			free(prr->PART_ID);
-			free(prr->PART_TXT);
-			free(prr->PART_FIX);
-			free(rec);
+		case REC_ATR: {
+			rec_atr *atr = (rec_atr*)rec;
+			free(atr->CMD_LINE);
+			free(atr);
 			break;
 		}
-#ifdef STDF_VER3
-		case REC_PDR: {
-			rec_pdr *pdr = (rec_pdr*)rec;
-			free(pdr->UNITS);
-			free(pdr->TEST_NAM);
-			free(pdr->SEQ_NAME);
-			free(rec);
-			break;
-		}
-		case REC_FDR: {
-			rec_fdr *fdr = (rec_fdr*)rec;
-			free(fdr->TEST_NAM);
-			free(fdr->SEQ_NAME);
-			free(rec);
-			break;
-		}
-#endif
-		case REC_TSR: {
-			rec_tsr *tsr = (rec_tsr*)rec;
-			free(tsr->TEST_NAM);
-			free(tsr->SEQ_NAME);
-#ifdef STDF_VER3
-			if (file->ver == 4)
-#endif
-			free(tsr->TEST_LBL);
-			free(rec);
-			break;
-		}
-		case REC_PTR: {
-			rec_ptr *ptr = (rec_ptr*)rec;
-			free(ptr->TEST_TXT);
-			free(ptr->ALARM_ID);
-			free(ptr->UNITS);
-			free(ptr->C_RESFMT);
-			free(ptr->C_LLMFMT);
-			free(ptr->C_HLMFMT);
-			free(rec);
-			break;
-		}
-		case REC_MPR: {
-			rec_mpr *mpr = (rec_mpr*)rec;
-			free(mpr->RTN_STAT);
-			free_xR4(mpr->RTN_RSLT);
-			free(mpr->TEST_TXT);
-			free(mpr->ALARM_ID);
-			free_xU2(mpr->RTN_INDX);
-			free(mpr->UNITS);
-			free(mpr->UNITS_IN);
-			free(mpr->C_RESFMT);
-			free(mpr->C_LLMFMT);
-			free(mpr->C_HLMFMT);
-			free(rec);
-			break;
-		}
-		case REC_FTR: {
-			rec_ftr *ftr = (rec_ftr*)rec;
-			free_xU2(ftr->RTN_INDX);
-			free(ftr->RTN_STAT);
-			free_xU2(ftr->PGM_INDX);
-			free(ftr->PGM_STAT);
-			free(ftr->FAIL_PIN);
-			free(ftr->VECT_NAM);
-			free(ftr->TIME_SET);
-			free(ftr->OP_CODE);
-			free(ftr->TEST_TXT);
-			free(ftr->ALARM_ID);
-			free(ftr->PROG_TXT);
-			free(ftr->RSLT_TXT);
-			free(ftr->SPIN_MAP);
-			free(rec);
-			break;
-		}
-		case REC_BPS: {
-			rec_bps *bps = (rec_bps*)rec;
-			free(bps->SEQ_NAME);
-			free(rec);
-			break;
-		}
-		case REC_EPS: {
-			free(rec);
-			break;
-		}
-#ifdef STDF_VER3
-		case REC_SHB: {
-			rec_shb *shb = (rec_shb*)rec;
-			free(shb->HBIN_NAM);
-			free(rec);
-			break;
-		}
-		case REC_SSB: {
-			rec_ssb *ssb = (rec_ssb*)rec;
-			free(ssb->SBIN_NAM);
-			free(rec);
-			break;
-		}
-		case REC_STS: {
-			rec_sts *sts = (rec_sts*)rec;
-			free(sts->TEST_NAM);
-			free(sts->SEQ_NAME);
-			free(sts->TEST_LBL);
-			free(rec);
-			break;
-		}
-		case REC_SCR: {
-			free(rec);
-			break;
-		}
-#endif
-		case REC_GDR: {
-			rec_gdr *gdr = (rec_gdr*)rec;
-			free_Vn(gdr->GEN_DATA, gdr->FLD_CNT);
-			free(rec);
-			break;
-		}
-		case REC_DTR: {
-			rec_dtr *dtr = (rec_dtr*)rec;
-			free(dtr->TEXT_DAT);
-			free(rec);
-			break;
-		}
+
+		/* all the rest */
 		case REC_UNKNOWN: {
 			if (rec->data) free(rec->data);
 			free(rec);
