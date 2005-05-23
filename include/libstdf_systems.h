@@ -56,6 +56,9 @@
 #if defined(HAVE_MACHINE_ENDIAN_H)
 # include <machine/endian.h>
 #endif
+#if defined(HAVE_SYS_ISA_DEFS_H)
+# include <sys/isa_defs.h>
+#endif
 
 /* Support for Tru64 */
 #if defined(HAVE_CMPLRS_HOST_H)
@@ -68,6 +71,43 @@ typedef int8 int8_t;
 typedef int16 int16_t;
 typedef int32 int32_t;
 typedef int64 int64_t;
+#endif
+
+#if !defined(STDF_FORCE_ENDIAN)
+
+/* Workaround for crappy Solaris */
+# if !defined(BYTE_ORDER)
+#  if defined(_LITTLE_ENDIAN)
+#   define STDF_FORCE_ENDIAN 1234
+#  elif defined(_BIG_ENDIAN)
+#   define STDF_FORCE_ENDIAN 4321
+#  endif
+# endif
+
+#endif
+
+#if defined(STDF_FORCE_ENDIAN)
+# undef LITTLE_ENDIAN
+# undef BIG_ENDIAN
+# undef BYTE_ORDER
+# define LITTLE_ENDIAN 1234
+# define BIG_ENDIAN    4321
+# if STDF_FORCE_ENDIAN == LITTLE_ENDIAN
+#  define BYTE_ORDER LITTLE_ENDIAN
+# else
+#  define BYTE_ORDER BIG_ENDIAN
+# endif
+#endif
+
+#if !defined(BYTE_ORDER) || !defined(LITTLE_ENDIAN) || !defined(BIG_ENDIAN)
+# error Unable to detect appropriate endian
+# error settings for your system.  Please
+# error send a bug report to the
+# error freestdf-devel@lists.sourceforge.net
+# error mailing list.
+# error You can work around the problem
+# error by re-running ./configure with
+# error the --enable-endian option.
 #endif
 
 #if HAVE_ZIP
@@ -84,7 +124,7 @@ typedef int64 int64_t;
 #endif
 
 /* i'll see you in hell windows */
-#ifndef O_BINARY
+#if !defined(O_BINARY)
 # define O_BINARY 0x00
 #endif
 
