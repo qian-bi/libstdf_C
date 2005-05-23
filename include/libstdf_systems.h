@@ -73,15 +73,20 @@ typedef int32 int32_t;
 typedef int64 int64_t;
 #endif
 
-#if !defined(STDF_FORCE_ENDIAN)
+#if !defined(STDF_FORCE_ENDIAN) && !defined(BYTE_ORDER)
+
+/* Workaround for random systems */
+# if defined(WORDS_LITTLENDIAN)
+#  define STDF_FORCE_ENDIAN 1234
+# elif defined(WORDS_BIGENDIAN)
+#  define STDF_FORCE_ENDIAN 4321
 
 /* Workaround for crappy Solaris */
-# if !defined(BYTE_ORDER)
-#  if defined(_LITTLE_ENDIAN)
-#   define STDF_FORCE_ENDIAN 1234
-#  elif defined(_BIG_ENDIAN)
-#   define STDF_FORCE_ENDIAN 4321
-#  endif
+# elif defined(_LITTLE_ENDIAN)
+#  define STDF_FORCE_ENDIAN 1234
+# elif defined(_BIG_ENDIAN)
+#  define STDF_FORCE_ENDIAN 4321
+
 # endif
 
 #endif
