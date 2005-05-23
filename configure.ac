@@ -16,7 +16,7 @@ AC_CHECK_HEADERS([ \
 stdint.h inttypes.h sys/types.h sys/stat.h \
 unistd.h fcntl.h stdio.h stdlib.h \
 string.h endian.h sys/endian.h machine/endian.h \
-cmplrs/host.h \
+cmplrs/host.h sys/isa_defs.h \
 ])
 
 dnl Let's get anal with compiling while on my dev box
@@ -63,6 +63,23 @@ if test "x$enable_stdf_ver3_support" = "xyes" ; then
 	AC_DEFINE(STDF_VER3, 1, [Enable support for STDFv3])
 fi
 AC_MSG_RESULT($enable_stdf_ver3_support)
+
+dnl ********************************************************
+dnl *                 Force endian types                   *
+dnl ********************************************************
+stdf_force_endian="auto"
+AC_MSG_CHECKING(for endian type)
+AC_ARG_ENABLE(endian,
+	AC_HELP_STRING([--enable-endian],[force endian type @<:@default=detect@:>@]),
+	[stdf_force_endian=$enableval])
+if test "x$stdf_force_endian" = "xlittle" ; then
+	AC_DEFINE(STDF_FORCE_ENDIAN, 1234, [Force endian size to little])
+elif test "x$stdf_force_endian" = "xbig" ; then
+	AC_DEFINE(STDF_FORCE_ENDIAN, 4321, [Force endian size to big])
+elif test "x$stdf_force_endian" != "xauto" ; then
+	AC_MSG_ERROR(Valid values for endian are "little", "big", or "auto")
+fi
+AC_MSG_RESULT($stdf_force_endian)
 
 dnl ********************************************************
 dnl *                     zip [zziplib]                    *
