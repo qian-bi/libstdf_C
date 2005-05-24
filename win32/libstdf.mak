@@ -1,6 +1,7 @@
 # Howto build:
-# from a command prompt, cd to the libstdf main dir.
-# then run 'nmake -f win32/Makefile.msc'
+# from a command prompt, cd to the libstdf/win32 dir.
+# then run 'nmake -f libstdf.mak'
+# to build examples 'nmake -f libstdf.mak examples'
 
 STATICLIB	= libstdf.lib
 SHAREDLIB	= libstdf.dll
