@@ -4,7 +4,7 @@
  * @internal
  */
 /*
- * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2005 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  *
@@ -12,6 +12,7 @@
  */
 
 #include <libstdf.h>
+#include "libstdf_internal.h"
 #include "dtc.h"
 #include "rec.h"
 
@@ -92,13 +93,13 @@ char* stdf_get_rec_name(rec_typ type, rec_sub sub)
 #if WARN_UNTESTED
 #define	warn_untested(type) \
 	do { \
-		fprintf(stderr, "*********************************************\n"); \
-		fprintf(stderr, "This record type (" type ") has not been tested!\n"); \
-		fprintf(stderr, "Please consider sending this file to\n"); \
-		fprintf(stderr, "vapier@gmail.com to help out the\n"); \
-		fprintf(stderr, "FreeSTDF project and make sure this code\n"); \
-		fprintf(stderr, "works exactly the way it should!\n"); \
-		fprintf(stderr, "*********************************************\n"); \
+		warnf("*********************************************\n"); \
+		warnf("This record type (" type ") has not been tested!\n"); \
+		warnf("Please consider sending this file to\n"); \
+		warnf("vapier@gmail.com to help out the\n"); \
+		warnf("FreeSTDF project and make sure this code\n"); \
+		warnf("works exactly the way it should!\n"); \
+		warnf("*********************************************\n"); \
 	} while (0)
 #else
 #define warn_untested(type)
@@ -1033,7 +1034,7 @@ void stdf_free_record(rec_unknown *rec)
 			break;
 		}
 		default: {
-			fprintf(stderr, "Memory leak: unhandled record type (%s) in stdf_free_record()!\n",
+			warnf("Memory leak: unhandled record type (%s) !",
 			       stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB));
 			break;
 		}

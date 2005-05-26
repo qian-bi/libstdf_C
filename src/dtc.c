@@ -4,7 +4,7 @@
  * @internal
  */
 /*
- * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2005 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  *
@@ -12,6 +12,7 @@
  */
 
 #include <libstdf.h>
+#include "libstdf_internal.h"
 #include "dtc.h"
 #include "rec.h"
 
@@ -20,7 +21,7 @@ void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int 
 	if (in_byte_order == out_byte_order || len == 1)
 		return;
 	if (in_byte_order != LITTLE_ENDIAN && in_byte_order != BIG_ENDIAN) {
-		fprintf(stderr, "__byte_order_change(): byte order %i is not implemented\n", in_byte_order);
+		warnf("byte order %i is not implemented", in_byte_order);
 		return;
 	}
 
@@ -29,7 +30,7 @@ void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int 
 		case 4:	stdf_bswap_32(*((uint32_t*)in)); break;
 		case 8:	stdf_bswap_64(*((uint64_t*)in)); break;
 		default:
-			fprintf(stderr, "__byte_order_change(): byte len of %i has no implementation\n", len);
+			warnf("byte len of %i has no implementation", len);
 	}
 }
 
@@ -222,7 +223,7 @@ void _stdf_read_dtc_Vn(stdf_file *f, dtc_Vn *pVn, dtc_U2 cnt)
 			case GDR_Dn: DO_VN(dtc_Dn); break;
 			case GDR_N1: DO_VN(dtc_N1); break;
 			default: {
-				fprintf(stderr, "_stdf_read_dtc_Vn(): unknown type '%i'\n", Vn->type);
+				warnf("unknown type '%i'", Vn->type);
 				Vn->data = NULL;
 			}
 		}
