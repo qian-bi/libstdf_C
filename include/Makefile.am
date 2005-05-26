@@ -6,3 +6,5 @@ include_HEADERS = \
 	libstdf_systems.h \
 	libstdf_sys_config.h \
 	libstdf_bswap.h
+noinst_INCLUDES = \
+	libstdf_internal.h
