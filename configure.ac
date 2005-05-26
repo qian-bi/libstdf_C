@@ -21,7 +21,7 @@ cmplrs/host.h sys/isa_defs.h \
 
 dnl Let's get anal with compiling while on my dev box
 if test "x$HOSTNAME" = "xvapier" ; then
-	CFLAGS="$CFLAGS -Wall -Werror"
+	CFLAGS="$CFLAGS -Wall -Werror -fbounds-checking"
 fi
 
 dnl ********************************************************
