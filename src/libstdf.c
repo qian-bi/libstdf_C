@@ -4,7 +4,7 @@
  * @internal
  */
 /*
- * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2005 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  *
@@ -12,6 +12,7 @@
  */
 
 #include <libstdf.h>
+#include "libstdf_internal.h"
 #include "dtc.h"
 #include "rec.h"
 
@@ -236,45 +237,47 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts)
 		ret->file_format = STDF_FORMAT_BZIP2;
 	else if (ret->filename) {
 		/* try to guess from the filename if it's compressed */
-		if (strrchr(ret->filename, '.') != NULL)
-			if (strstr(ret->filename, ".zip") != NULL)
-				ret->file_format = STDF_FORMAT_ZIP;
-			else if (strstr(ret->filename, ".gz") != NULL)
-				ret->file_format = STDF_FORMAT_GZIP;
-			else if (strstr(ret->filename, ".bz") != NULL || strstr(ret->filename, ".bz2") != NULL)
-				ret->file_format = STDF_FORMAT_BZIP2;
-			else
-				ret->file_format = STDF_FORMAT_REG;
-		else
+		if (strrchr(ret->filename, '.') != NULL) {
+			struct {
+				char *filetype;
+				stdf_format fmt;
+			} guesses[] = {
+				{ ".zip", STDF_FORMAT_ZIP   },
+				{ ".gz",  STDF_FORMAT_GZIP  },
+				{ ".bz",  STDF_FORMAT_BZIP2 },
+				{ ".bz2", STDF_FORMAT_BZIP2 },
+				{ NULL,   STDF_FORMAT_REG   }
+			};
+			int i;
+			ret->file_format = STDF_FORMAT_REG;
+			for (i = 0; guesses[i].filetype; ++i)
+				if (strstr(ret->filename, guesses[i].filetype) != NULL) {
+					ret->file_format = guesses[i].fmt;
+					break;
+				}
+		} else
 			ret->file_format = STDF_FORMAT_REG;
 	}
 
 	switch (ret->file_format) {
-		case STDF_FORMAT_ZIP:
 #if HAVE_ZIP
+		case STDF_FORMAT_ZIP:
 			ret->fops = &__stdf_fops_zip;
 			break;
-#else
-			fprintf(stderr, "stdf_open(): zip support was disabled!\n");
-			goto out_err;
 #endif
-		case STDF_FORMAT_GZIP:
 #if HAVE_GZIP
+		case STDF_FORMAT_GZIP:
 			ret->fops = &__stdf_fops_gzip;
 			break;
-#else
-			fprintf(stderr, "stdf_open(): gzip support was disabled!\n");
-			goto out_err;
 #endif
-		case STDF_FORMAT_BZIP2:
 #if HAVE_BZIP2
+		case STDF_FORMAT_BZIP2:
 			ret->fops = &__stdf_fops_bzip2;
 			break;
-#else
-			fprintf(stderr, "stdf_open(): bzip2 compression was disabled!\n");
-			goto out_err;
 #endif
 		default:
+			fprintf(stderr, "stdf_open(): format not supported\n");
+			goto out_err;
 		case STDF_FORMAT_REG:
 			ret->fops = &__stdf_fops_reg;
 	}
