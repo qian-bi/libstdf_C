@@ -212,10 +212,10 @@ rec_mrr* stdf_read_rec_mrr(stdf_file *file)
 #ifdef STDF_VER3
 	if (file->ver == 3) {
 	_stdf_read_dtc_U4(file, &(mrr->PART_CNT));
-	_stdf_read_dtc_I4(file, &(mrr->RTST_CNT));
-	_stdf_read_dtc_I4(file, &(mrr->ABRT_CNT));
-	_stdf_read_dtc_I4(file, &(mrr->GOOD_CNT));
-	_stdf_read_dtc_I4(file, &(mrr->FUNC_CNT));
+	_stdf_read_dtc_U4(file, &(mrr->RTST_CNT));
+	_stdf_read_dtc_U4(file, &(mrr->ABRT_CNT));
+	_stdf_read_dtc_U4(file, &(mrr->GOOD_CNT));
+	_stdf_read_dtc_U4(file, &(mrr->FUNC_CNT));
 	}
 #endif
 	_stdf_read_dtc_C1(file, &(mrr->DISP_COD));
