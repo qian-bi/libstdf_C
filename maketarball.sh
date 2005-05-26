@@ -15,6 +15,8 @@ rm -rf clean.sh maketarball.sh test.sh
 ./autogen.sh || exit 1
 rm -rf autom4te.cache `find -name CVS`
 
+find . -iname '*cmake*' | xargs rm -f
+
 if [ "${VER}" == "test" ] ; then
 	./configure && make -j
 else
