@@ -14,14 +14,14 @@ AC_ENABLE_STATIC
 
 AC_CHECK_HEADERS([ \
 stdint.h inttypes.h sys/types.h sys/stat.h \
-unistd.h fcntl.h stdio.h stdlib.h \
+errno.h unistd.h fcntl.h stdio.h stdlib.h \
 string.h endian.h sys/endian.h machine/endian.h \
-cmplrs/host.h sys/isa_defs.h \
+cmplrs/host.h sys/isa_defs.h byteswap.h \
 ])
 
 dnl Let's get anal with compiling while on my dev box
 if test "x$HOSTNAME" = "xvapier" ; then
-	CFLAGS="$CFLAGS -Wall -Werror -fbounds-checking"
+	CFLAGS="$CFLAGS -Wall -Werror"
 fi
 
 dnl ********************************************************
