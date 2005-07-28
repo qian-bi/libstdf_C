@@ -3,7 +3,7 @@
  * @brief Top level include and the main stdf structure definition.
  */
 /*
- * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2005 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  *
@@ -66,16 +66,19 @@ typedef struct {
 	int			fd;				/**< Actual file descriptor for the backing file */
 #if !HAVE_NO_COMPRESSION
 	union {
-#if HAVE_ZIP
-	ZZIP_FILE	*fd_zip;
-#endif
-#if HAVE_GZIP
-	gzFile		fd_gzip;
-#endif
-#if HAVE_BZIP2
-	BZFILE		*fd_bzip2;
-#endif
-	};
+# if HAVE_ZIP
+	ZZIP_FILE	*zip;
+#  define fd_zip __fd.zip
+# endif
+# if HAVE_GZIP
+	gzFile		*gzip;
+#  define fd_gzip __fd.gzip
+# endif
+# if HAVE_BZIP2
+	BZFILE		*bzip2;
+#  define fd_bzip2 __fd.bzip2
+# endif
+	} __fd;
 #endif
 	stdf_format	file_format;	/**< Compressed file format */
 	char		*filename;		/**< Filename that was given to stdf_open() */
