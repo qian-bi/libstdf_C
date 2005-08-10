@@ -51,6 +51,12 @@ extern int errno;
 #if defined(HAVE_STRING_H)
 # include <string.h>
 #endif
+#if defined(HAVE_FEATURES_H)
+# include <features.h>
+#endif
+#if defined(HAVE_STDARG_H)
+# include <stdarg.h>
+#endif
 
 #if defined(HAVE_ENDIAN_H)
 # include <endian.h>
