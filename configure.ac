@@ -17,6 +17,7 @@ stdint.h inttypes.h sys/types.h sys/stat.h \
 errno.h unistd.h fcntl.h stdio.h stdlib.h \
 string.h endian.h sys/endian.h machine/endian.h \
 cmplrs/host.h sys/isa_defs.h byteswap.h \
+features.h stdarg.h
 ])
 
 dnl Let's get anal with compiling while on my dev box
@@ -244,11 +245,13 @@ dnl *                     HASH [hash / ecore / glib]       *
 dnl ********************************************************
 if test "x$enable_example_programs" = "xyes" ; then
 dnl First check for libhash ...
+HASH_CFLAGS=""
 HASH_LIBS=""
-AC_CHECK_LIB(fhash, hash_initialise,
+AC_CHECK_LIB(hash, hash_initialise,
 	[
 		AC_CHECK_HEADERS([hash.h], [HASH_LIBS="-lhash"])
 	])
+AC_SUBST(HASH_CFLAGS)
 AC_SUBST(HASH_LIBS)
 
 dnl If that fails, check for ecore ...
@@ -285,6 +288,25 @@ if test "x$HASH_LIBS" != "x" -o "x$ECORE_LIBS" != "x" ; then
 fi
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
+fi
+
+dnl ********************************************************
+dnl *                        GD                            *
+dnl ********************************************************
+if test "x$enable_example_programs" = "xyes" ; then
+AC_PATH_PROG(GDLIB_CONFIG, "gdlib-config", "")
+if test "x$GDLIB_CONFIG" != "x" ; then
+	AC_DEFINE(HAVE_GDLIB, 1, [Has gd support (used by example programs)])
+	AM_CONDITIONAL(HAVE_GDLIB, true)
+	GDLIB_CFLAGS=`gdlib-config --cflags`
+	GDLIB_LIBS="-lgd `gdlib-config --libs`"
+else
+	AM_CONDITIONAL(HAVE_GDLIB, false)
+	GDLIB_CFLAGS=""
+	GDLIB_LIBS=""
+fi
+AC_SUBST(GDLIB_CFLAGS)
+AC_SUBST(GDLIB_LIBS)
 fi
 
 dnl ********************************************************
