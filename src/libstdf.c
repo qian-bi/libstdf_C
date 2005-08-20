@@ -311,32 +311,18 @@ out_err:
 }
 stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
 {
-	fprintf(stderr, "stdf_open_ex is deprecated, use stdf_open()\n");
 	return _stdf_open(pathname, -1, opts);
 }
-stdf_file* stdf_open(char *pathname, ...)
+stdf_file* stdf_open(char *pathname)
 {
-	uint32_t opts;
-	va_list ap;
-	va_start(ap, pathname);
-	opts = va_arg(ap, uint32_t);
-	va_end(ap);
-	if (!opts) opts = STDF_OPTS_DEFAULT;
-	return _stdf_open(pathname, -1, opts);
+	return _stdf_open(pathname, -1, STDF_OPTS_DEFAULT);
 }
-stdf_file* stdf_dopen(int fd, ...)
+stdf_file* stdf_dopen(int fd)
 {
-	uint32_t opts;
-	va_list ap;
-	va_start(ap, fd);
-	opts = va_arg(ap, uint32_t);
-	va_end(ap);
-	if (!opts) opts = STDF_OPTS_DEFAULT;
-	return _stdf_open(NULL, fd, opts);
+	return _stdf_open(NULL, fd, STDF_OPTS_DEFAULT);
 }
 stdf_file* stdf_dopen_ex(int fd, uint32_t opts)
 {
-	fprintf(stderr, "stdf_dopen_ex is deprecated, use stdf_dopen()\n");
 	return _stdf_open(NULL, fd, opts);
 }
 
