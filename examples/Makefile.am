@@ -7,12 +7,17 @@ noinst_PROGRAMS = \
 	is_valid_stdf \
 	stdf2xtdf \
 	makestdf \
-	extract_records
+	extract_records \
+	stdf2img
 else
 noinst_PROGRAMS =
 endif
 
-INCLUDES = -I$(top_builddir)/include @ECORE_CFLAGS@ @GLIB_CFLAGS@
+INCLUDES = \
+	-I$(top_builddir)/include \
+	@HASH_CFLAGS@ @ECORE_CFLAGS@ @GLIB_CFLAGS@ \
+	@GDLIB_CFLAGS@
 
 LDADD = $(top_builddir)/src/libstdf.la
 record_stats_LDADD = @HASH_LIBS@ @ECORE_LIBS@ @GLIB_LIBS@ $(LDADD)
+stdf2img_LDADD = @GDLIB_LIBS@ $(LDADD)
