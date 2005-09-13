@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 		softim = gdImageCreate(x_range, y_range);
 		for (x = 0; x < x_range; ++x)
 			for (y = 0; y < y_range; ++y) {
-				int r, g, b, hc, sc;
+				int r, g, b, hc = 0, sc = 0;
 				bin = hard_bins[x*x_range+y];
 				if (bin < sizeof(hard_colors)/sizeof(*hard_colors)) {
 					if (hard_colors[bin] == 0) {
