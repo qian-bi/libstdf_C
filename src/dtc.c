@@ -65,6 +65,7 @@ MAKE_NUM_FUNC(dtc_I4)
 MAKE_NUM_FUNC(dtc_R4)
 MAKE_NUM_FUNC(dtc_R8)
 
+#ifdef STDF_VER3
 void _stdf_read_dtc_Cx(stdf_file *f, dtc_Cn *Cn, int len)
 {
 	/* does this even work ?
@@ -78,6 +79,7 @@ void _stdf_read_dtc_Cx(stdf_file *f, dtc_Cn *Cn, int len)
 	memcpy((*Cn)+1, f->rec_pos, len);
 	f->rec_pos += len;
 }
+#endif
 
 void _stdf_read_dtc_Cn(stdf_file *f, dtc_Cn *Cn)
 {
@@ -95,6 +97,14 @@ void _stdf_read_dtc_Cn(stdf_file *f, dtc_Cn *Cn)
 	f->rec_pos += len;
 	(*Cn)[len+1] = '\0';
 }
+#ifdef strong_alias
+strong_alias(_stdf_read_dtc_Cn, _stdf_read_dtc_Bn);
+#else
+void _stdf_read_dtc_Bn(stdf_file *f, dtc_Bn *Bn)
+{
+	return _stdf_read_dtc_Cn(f, (dtc_Cn*)Bn);
+}
+#endif
 
 void _stdf_read_dtc_Dn(stdf_file *f, dtc_Dn *Dn)
 {

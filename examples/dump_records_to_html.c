@@ -2,7 +2,7 @@
  * @file dump_records_to_html.c
  */
 /*
- * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2005 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  *
@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
 
 	for (type=1; type<3; type++) {
 		f->fops->close(f);
-		f->fops->open(f);
+		f->fops->open(f, O_RDONLY, 0);
 
 		width = 0;
 		rec_count = max_recs;

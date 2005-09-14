@@ -27,7 +27,7 @@ extern "C" {
 #define	__STDF_HOST_BYTE_ORDER		BYTE_ORDER
 
 typedef struct {
-	int		(*open)(void*);
+	int		(*open)(void*, int, uint32_t);
 	int		(*read)(void*, void*, long);
 	int		(*close)(void*);
 } __stdf_fops;
@@ -46,15 +46,18 @@ typedef enum {
  * Misc options to control libstdf behavior
  */
 typedef enum {
-	STDF_OPTS_DEFAULT	= 0x00,	/**< Default options */
-	STDF_OPTS_FORCE		= 0x01,	/**< Force reading even if some sanity checks fail */
+	STDF_OPTS_DEFAULT  = 0x000,  /**< Default options */
+	STDF_OPTS_FORCE    = 0x001,  /**< Force reading even if some sanity checks fail */
 #ifdef STDF_VER3
-	STDF_OPTS_FORCE_V3	= 0x02,	/**< Force STDFv3 behavior */
+	STDF_OPTS_FORCE_V3 = 0x002,  /**< Force STDFv3 behavior */
 #endif
-	STDF_OPTS_FORCE_V4	= 0x04,	/**< Force STDFv4 behavior */
-	STDF_OPTS_ZIP		= 0x08,	/**< File is compressed with zip */
-	STDF_OPTS_GZIP		= 0x10,	/**< File is compressed with gzip */
-	STDF_OPTS_BZIP2		= 0x20	/**< File is compressed with bzip2 */
+	STDF_OPTS_FORCE_V4 = 0x004,  /**< Force STDFv4 behavior */
+	STDF_OPTS_ZIP      = 0x008,  /**< File is compressed with zip */
+	STDF_OPTS_GZIP     = 0x010,  /**< File is compressed with gzip */
+	STDF_OPTS_BZIP2    = 0x020,  /**< File is compressed with bzip2 */
+	STDF_OPTS_READ     = 0x040,  /**< Allow reading from file */
+	STDF_OPTS_WRITE    = 0x080,  /**< Allow writing to file */
+	STDF_OPTS_CREATE   = 0x100   /**< Create file from scratch */
 } stdf_options;
 
 /**

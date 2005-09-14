@@ -16,12 +16,17 @@
 #include "dtc.h"
 #include "rec.h"
 
+
+
+/*
+ * UNCOMPRESSED SUPPORT
+ */
 int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, uint32_t opts)
 {
 	switch (cpu_type) {
 		case CPU_TYPE_DEC:
 			f->byte_order = 0xBEEF;
-			fprintf(stderr, "byte_order: CPU_TYPE_DEC (PDP_ENDIAN) has no implementation\n");
+			warnf("CPU_TYPE_DEC (PDP_ENDIAN) has no implementation");
 			break;
 
 		/*case CPU_TYPE_SUN_680XX:*/
@@ -37,12 +42,12 @@ int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, uint32_t opts)
 #ifdef STDF_VER3
 		case CPU_TYPE_LTX:
 			if (stdf_ver == 3) {
-				fprintf(stderr, "byte_order: CPU_TYPE_LTX (???_ENDIAN) has no implementation\n");
+				warnf("CPU_TYPE_LTX (???_ENDIAN) has no implementation");
 				break;
 			}
 		case CPU_TYPE_APOLLO:
 			if (stdf_ver == 3) {
-				fprintf(stderr, "byte_order: CPU_TYPE_APOLLO (???_ENDIAN) has no implementation\n");
+				warnf("CPU_TYPE_APOLLO (???_ENDIAN) has no implementation");
 				break;
 			}
 #endif
@@ -50,6 +55,7 @@ int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, uint32_t opts)
 			f->byte_order = __STDF_HOST_BYTE_ORDER;
 			break;
 	}
+
 	if ((opts & STDF_OPTS_FORCE_V4) || (opts & STDF_OPTS_FORCE) || stdf_ver == 4) {
 		f->ver = 4;
 #ifdef STDF_VER3
@@ -57,9 +63,10 @@ int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, uint32_t opts)
 		f->ver = 3;
 #endif
 	} else {
-		fprintf(stderr, "Unable to handle STDF ver%i !\n", stdf_ver);
+		warnf("Unable to handle STDF ver%i !", stdf_ver);
 		return 1;
 	}
+
 	f->opts = opts;
 
 	f->rec_pos = NULL;
@@ -68,7 +75,7 @@ int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, uint32_t opts)
 	return 0;
 }
 
-static int __stdf_open_reg(void *data)
+static int __stdf_open_reg(void *data, int flags, uint32_t mode)
 {
 	stdf_file *stdf = (stdf_file*)data;
 
@@ -77,7 +84,7 @@ static int __stdf_open_reg(void *data)
 		if (stdf->filename[0] == '-' && stdf->filename[1] == '\0')
 			stdf->fd = 0;
 		else
-			stdf->fd = open(stdf->filename, O_RDONLY | O_BINARY);
+			stdf->fd = open(stdf->filename, flags, mode);
 	}
 
 	return stdf->fd;
@@ -101,8 +108,13 @@ static __stdf_fops __stdf_fops_reg = {
 	__stdf_close_reg
 };
 
+
+
+/*
+ * ZIP SUPPORT
+ */
 #if HAVE_ZIP
-static int __stdf_open_zip(void *data)
+static int __stdf_open_zip(void *data, int flags, uint32_t mode)
 {
 	stdf_file *stdf = (stdf_file*)data;
 
@@ -114,7 +126,7 @@ static int __stdf_open_zip(void *data)
 
 	stdf->fd_zip = NULL;
 
-	if (__stdf_open_reg(data) == -1)
+	if (__stdf_open_reg(data, flags, mode) == -1)
 		return -1;
 
 	d = zzip_dir_fdopen(stdf->fd, &err);
@@ -148,13 +160,18 @@ static __stdf_fops __stdf_fops_zip = {
 };
 #endif
 
+
+
+/*
+ * GZIP SUPPORT
+ */
 #if HAVE_GZIP
-static int __stdf_open_gzip(void *data)
+static int __stdf_open_gzip(void *data, int flags, uint32_t mode)
 {
 	stdf_file *stdf = (stdf_file*)data;
 	stdf->fd_gzip = NULL;
 
-	if (__stdf_open_reg(data) == -1)
+	if (__stdf_open_reg(data, flags, mode) == -1)
 		return -1;
 
 	stdf->fd_gzip = gzdopen(stdf->fd, "rb");
@@ -181,13 +198,18 @@ static __stdf_fops __stdf_fops_gzip = {
 };
 #endif
 
+
+
+/*
+ * BZIP2 SUPPORT
+ */
 #if HAVE_BZIP2
-static int __stdf_open_bzip2(void *data)
+static int __stdf_open_bzip2(void *data, int flags, uint32_t mode)
 {
 	stdf_file *stdf = (stdf_file*)data;
 	stdf->fd_bzip2 = NULL;
 
-	if (__stdf_open_reg(data) == -1)
+	if (__stdf_open_reg(data, flags, mode) == -1)
 		return -1;
 
 	stdf->fd_bzip2 = BZ2_bzdopen(stdf->fd, "rb");
@@ -214,20 +236,26 @@ static __stdf_fops __stdf_fops_bzip2 = {
 };
 #endif
 
-static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts)
+
+
+static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mode)
 {
+	int flags, ret_errno = EINVAL;
 	stdf_file *ret = (stdf_file*)malloc(sizeof(stdf_file));
 
 	if (!pathname || pathname[0] == '\0') {
 		if (fd == -1) {
 			free(ret);
-			return NULL;
+			goto set_errno_and_ret;
 		}
 		ret->filename = NULL;
 		ret->fd = fd;
 	} else
 		ret->filename = strdup(pathname);
 	ret->fops = NULL;
+
+	if (opts == STDF_OPTS_DEFAULT)
+		opts = STDF_OPTS_READ;
 
 	if (opts & STDF_OPTS_ZIP)
 		ret->file_format = STDF_FORMAT_ZIP;
@@ -282,14 +310,26 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts)
 			ret->fops = &__stdf_fops_reg;
 	}
 
-	if (ret->fops->open(ret) == -1)
-		goto out_err;
+	flags = O_BINARY;
+	if (opts & (STDF_OPTS_READ | STDF_OPTS_WRITE))
+		flags |= O_RDWR;
+	else if (opts & STDF_OPTS_WRITE)
+		flags |= O_WRONLY;
+	else
+		flags |= O_RDONLY;
+	if (opts & STDF_OPTS_CREATE)
+		flags |= O_CREAT;
 
-	/* try to peek at the FAR record to figure out the CPU type/STDF ver */
-	ret->__data = (byte_t*)malloc(6);
-	if (ret->fops->read(ret, ret->__data, 6) != 6)
+	if (ret->fops->open(ret, flags, mode) == -1) {
+		ret_errno = ENOENT;
 		goto out_err;
-	else {
+	}
+
+	if (!(opts & STDF_OPTS_WRITE)) {
+		/* try to peek at the FAR record to figure out the CPU type/STDF ver */
+		ret->__data = (byte_t*)malloc(6);
+		if (ret->fops->read(ret, ret->__data, 6) != 6)
+			goto out_err;
 		if ((MAKE_REC(ret->__data[2], ret->__data[3]) != REC_FAR)
 #ifdef STDF_VER3
 		    /* STDF v3 can have either a FAR or a MIR record */
@@ -299,31 +339,53 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts)
 			goto out_err;
 		if (__stdf_init(ret, ret->__data[4], ret->__data[5], opts))
 			goto out_err;
+	} else {
+		if (__stdf_init(ret, -1, 4, opts))
+			goto out_err;
 	}
 
+	errno = 0;
 	return ret;
+
 out_err:
 	if (ret->fops)
 		ret->fops->close(ret);
 	free(ret->filename);
 	free(ret);
+
+set_errno_and_ret:
+	errno = ret_errno;
 	return NULL;
 }
-stdf_file* stdf_open_ex(char *pathname, uint32_t opts)
+stdf_file* stdf_open_ex(char *pathname, uint32_t opts, ...)
 {
-	return _stdf_open(pathname, -1, opts);
+	uint32_t mode = 0;
+	if (opts & STDF_OPTS_CREATE) {
+		va_list ap;
+		va_start(ap, opts);
+		mode = va_arg(ap, uint32_t);
+		va_end(ap);
+	}
+	return _stdf_open(pathname, -1, opts, mode);
 }
 stdf_file* stdf_open(char *pathname)
 {
-	return _stdf_open(pathname, -1, STDF_OPTS_DEFAULT);
+	return _stdf_open(pathname, -1, STDF_OPTS_DEFAULT, 0);
 }
 stdf_file* stdf_dopen(int fd)
 {
-	return _stdf_open(NULL, fd, STDF_OPTS_DEFAULT);
+	return _stdf_open(NULL, fd, STDF_OPTS_DEFAULT, 0);
 }
-stdf_file* stdf_dopen_ex(int fd, uint32_t opts)
+stdf_file* stdf_dopen_ex(int fd, uint32_t opts, ...)
 {
-	return _stdf_open(NULL, fd, opts);
+	uint32_t mode = 0;
+	if (opts & STDF_OPTS_CREATE) {
+		va_list ap;
+		va_start(ap, opts);
+		mode = va_arg(ap, uint32_t);
+		va_end(ap);
+	}
+	return _stdf_open(NULL, fd, opts, mode);
 }
 
 int stdf_close(stdf_file *file)
@@ -331,6 +393,7 @@ int stdf_close(stdf_file *file)
 	int ret = file->fops->close(file);
 	if (file->filename) free(file->filename);
 	free(file);
+	errno = 0;
 	return ret;
 }
 
@@ -480,4 +543,86 @@ rec_unknown* stdf_read_record(stdf_file *file)
 	stdf_free_record(raw_rec);
 
 	return rec;
+}
+
+ssize_t _stdf_write_record(stdf_file *file, void *rec_void, unsigned char *buf)
+{
+	rec_unknown *rec = (rec_unknown*)rec_void;
+	/* record order is based on frequency in 'standard' files
+	 * Note: keep order in sync with rec.c
+	 */
+	switch (HEAD_TO_REC(rec->header)) {
+		/* REC_TYP_PER_EXEC */
+		case REC_PTR: return stdf_write_rec_ptr(file, (rec_ptr*)rec, buf);
+		case REC_FTR: return stdf_write_rec_ftr(file, (rec_ftr*)rec, buf);
+		case REC_MPR: return stdf_write_rec_mpr(file, (rec_mpr*)rec, buf);
+
+		/* REC_TYP_PER_PART */
+		case REC_PIR: return stdf_write_rec_pir(file, (rec_pir*)rec, buf);
+		case REC_PRR: return stdf_write_rec_prr(file, (rec_prr*)rec, buf);
+
+		/* REC_TYP_PER_TEST */
+		case REC_TSR: return stdf_write_rec_tsr(file, (rec_tsr*)rec, buf);
+#ifdef STDF_VER3
+		case REC_PDR: return stdf_write_rec_pdr(file, (rec_pdr*)rec, buf);
+		case REC_FDR: return stdf_write_rec_fdr(file, (rec_fdr*)rec, buf);
+#endif
+
+		/* REC_TYP_GENERIC */
+		case REC_DTR: return stdf_write_rec_dtr(file, (rec_dtr*)rec, buf);
+		case REC_GDR: return stdf_write_rec_gdr(file, (rec_gdr*)rec, buf);
+
+		/* REC_TYP_PER_PROG */
+		case REC_BPS: return stdf_write_rec_bps(file, (rec_bps*)rec, buf);
+		case REC_EPS: return stdf_write_rec_eps(file, (rec_eps*)rec, buf);
+
+		/* REC_TYP_PER_SITE */
+#ifdef STDF_VER3
+		case REC_SHB: return stdf_write_rec_shb(file, (rec_shb*)rec, buf);
+		case REC_SSB: return stdf_write_rec_ssb(file, (rec_ssb*)rec, buf);
+		case REC_STS: return stdf_write_rec_sts(file, (rec_sts*)rec, buf);
+		case REC_SCR: return stdf_write_rec_scr(file, (rec_scr*)rec, buf);
+#endif
+
+		/* REC_TYP_PER_LOT */
+		case REC_PMR: return stdf_write_rec_pmr(file, (rec_pmr*)rec, buf);
+		case REC_PGR: return stdf_write_rec_pgr(file, (rec_pgr*)rec, buf);
+		case REC_HBR: return stdf_write_rec_hbr(file, (rec_hbr*)rec, buf);
+		case REC_SBR: return stdf_write_rec_sbr(file, (rec_sbr*)rec, buf);
+		case REC_PLR: return stdf_write_rec_plr(file, (rec_plr*)rec, buf);
+		case REC_RDR: return stdf_write_rec_rdr(file, (rec_rdr*)rec, buf);
+		case REC_SDR: return stdf_write_rec_sdr(file, (rec_sdr*)rec, buf);
+		case REC_MIR: return stdf_write_rec_mir(file, (rec_mir*)rec, buf);
+		case REC_MRR: return stdf_write_rec_mrr(file, (rec_mrr*)rec, buf);
+		case REC_PCR: return stdf_write_rec_pcr(file, (rec_pcr*)rec, buf);
+
+		/* REC_TYP_PER_WAFER */
+		case REC_WIR: return stdf_write_rec_wir(file, (rec_wir*)rec, buf);
+		case REC_WRR: return stdf_write_rec_wrr(file, (rec_wrr*)rec, buf);
+		case REC_WCR: return stdf_write_rec_wcr(file, (rec_wcr*)rec, buf);
+
+		/* REC_TYP_INFO */
+		case REC_FAR: return stdf_write_rec_far(file, (rec_far*)rec, buf);
+		case REC_ATR: return stdf_write_rec_atr(file, (rec_atr*)rec, buf);
+
+		default:      return -1;
+	}
+}
+
+unsigned char __stdf_write_buffer[65536];
+
+ssize_t stdf_write_record(stdf_file *file, void *rec_void)
+{
+	return _stdf_write_record(file, rec_void, __stdf_write_buffer);
+}
+
+ssize_t stdf_write_record_r(stdf_file *file, void *rec_void)
+{
+	ssize_t ret;
+	rec_unknown *rec = (rec_unknown*)rec_void;
+	unsigned char *reentrant_buffer;
+	reentrant_buffer = (unsigned char *)malloc(rec->header.REC_LEN);
+	ret = _stdf_write_record(file, rec, reentrant_buffer);
+	free(reentrant_buffer);
+	return ret;
 }
