@@ -57,6 +57,9 @@ extern int errno;
 #if defined(HAVE_STDARG_H)
 # include <stdarg.h>
 #endif
+#if defined(HAVE_SYS_CDEFS_H)
+# include <sys/cdefs.h>
+#endif
 
 #if defined(HAVE_ENDIAN_H)
 # include <endian.h>
@@ -87,6 +90,8 @@ typedef int16 int16_t;
 typedef int32 int32_t;
 typedef int64 int64_t;
 #endif
+
+typedef unsigned char uchar;
 
 #if !defined(STDF_FORCE_ENDIAN) && !defined(BYTE_ORDER)
 
@@ -128,6 +133,17 @@ typedef int64 int64_t;
 # error You can work around the problem
 # error by re-running ./configure with
 # error the --enable-endian option.
+#endif
+
+#if defined(__GNUC__)
+# if !defined(weak_alias)
+#  define weak_alias(name, aliasname) \
+	extern __typeof (name) aliasname __attribute__ ((weak, alias (#name)))
+# endif
+# if !defined(strong_alias)
+#  define strong_alias(name, aliasname) \
+	extern __typeof (name) aliasname __attribute__ ((alias (#name)))
+# endif
 #endif
 
 #if HAVE_ZIP
