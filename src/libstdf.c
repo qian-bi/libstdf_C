@@ -311,14 +311,14 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mod
 	}
 
 	flags = O_BINARY;
-	if (opts & (STDF_OPTS_READ | STDF_OPTS_WRITE))
+	if ((opts & STDF_OPTS_READ) && (opts & STDF_OPTS_WRITE))
 		flags |= O_RDWR;
 	else if (opts & STDF_OPTS_WRITE)
 		flags |= O_WRONLY;
 	else
 		flags |= O_RDONLY;
 	if (opts & STDF_OPTS_CREATE)
-		flags |= O_CREAT;
+		flags |= O_CREAT | O_TRUNC;
 
 	if (ret->fops->open(ret, flags, mode) == -1) {
 		ret_errno = ENOENT;
