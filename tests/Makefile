@@ -6,7 +6,7 @@ BZCMP        = bzdiff
 
 all:
 
-check: ascii html stats
+check: ascii html stats create
 
 ascii:
 	$(EXAMPLE_DIR)/dump_records_to_ascii $(STDF) > ascii.out
@@ -19,6 +19,10 @@ html:
 stats:
 	$(EXAMPLE_DIR)/record_stats $(STDF) | sort > stats.out
 	$(BZCMP) stats.out stats.good.bz2
+
+create:
+	$(EXAMPLE_DIR)/makestdf create.out
+	$(BZCMP) create.out create.good.bz2
 
 clean:
 	rm -f *.out
