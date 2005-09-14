@@ -69,6 +69,8 @@ typedef enum {
 } rec_sub;
 /* Definitions that combine Record Types with Subtypes */
 #define	MAKE_REC(typ,sub)	((typ << 8) + sub)
+#define	BREAK_REC(h,type)	do { h.REC_TYP = (type >> 8); h.REC_SUB = (type & 0xFF); } while (0)
+#define	INIT_HEADER(h,type)	do { BREAK_REC(h, type); h.REC_LEN = 0; } while (0)
 #define	HEAD_TO_REC(h)		MAKE_REC(h.REC_TYP,h.REC_SUB)
 #define	REC_FAR				MAKE_REC(REC_TYP_INFO, REC_SUB_FAR)
 #define	REC_ATR				MAKE_REC(REC_TYP_INFO, REC_SUB_ATR)
