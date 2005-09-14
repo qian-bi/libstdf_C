@@ -14,7 +14,9 @@
 #ifndef _LIBSTDF_INTERNAL_H
 #define _LIBSTDF_INTERNAL_H
 
-#define warn(fmt, args...)  fprintf(stderr, "libstdf: " fmt "\n", ## args)
-#define warnf(fmt, args...) warn("%s(): " fmt, __FUNCTION__, ## args)
+#define warn(fmt, args...)   fprintf(stderr, "libstdf: " fmt "\n" , ## args)
+#define warnf(fmt, args...)  warn("%s(): " fmt, __FUNCTION__ , ## args)
+#define warnp(fmt, args...)  warn(fmt ": %s" , ## args , strerror(errno))
+#define warnfp(fmt, args...) warnp("%s(): " fmt, __FUNCTION__ , ## args)
 
 #endif /* _LIBSTDF_INTERNAL_H */
