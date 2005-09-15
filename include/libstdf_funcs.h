@@ -19,6 +19,9 @@ extern stdf_file* stdf_dopen(int);							/**< Open a file descriptor with defaul
 extern stdf_file* stdf_dopen_ex(int, uint32_t, ...);		/**< Open a file descriptor with custom options */
 extern int stdf_close(stdf_file*);							/**< Close an open file */
 
+extern int stdf_set_option(stdf_file*, uint32_t, ...);
+extern void stdf_get_option(stdf_file*, uint32_t, ...);
+
 extern rec_unknown* stdf_read_record(stdf_file*);			/**< Read in the next record and parse it */
 extern rec_unknown* stdf_read_record_raw(stdf_file*);		/**< Read in the next record raw */
 extern rec_unknown* stdf_parse_raw_record(rec_unknown*);	/**< Parse a previously read record */

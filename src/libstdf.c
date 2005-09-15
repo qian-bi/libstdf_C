@@ -82,6 +82,38 @@ int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, uint32_t opts)
 	return 0;
 }
 
+int stdf_set_option(stdf_file *f, uint32_t option, ...)
+{
+	va_list ap;
+
+	switch (option) {
+		case STDF_OPT_WRITE_SIZE: {
+			va_start(ap, option);
+			f->_write_chunk_size = va_arg(ap, int);
+			va_end(ap);
+			break;
+		}
+	}
+
+	return 0;
+}
+void stdf_get_option(stdf_file *f, uint32_t option, ...)
+{
+	va_list ap;
+
+	switch (option) {
+		case STDF_OPT_WRITE_SIZE: {
+			dtc_U2 *ret;
+			va_start(ap, option);
+			ret = va_arg(ap, dtc_U2*);
+			va_end(ap);
+			*ret = f->_write_chunk_size;
+			break;
+		}
+	}
+}
+
+
 /*
  * UNCOMPRESSED SUPPORT
  */

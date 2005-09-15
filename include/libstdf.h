@@ -58,7 +58,11 @@ typedef enum {
 	STDF_OPTS_READ     = 0x040,  /**< Allow reading from file */
 	STDF_OPTS_WRITE    = 0x080,  /**< Allow writing to file */
 	STDF_OPTS_CREATE   = 0x100   /**< Create file from scratch */
-} stdf_options;
+} stdf_initial_options;
+
+typedef enum {
+	STDF_OPT_WRITE_SIZE = 0x001  /**< Set the output blocksize for writing */
+} stdf_runtime_options;
 
 /**
  * @brief The main STDF file structure.
