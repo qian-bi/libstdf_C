@@ -22,10 +22,9 @@ extern int stdf_close(stdf_file*);							/**< Close an open file */
 extern rec_unknown* stdf_read_record(stdf_file*);			/**< Read in the next record and parse it */
 extern rec_unknown* stdf_read_record_raw(stdf_file*);		/**< Read in the next record raw */
 extern rec_unknown* stdf_parse_raw_record(rec_unknown*);	/**< Parse a previously read record */
-extern void stdf_free_record(rec_unknown*);					/**< Free a record  */
+extern void stdf_free_record(rec_unknown*);					/**< Free a record */
 
-extern ssize_t stdf_write_record(stdf_file*, void*);
-extern ssize_t stdf_write_record_r(stdf_file*, void*);
+extern ssize_t stdf_write_record(stdf_file*, void*);		/**< Write out a record */
 
 #define stdf_init_header(header, type) INIT_HEADER(header, type)
 
