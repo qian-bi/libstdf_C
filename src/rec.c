@@ -1165,12 +1165,12 @@ static inline size_t _calc_rec_len_mrr(stdf_file *f, rec_mrr *r)
 	sizeof(r->FINISH_T) + sizeof(r->DISP_COD) + \
 	sizeof(r->PART_CNT) + sizeof(r->RTST_CNT) + sizeof(r->ABRT_CNT) + \
 	sizeof(r->GOOD_CNT) + sizeof(r->FUNC_CNT) + \
-	_lenCn(r->USR_DESC)+1 + _lenCn(r->EXC_DESC)+1 \
+	_lenCn(r->USR_DESC) + _lenCn(r->EXC_DESC) \
 	)
 #define _CALC_REC_LEN_MRR_v4(r) \
 	( \
 	sizeof(r->FINISH_T) + sizeof(r->DISP_COD) + \
-	_lenCn(r->USR_DESC)+1 + _lenCn(r->EXC_DESC)+1 \
+	_lenCn(r->USR_DESC) + _lenCn(r->EXC_DESC) \
 	)
 #ifdef STDF_VER3
 	return (f->ver == 3 ? _CALC_REC_LEN_MRR_v3(r) : _CALC_REC_LEN_MRR_v4(r));
@@ -1499,14 +1499,65 @@ static inline size_t _calc_rec_len_dtr(stdf_file *f, rec_dtr *r)
  */
 
 
-ssize_t _stdf_write_flush(stdf_file *file, size_t count, uchar *buf)
+ssize_t _stdf_write_flush(stdf_file *file, size_t count)
 {
-	return write(file->fd, buf, count + 4);
+	size_t write_ret = 1;
+
+	if (count == -1) {
+		count = file->_write_pos - file->__output;
+		if (count == 0)
+			return 0;
+	} else {
+		/* every record has a 4 byte header */
+		file->_write_pos += count + 4;
+		count = file->_write_pos - file->__output;
+		if (count < file->_write_chunk_size)
+			return 0;
+	}
+
+	file->_write_pos = file->__output;
+#if 0
+	{
+		/* debug */
+		ssize_t ret;
+		ret = write(file->fd, file->__output, count);
+		memset(file->__output, '|', (dtc_U2)-1);
+		return ret;
+	}
+#else
+	while (count > 0 && write_ret > 0) {
+		write_ret = write(file->fd, file->_write_pos, count);
+		if (write_ret > 0) {
+			count -= write_ret;
+			file->_write_pos += write_ret;
+		}
+	}
+
+	/* everything was written, happy happy joy joy */
+	if (count == 0) {
+		errno = 0;
+		count = file->_write_pos - file->__output;
+		file->_write_pos = file->__output;
+		return count;
+	}
+
+	/* did we have a partial write ?  if so, report how many bytes we 
+	 * managed to write, but keep the rest in the buffer for next time */
+	if (file->_write_pos != file->__output) {
+		memmove(file->__output, file->_write_pos, count);
+		count = file->_write_pos - file->__output;
+		file->_write_pos = file->__output;
+		return count;
+	}
+
+	/* did we totally fail ? */
+	return -1;
+#endif
 }
 
-ssize_t stdf_write_rec_far(stdf_file *file, rec_far *far, uchar *buf)
+ssize_t stdf_write_rec_far(stdf_file *file, rec_far *far)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!far->header.REC_LEN) {
 		far->header.REC_LEN = _calc_rec_len_far(file, far);
 		far->header.REC_TYP = REC_TYP_INFO;
@@ -1515,21 +1566,21 @@ ssize_t stdf_write_rec_far(stdf_file *file, rec_far *far, uchar *buf)
 	_stdf_write_dtc_header(file, &(far->header), dtc_buf);
 	_stdf_write_dtc_U1(file, far->CPU_TYPE, dtc_buf);
 	_stdf_write_dtc_U1(file, far->STDF_VER, dtc_buf);
-	return _stdf_write_flush(file, far->header.REC_LEN, buf);
+	return _stdf_write_flush(file, far->header.REC_LEN);
 }
 ssize_t stdf_qwrite_rec_far(stdf_file *file, dtc_U1 CPU_TYPE, dtc_U1 STDF_VER)
 {
-	uchar buf[6];
-	rec_far far;
-	far.header.REC_LEN = 0;
-	far.CPU_TYPE = CPU_TYPE;
-	far.STDF_VER = STDF_VER;
-	return stdf_write_rec_far(file, &far, buf);
+	rec_far far = {
+		.CPU_TYPE = CPU_TYPE,
+		.STDF_VER = STDF_VER
+	};
+	stdf_init_header(far.header, REC_FAR);
+	return stdf_write_rec_far(file, &far);
 }
 
-ssize_t stdf_write_rec_atr(stdf_file *file, rec_atr *atr, uchar *buf)
+ssize_t stdf_write_rec_atr(stdf_file *file, rec_atr *atr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!atr->header.REC_LEN) {
 		atr->header.REC_LEN = _calc_rec_len_atr(file, atr);
 		atr->header.REC_TYP = REC_TYP_INFO;
@@ -1538,12 +1589,12 @@ ssize_t stdf_write_rec_atr(stdf_file *file, rec_atr *atr, uchar *buf)
 	_stdf_write_dtc_header(file, &(atr->header), dtc_buf);
 	_stdf_write_dtc_U4(file, atr->MOD_TIM, dtc_buf);
 	_stdf_write_dtc_Cn(file, atr->CMD_LINE, dtc_buf);
-	return _stdf_write_flush(file, atr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, atr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_mir(stdf_file *file, rec_mir *mir, uchar *buf)
+ssize_t stdf_write_rec_mir(stdf_file *file, rec_mir *mir)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!mir->header.REC_LEN) {
 		mir->header.REC_LEN = _calc_rec_len_mir(file, mir);
 		mir->header.REC_TYP = REC_TYP_PER_LOT;
@@ -1618,12 +1669,12 @@ ssize_t stdf_write_rec_mir(stdf_file *file, rec_mir *mir, uchar *buf)
 	_stdf_write_dtc_Cn(file, mir->PRB_CARD, dtc_buf);
 	}
 #endif
-	return _stdf_write_flush(file, mir->header.REC_LEN, buf);
+	return _stdf_write_flush(file, mir->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_mrr(stdf_file *file, rec_mrr *mrr, uchar *buf)
+ssize_t stdf_write_rec_mrr(stdf_file *file, rec_mrr *mrr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!mrr->header.REC_LEN) {
 		mrr->header.REC_LEN = _calc_rec_len_mrr(file, mrr);
 		mrr->header.REC_TYP = REC_TYP_PER_LOT;
@@ -1643,12 +1694,12 @@ ssize_t stdf_write_rec_mrr(stdf_file *file, rec_mrr *mrr, uchar *buf)
 	_stdf_write_dtc_C1(file, mrr->DISP_COD, dtc_buf);
 	_stdf_write_dtc_Cn(file, mrr->USR_DESC, dtc_buf);
 	_stdf_write_dtc_Cn(file, mrr->EXC_DESC, dtc_buf);
-	return _stdf_write_flush(file, mrr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, mrr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_pcr(stdf_file *file, rec_pcr *pcr, uchar *buf)
+ssize_t stdf_write_rec_pcr(stdf_file *file, rec_pcr *pcr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!pcr->header.REC_LEN) {
 		pcr->header.REC_LEN = _calc_rec_len_pcr(file, pcr);
 		pcr->header.REC_TYP = REC_TYP_PER_LOT;
@@ -1662,12 +1713,12 @@ ssize_t stdf_write_rec_pcr(stdf_file *file, rec_pcr *pcr, uchar *buf)
 	_stdf_write_dtc_U4(file, pcr->ABRT_CNT, dtc_buf);
 	_stdf_write_dtc_U4(file, pcr->GOOD_CNT, dtc_buf);
 	_stdf_write_dtc_U4(file, pcr->FUNC_CNT, dtc_buf);
-	return _stdf_write_flush(file, pcr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, pcr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_hbr(stdf_file *file, rec_hbr *hbr, uchar *buf)
+ssize_t stdf_write_rec_hbr(stdf_file *file, rec_hbr *hbr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!hbr->header.REC_LEN) {
 		hbr->header.REC_LEN = _calc_rec_len_hbr(file, hbr);
 		hbr->header.REC_TYP = REC_TYP_PER_LOT;
@@ -1680,12 +1731,12 @@ ssize_t stdf_write_rec_hbr(stdf_file *file, rec_hbr *hbr, uchar *buf)
 	_stdf_write_dtc_U4(file, hbr->HBIN_CNT, dtc_buf);
 	_stdf_write_dtc_C1(file, hbr->HBIN_PF, dtc_buf);
 	_stdf_write_dtc_Cn(file, hbr->HBIN_NAM, dtc_buf);
-	return _stdf_write_flush(file, hbr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, hbr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_sbr(stdf_file *file, rec_sbr *sbr, uchar *buf)
+ssize_t stdf_write_rec_sbr(stdf_file *file, rec_sbr *sbr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!sbr->header.REC_LEN) {
 		sbr->header.REC_LEN = _calc_rec_len_sbr(file, sbr);
 		sbr->header.REC_TYP = REC_TYP_PER_LOT;
@@ -1698,12 +1749,12 @@ ssize_t stdf_write_rec_sbr(stdf_file *file, rec_sbr *sbr, uchar *buf)
 	_stdf_write_dtc_U4(file, sbr->SBIN_CNT, dtc_buf);
 	_stdf_write_dtc_C1(file, sbr->SBIN_PF, dtc_buf);
 	_stdf_write_dtc_Cn(file, sbr->SBIN_NAM, dtc_buf);
-	return _stdf_write_flush(file, sbr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, sbr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_pmr(stdf_file *file, rec_pmr *pmr, uchar *buf)
+ssize_t stdf_write_rec_pmr(stdf_file *file, rec_pmr *pmr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!pmr->header.REC_LEN) {
 		pmr->header.REC_LEN = _calc_rec_len_pmr(file, pmr);
 		pmr->header.REC_TYP = REC_TYP_PER_LOT;
@@ -1717,12 +1768,12 @@ ssize_t stdf_write_rec_pmr(stdf_file *file, rec_pmr *pmr, uchar *buf)
 	_stdf_write_dtc_Cn(file, pmr->LOG_NAM, dtc_buf);
 	_stdf_write_dtc_U1(file, pmr->HEAD_NUM, dtc_buf);
 	_stdf_write_dtc_U1(file, pmr->SITE_NUM, dtc_buf);
-	return _stdf_write_flush(file, pmr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, pmr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_pgr(stdf_file *file, rec_pgr *pgr, uchar *buf)
+ssize_t stdf_write_rec_pgr(stdf_file *file, rec_pgr *pgr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!pgr->header.REC_LEN) {
 		pgr->header.REC_LEN = _calc_rec_len_pgr(file, pgr);
 		pgr->header.REC_TYP = REC_TYP_PER_LOT;
@@ -1733,12 +1784,12 @@ ssize_t stdf_write_rec_pgr(stdf_file *file, rec_pgr *pgr, uchar *buf)
 	_stdf_write_dtc_Cn(file, pgr->GRP_NAM, dtc_buf);
 	_stdf_write_dtc_U2(file, pgr->INDX_CNT, dtc_buf);
 	_stdf_write_dtc_xU2(file, pgr->PMR_INDX, pgr->INDX_CNT, dtc_buf);
-	return _stdf_write_flush(file, pgr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, pgr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_plr(stdf_file *file, rec_plr *plr, uchar *buf)
+ssize_t stdf_write_rec_plr(stdf_file *file, rec_plr *plr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	warn_untested("PLR");
 	if (!plr->header.REC_LEN) {
 		plr->header.REC_LEN = _calc_rec_len_plr(file, plr);
@@ -1754,12 +1805,12 @@ ssize_t stdf_write_rec_plr(stdf_file *file, rec_plr *plr, uchar *buf)
 	_stdf_write_dtc_xCn(file, plr->RTN_CHAR, plr->GRP_CNT, dtc_buf);
 	_stdf_write_dtc_xCn(file, plr->PGM_CHAL, plr->GRP_CNT, dtc_buf);
 	_stdf_write_dtc_xCn(file, plr->RTN_CHAL, plr->GRP_CNT, dtc_buf);
-	return _stdf_write_flush(file, plr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, plr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_rdr(stdf_file *file, rec_rdr *rdr, uchar *buf)
+ssize_t stdf_write_rec_rdr(stdf_file *file, rec_rdr *rdr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!rdr->header.REC_LEN) {
 		rdr->header.REC_LEN = _calc_rec_len_rdr(file, rdr);
 		rdr->header.REC_TYP = REC_TYP_PER_LOT;
@@ -1768,12 +1819,12 @@ ssize_t stdf_write_rec_rdr(stdf_file *file, rec_rdr *rdr, uchar *buf)
 	_stdf_write_dtc_header(file, &(rdr->header), dtc_buf);
 	_stdf_write_dtc_U2(file, rdr->NUM_BINS, dtc_buf);
 	_stdf_write_dtc_xU2(file, rdr->RTST_BIN, rdr->NUM_BINS, dtc_buf);
-	return _stdf_write_flush(file, rdr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, rdr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_sdr(stdf_file *file, rec_sdr *sdr, uchar *buf)
+ssize_t stdf_write_rec_sdr(stdf_file *file, rec_sdr *sdr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!sdr->header.REC_LEN) {
 		sdr->header.REC_LEN = _calc_rec_len_sdr(file, sdr);
 		sdr->header.REC_TYP = REC_TYP_PER_LOT;
@@ -1800,12 +1851,12 @@ ssize_t stdf_write_rec_sdr(stdf_file *file, rec_sdr *sdr, uchar *buf)
 	_stdf_write_dtc_Cn(file, sdr->LASR_ID, dtc_buf);
 	_stdf_write_dtc_Cn(file, sdr->EXTR_TYP, dtc_buf);
 	_stdf_write_dtc_Cn(file, sdr->EXTR_ID, dtc_buf);
-	return _stdf_write_flush(file, sdr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, sdr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_wir(stdf_file *file, rec_wir *wir, uchar *buf)
+ssize_t stdf_write_rec_wir(stdf_file *file, rec_wir *wir)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!wir->header.REC_LEN) {
 		wir->header.REC_LEN = _calc_rec_len_wir(file, wir);
 		wir->header.REC_TYP = REC_TYP_PER_WAFER;
@@ -1821,12 +1872,12 @@ ssize_t stdf_write_rec_wir(stdf_file *file, rec_wir *wir, uchar *buf)
 	_stdf_write_dtc_U1(file, wir->SITE_GRP, dtc_buf);
 	_stdf_write_dtc_U4(file, wir->START_T, dtc_buf);
 	_stdf_write_dtc_Cn(file, wir->WAFER_ID, dtc_buf);
-	return _stdf_write_flush(file, wir->header.REC_LEN, buf);
+	return _stdf_write_flush(file, wir->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_wrr(stdf_file *file, rec_wrr *wrr, uchar *buf)
+ssize_t stdf_write_rec_wrr(stdf_file *file, rec_wrr *wrr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!wrr->header.REC_LEN) {
 		wrr->header.REC_LEN = _calc_rec_len_wrr(file, wrr);
 		wrr->header.REC_TYP = REC_TYP_PER_WAFER;
@@ -1866,12 +1917,12 @@ ssize_t stdf_write_rec_wrr(stdf_file *file, rec_wrr *wrr, uchar *buf)
 #endif
 	_stdf_write_dtc_Cn(file, wrr->USR_DESC, dtc_buf);
 	_stdf_write_dtc_Cn(file, wrr->EXC_DESC, dtc_buf);
-	return _stdf_write_flush(file, wrr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, wrr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_wcr(stdf_file *file, rec_wcr *wcr, uchar *buf)
+ssize_t stdf_write_rec_wcr(stdf_file *file, rec_wcr *wcr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!wcr->header.REC_LEN) {
 		wcr->header.REC_LEN = _calc_rec_len_wcr(file, wcr);
 		wcr->header.REC_TYP = REC_TYP_PER_WAFER;
@@ -1887,12 +1938,12 @@ ssize_t stdf_write_rec_wcr(stdf_file *file, rec_wcr *wcr, uchar *buf)
 	_stdf_write_dtc_I2(file, wcr->CENTER_Y, dtc_buf);
 	_stdf_write_dtc_C1(file, wcr->POS_X, dtc_buf);
 	_stdf_write_dtc_C1(file, wcr->POS_Y, dtc_buf);
-	return _stdf_write_flush(file, wcr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, wcr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_pir(stdf_file *file, rec_pir *pir, uchar *buf)
+ssize_t stdf_write_rec_pir(stdf_file *file, rec_pir *pir)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!pir->header.REC_LEN) {
 		pir->header.REC_LEN = _calc_rec_len_pir(file, pir);
 		pir->header.REC_TYP = REC_TYP_PER_PART;
@@ -1908,12 +1959,12 @@ ssize_t stdf_write_rec_pir(stdf_file *file, rec_pir *pir, uchar *buf)
 	_stdf_write_dtc_Cn(file, pir->PART_ID, dtc_buf);
 	}
 #endif
-	return _stdf_write_flush(file, pir->header.REC_LEN, buf);
+	return _stdf_write_flush(file, pir->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_prr(stdf_file *file, rec_prr *prr, uchar *buf)
+ssize_t stdf_write_rec_prr(stdf_file *file, rec_prr *prr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!prr->header.REC_LEN) {
 		prr->header.REC_LEN = _calc_rec_len_prr(file, prr);
 		prr->header.REC_TYP = REC_TYP_PER_PART;
@@ -1944,14 +1995,14 @@ ssize_t stdf_write_rec_prr(stdf_file *file, rec_prr *prr, uchar *buf)
 	_stdf_write_dtc_Cn(file, prr->PART_ID, dtc_buf);
 	_stdf_write_dtc_Cn(file, prr->PART_TXT, dtc_buf);
 	_stdf_write_dtc_Bn(file, prr->PART_FIX, dtc_buf);
-	return _stdf_write_flush(file, prr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, prr->header.REC_LEN);
 }
 
 #ifdef STDF_VER3
 
-ssize_t stdf_write_rec_pdr(stdf_file *file, rec_pdr *pdr, uchar *buf)
+ssize_t stdf_write_rec_pdr(stdf_file *file, rec_pdr *pdr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!pdr->header.REC_LEN) {
 		pdr->header.REC_LEN = _calc_rec_len_pdr(file, pdr);
 		pdr->header.REC_TYP = REC_TYP_PER_TEST;
@@ -1975,12 +2026,12 @@ ssize_t stdf_write_rec_pdr(stdf_file *file, rec_pdr *pdr, uchar *buf)
 	_stdf_write_dtc_R4(file, pdr->HI_LIMIT, dtc_buf);
 	_stdf_write_dtc_Cn(file, pdr->TEST_NAM, dtc_buf);
 	_stdf_write_dtc_Cn(file, pdr->SEQ_NAME, dtc_buf);
-	return _stdf_write_flush(file, pdr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, pdr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_fdr(stdf_file *file, rec_fdr *fdr, uchar *buf)
+ssize_t stdf_write_rec_fdr(stdf_file *file, rec_fdr *fdr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!fdr->header.REC_LEN) {
 		fdr->header.REC_LEN = _calc_rec_len_fdr(file, fdr);
 		fdr->header.REC_TYP = REC_TYP_PER_TEST;
@@ -1991,14 +2042,14 @@ ssize_t stdf_write_rec_fdr(stdf_file *file, rec_fdr *fdr, uchar *buf)
 	_stdf_write_dtc_B1(file, fdr->DESC_FLG, dtc_buf);
 	_stdf_write_dtc_Cn(file, fdr->TEST_NAM, dtc_buf);
 	_stdf_write_dtc_Cn(file, fdr->SEQ_NAME, dtc_buf);
-	return _stdf_write_flush(file, fdr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, fdr->header.REC_LEN);
 }
 
 #endif
 
-ssize_t stdf_write_rec_tsr(stdf_file *file, rec_tsr *tsr, uchar *buf)
+ssize_t stdf_write_rec_tsr(stdf_file *file, rec_tsr *tsr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!tsr->header.REC_LEN) {
 		tsr->header.REC_LEN = _calc_rec_len_tsr(file, tsr);
 		tsr->header.REC_TYP = REC_TYP_PER_TEST;
@@ -2041,12 +2092,12 @@ ssize_t stdf_write_rec_tsr(stdf_file *file, rec_tsr *tsr, uchar *buf)
 	_stdf_write_dtc_Cn(file, tsr->SEQ_NAME, dtc_buf);
 	}
 #endif
-	return _stdf_write_flush(file, tsr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, tsr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_ptr(stdf_file *file, rec_ptr *ptr, uchar *buf)
+ssize_t stdf_write_rec_ptr(stdf_file *file, rec_ptr *ptr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!ptr->header.REC_LEN) {
 		ptr->header.REC_LEN = _calc_rec_len_ptr(file, ptr);
 		ptr->header.REC_TYP = REC_TYP_PER_EXEC;
@@ -2073,12 +2124,12 @@ ssize_t stdf_write_rec_ptr(stdf_file *file, rec_ptr *ptr, uchar *buf)
 	_stdf_write_dtc_Cn(file, ptr->C_HLMFMT, dtc_buf);
 	_stdf_write_dtc_R4(file, ptr->LO_SPEC, dtc_buf);
 	_stdf_write_dtc_R4(file, ptr->HI_SPEC, dtc_buf);
-	return _stdf_write_flush(file, ptr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, ptr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_mpr(stdf_file *file, rec_mpr *mpr, uchar *buf)
+ssize_t stdf_write_rec_mpr(stdf_file *file, rec_mpr *mpr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	warn_untested("MPR");
 	if (!mpr->header.REC_LEN) {
 		mpr->header.REC_LEN = _calc_rec_len_mpr(file, mpr);
@@ -2113,12 +2164,12 @@ ssize_t stdf_write_rec_mpr(stdf_file *file, rec_mpr *mpr, uchar *buf)
 	_stdf_write_dtc_Cn(file, mpr->C_HLMFMT, dtc_buf);
 	_stdf_write_dtc_R4(file, mpr->LO_SPEC, dtc_buf);
 	_stdf_write_dtc_R4(file, mpr->HI_SPEC, dtc_buf);
-	return _stdf_write_flush(file, mpr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, mpr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_ftr(stdf_file *file, rec_ftr *ftr, uchar *buf)
+ssize_t stdf_write_rec_ftr(stdf_file *file, rec_ftr *ftr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	warn_untested("FTR");
 	if (!ftr->header.REC_LEN) {
 		ftr->header.REC_LEN = _calc_rec_len_ftr(file, ftr);
@@ -2154,12 +2205,12 @@ ssize_t stdf_write_rec_ftr(stdf_file *file, rec_ftr *ftr, uchar *buf)
 	_stdf_write_dtc_Cn(file, ftr->RSLT_TXT, dtc_buf);
 	_stdf_write_dtc_U1(file, ftr->PATG_NUM, dtc_buf);
 	_stdf_write_dtc_Dn(file, ftr->SPIN_MAP, dtc_buf);
-	return _stdf_write_flush(file, ftr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, ftr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_bps(stdf_file *file, rec_bps *bps, uchar *buf)
+ssize_t stdf_write_rec_bps(stdf_file *file, rec_bps *bps)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!bps->header.REC_LEN) {
 		bps->header.REC_LEN = _calc_rec_len_bps(file, bps);
 		bps->header.REC_TYP = REC_TYP_PER_PROG;
@@ -2167,26 +2218,26 @@ ssize_t stdf_write_rec_bps(stdf_file *file, rec_bps *bps, uchar *buf)
 	}
 	_stdf_write_dtc_header(file, &(bps->header), dtc_buf);
 	_stdf_write_dtc_Cn(file, bps->SEQ_NAME, dtc_buf);
-	return _stdf_write_flush(file, bps->header.REC_LEN, buf);
+	return _stdf_write_flush(file, bps->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_eps(stdf_file *file, rec_eps *eps, uchar *buf)
+ssize_t stdf_write_rec_eps(stdf_file *file, rec_eps *eps)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!eps->header.REC_LEN) {
 		eps->header.REC_LEN = _calc_rec_len_eps(file, eps);
 		eps->header.REC_TYP = REC_TYP_PER_PROG;
 		eps->header.REC_SUB = REC_SUB_EPS;
 	}
 	_stdf_write_dtc_header(file, &(eps->header), dtc_buf);
-	return _stdf_write_flush(file, eps->header.REC_LEN, buf);
+	return _stdf_write_flush(file, eps->header.REC_LEN);
 }
 
 #ifdef STDF_VER3
 
-ssize_t stdf_write_rec_shb(stdf_file *file, rec_shb *shb, uchar *buf)
+ssize_t stdf_write_rec_shb(stdf_file *file, rec_shb *shb)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!shb->header.REC_LEN) {
 		shb->header.REC_LEN = _calc_rec_len_shb(file, shb);
 		shb->header.REC_TYP = REC_TYP_PER_SITE;
@@ -2198,12 +2249,12 @@ ssize_t stdf_write_rec_shb(stdf_file *file, rec_shb *shb, uchar *buf)
 	_stdf_write_dtc_U2(file, shb->HBIN_NUM, dtc_buf);
 	_stdf_write_dtc_U4(file, shb->HBIN_CNT, dtc_buf);
 	_stdf_write_dtc_Cn(file, shb->HBIN_NAM, dtc_buf);
-	return _stdf_write_flush(file, shb->header.REC_LEN, buf);
+	return _stdf_write_flush(file, shb->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_ssb(stdf_file *file, rec_ssb *ssb, uchar *buf)
+ssize_t stdf_write_rec_ssb(stdf_file *file, rec_ssb *ssb)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!ssb->header.REC_LEN) {
 		ssb->header.REC_LEN = _calc_rec_len_ssb(file, ssb);
 		ssb->header.REC_TYP = REC_TYP_PER_SITE;
@@ -2215,12 +2266,12 @@ ssize_t stdf_write_rec_ssb(stdf_file *file, rec_ssb *ssb, uchar *buf)
 	_stdf_write_dtc_U2(file, ssb->SBIN_NUM, dtc_buf);
 	_stdf_write_dtc_U4(file, ssb->SBIN_CNT, dtc_buf);
 	_stdf_write_dtc_Cn(file, ssb->SBIN_NAM, dtc_buf);
-	return _stdf_write_flush(file, ssb->header.REC_LEN, buf);
+	return _stdf_write_flush(file, ssb->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_sts(stdf_file *file, rec_sts *sts, uchar *buf)
+ssize_t stdf_write_rec_sts(stdf_file *file, rec_sts *sts)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!sts->header.REC_LEN) {
 		sts->header.REC_LEN = _calc_rec_len_sts(file, sts);
 		sts->header.REC_TYP = REC_TYP_PER_SITE;
@@ -2244,12 +2295,12 @@ ssize_t stdf_write_rec_sts(stdf_file *file, rec_sts *sts, uchar *buf)
 	_stdf_write_dtc_Cn(file, sts->TEST_NAM, dtc_buf);
 	_stdf_write_dtc_Cn(file, sts->SEQ_NAME, dtc_buf);
 	_stdf_write_dtc_Cn(file, sts->TEST_LBL, dtc_buf);
-	return _stdf_write_flush(file, sts->header.REC_LEN, buf);
+	return _stdf_write_flush(file, sts->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_scr(stdf_file *file, rec_scr *scr, uchar *buf)
+ssize_t stdf_write_rec_scr(stdf_file *file, rec_scr *scr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!scr->header.REC_LEN) {
 		scr->header.REC_LEN = _calc_rec_len_scr(file, scr);
 		scr->header.REC_TYP = REC_TYP_PER_SITE;
@@ -2264,14 +2315,14 @@ ssize_t stdf_write_rec_scr(stdf_file *file, rec_scr *scr, uchar *buf)
 	_stdf_write_dtc_I4(file, scr->ABRT_CNT, dtc_buf);
 	_stdf_write_dtc_I4(file, scr->GOOD_CNT, dtc_buf);
 	_stdf_write_dtc_I4(file, scr->FUNC_CNT, dtc_buf);
-	return _stdf_write_flush(file, scr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, scr->header.REC_LEN);
 }
 
 #endif
 
-ssize_t stdf_write_rec_gdr(stdf_file *file, rec_gdr *gdr, uchar *buf)
+ssize_t stdf_write_rec_gdr(stdf_file *file, rec_gdr *gdr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!gdr->header.REC_LEN) {
 		gdr->header.REC_LEN = _calc_rec_len_gdr(file, gdr);
 		gdr->header.REC_TYP = REC_TYP_GENERIC;
@@ -2280,12 +2331,12 @@ ssize_t stdf_write_rec_gdr(stdf_file *file, rec_gdr *gdr, uchar *buf)
 	_stdf_write_dtc_header(file, &(gdr->header), dtc_buf);
 	_stdf_write_dtc_U2(file, gdr->FLD_CNT, dtc_buf);
 	_stdf_write_dtc_Vn(file, gdr->GEN_DATA, gdr->FLD_CNT, dtc_buf);
-	return _stdf_write_flush(file, gdr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, gdr->header.REC_LEN);
 }
 
-ssize_t stdf_write_rec_dtr(stdf_file *file, rec_dtr *dtr, uchar *buf)
+ssize_t stdf_write_rec_dtr(stdf_file *file, rec_dtr *dtr)
 {
-	uchar *dtc_buf = buf;
+	uchar *dtc_buf = file->_write_pos;
 	if (!dtr->header.REC_LEN) {
 		dtr->header.REC_LEN = _calc_rec_len_dtr(file, dtr);
 		dtr->header.REC_TYP = REC_TYP_GENERIC;
@@ -2293,5 +2344,5 @@ ssize_t stdf_write_rec_dtr(stdf_file *file, rec_dtr *dtr, uchar *buf)
 	}
 	_stdf_write_dtc_header(file, &(dtr->header), dtc_buf);
 	_stdf_write_dtc_Cn(file, dtr->TEXT_DAT, dtc_buf);
-	return _stdf_write_flush(file, dtr->header.REC_LEN, buf);
+	return _stdf_write_flush(file, dtr->header.REC_LEN);
 }

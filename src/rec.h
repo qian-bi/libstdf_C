@@ -53,40 +53,42 @@ extern rec_scr* stdf_read_rec_scr(stdf_file*);
 extern rec_gdr* stdf_read_rec_gdr(stdf_file*);
 extern rec_dtr* stdf_read_rec_dtr(stdf_file*);
 
-extern ssize_t stdf_write_rec_far(stdf_file*, rec_far*, uchar*);
-extern ssize_t stdf_write_rec_atr(stdf_file*, rec_atr*, uchar*);
-extern ssize_t stdf_write_rec_mir(stdf_file*, rec_mir*, uchar*);
-extern ssize_t stdf_write_rec_mrr(stdf_file*, rec_mrr*, uchar*);
-extern ssize_t stdf_write_rec_pcr(stdf_file*, rec_pcr*, uchar*);
-extern ssize_t stdf_write_rec_hbr(stdf_file*, rec_hbr*, uchar*);
-extern ssize_t stdf_write_rec_sbr(stdf_file*, rec_sbr*, uchar*);
-extern ssize_t stdf_write_rec_pmr(stdf_file*, rec_pmr*, uchar*);
-extern ssize_t stdf_write_rec_pgr(stdf_file*, rec_pgr*, uchar*);
-extern ssize_t stdf_write_rec_plr(stdf_file*, rec_plr*, uchar*);
-extern ssize_t stdf_write_rec_rdr(stdf_file*, rec_rdr*, uchar*);
-extern ssize_t stdf_write_rec_sdr(stdf_file*, rec_sdr*, uchar*);
-extern ssize_t stdf_write_rec_wir(stdf_file*, rec_wir*, uchar*);
-extern ssize_t stdf_write_rec_wrr(stdf_file*, rec_wrr*, uchar*);
-extern ssize_t stdf_write_rec_wcr(stdf_file*, rec_wcr*, uchar*);
-extern ssize_t stdf_write_rec_pir(stdf_file*, rec_pir*, uchar*);
-extern ssize_t stdf_write_rec_prr(stdf_file*, rec_prr*, uchar*);
+extern ssize_t stdf_write_rec_far(stdf_file*, rec_far*);
+extern ssize_t stdf_write_rec_atr(stdf_file*, rec_atr*);
+extern ssize_t stdf_write_rec_mir(stdf_file*, rec_mir*);
+extern ssize_t stdf_write_rec_mrr(stdf_file*, rec_mrr*);
+extern ssize_t stdf_write_rec_pcr(stdf_file*, rec_pcr*);
+extern ssize_t stdf_write_rec_hbr(stdf_file*, rec_hbr*);
+extern ssize_t stdf_write_rec_sbr(stdf_file*, rec_sbr*);
+extern ssize_t stdf_write_rec_pmr(stdf_file*, rec_pmr*);
+extern ssize_t stdf_write_rec_pgr(stdf_file*, rec_pgr*);
+extern ssize_t stdf_write_rec_plr(stdf_file*, rec_plr*);
+extern ssize_t stdf_write_rec_rdr(stdf_file*, rec_rdr*);
+extern ssize_t stdf_write_rec_sdr(stdf_file*, rec_sdr*);
+extern ssize_t stdf_write_rec_wir(stdf_file*, rec_wir*);
+extern ssize_t stdf_write_rec_wrr(stdf_file*, rec_wrr*);
+extern ssize_t stdf_write_rec_wcr(stdf_file*, rec_wcr*);
+extern ssize_t stdf_write_rec_pir(stdf_file*, rec_pir*);
+extern ssize_t stdf_write_rec_prr(stdf_file*, rec_prr*);
 #ifdef STDF_VER3
-extern ssize_t stdf_write_rec_pdr(stdf_file*, rec_pdr*, uchar*);
-extern ssize_t stdf_write_rec_fdr(stdf_file*, rec_fdr*, uchar*);
+extern ssize_t stdf_write_rec_pdr(stdf_file*, rec_pdr*);
+extern ssize_t stdf_write_rec_fdr(stdf_file*, rec_fdr*);
 #endif
-extern ssize_t stdf_write_rec_tsr(stdf_file*, rec_tsr*, uchar*);
-extern ssize_t stdf_write_rec_ptr(stdf_file*, rec_ptr*, uchar*);
-extern ssize_t stdf_write_rec_mpr(stdf_file*, rec_mpr*, uchar*);
-extern ssize_t stdf_write_rec_ftr(stdf_file*, rec_ftr*, uchar*);
-extern ssize_t stdf_write_rec_bps(stdf_file*, rec_bps*, uchar*);
-extern ssize_t stdf_write_rec_eps(stdf_file*, rec_eps*, uchar*);
+extern ssize_t stdf_write_rec_tsr(stdf_file*, rec_tsr*);
+extern ssize_t stdf_write_rec_ptr(stdf_file*, rec_ptr*);
+extern ssize_t stdf_write_rec_mpr(stdf_file*, rec_mpr*);
+extern ssize_t stdf_write_rec_ftr(stdf_file*, rec_ftr*);
+extern ssize_t stdf_write_rec_bps(stdf_file*, rec_bps*);
+extern ssize_t stdf_write_rec_eps(stdf_file*, rec_eps*);
 #ifdef STDF_VER3
-extern ssize_t stdf_write_rec_shb(stdf_file*, rec_shb*, uchar*);
-extern ssize_t stdf_write_rec_ssb(stdf_file*, rec_ssb*, uchar*);
-extern ssize_t stdf_write_rec_sts(stdf_file*, rec_sts*, uchar*);
-extern ssize_t stdf_write_rec_scr(stdf_file*, rec_scr*, uchar*);
+extern ssize_t stdf_write_rec_shb(stdf_file*, rec_shb*);
+extern ssize_t stdf_write_rec_ssb(stdf_file*, rec_ssb*);
+extern ssize_t stdf_write_rec_sts(stdf_file*, rec_sts*);
+extern ssize_t stdf_write_rec_scr(stdf_file*, rec_scr*);
 #endif
-extern ssize_t stdf_write_rec_gdr(stdf_file*, rec_gdr*, uchar*);
-extern ssize_t stdf_write_rec_dtr(stdf_file*, rec_dtr*, uchar*);
+extern ssize_t stdf_write_rec_gdr(stdf_file*, rec_gdr*);
+extern ssize_t stdf_write_rec_dtr(stdf_file*, rec_dtr*);
+
+ssize_t _stdf_write_flush(stdf_file*, size_t);
 
 #endif /* _LIBSTDF_REC_H */

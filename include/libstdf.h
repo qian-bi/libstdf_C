@@ -94,6 +94,10 @@ typedef struct {
 	byte_t		*__data;
 	byte_t		*rec_pos;
 	byte_t		*rec_end;
+
+	byte_t		*__output;
+	byte_t		*_write_pos;
+	dtc_U2		_write_chunk_size;
 } stdf_file;
 
 #include <libstdf_funcs.h>

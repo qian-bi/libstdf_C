@@ -18,9 +18,6 @@
 
 
 
-/*
- * UNCOMPRESSED SUPPORT
- */
 int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, uint32_t opts)
 {
 	switch (cpu_type) {
@@ -72,9 +69,22 @@ int __stdf_init(stdf_file *f, dtc_U1 cpu_type, dtc_U1 stdf_ver, uint32_t opts)
 	f->rec_pos = NULL;
 	f->rec_end = NULL;
 
+	if (f->opts & STDF_OPTS_WRITE) {
+		/* make the buffer big enough to hold the largest record possible */
+		f->__output = (byte_t*)malloc(sizeof(byte_t) * (dtc_U2)-1);
+		if (f->__output == NULL)
+			return 1;
+	} else
+		f->__output = NULL;
+	f->_write_pos = f->__output;
+	f->_write_chunk_size = 4096;
+
 	return 0;
 }
 
+/*
+ * UNCOMPRESSED SUPPORT
+ */
 static int __stdf_open_reg(void *data, int flags, uint32_t mode)
 {
 	stdf_file *stdf = (stdf_file*)data;
@@ -390,10 +400,16 @@ stdf_file* stdf_dopen_ex(int fd, uint32_t opts, ...)
 
 int stdf_close(stdf_file *file)
 {
-	int ret = file->fops->close(file);
+	int ret, ret_errno;
+	if (file->__output) {
+		_stdf_write_flush(file, -1);
+		free(file->__output);
+	}
+	ret = file->fops->close(file);
+	ret_errno = errno;
 	if (file->filename) free(file->filename);
 	free(file);
-	errno = 0;
+	errno = ret_errno;
 	return ret;
 }
 
@@ -545,7 +561,7 @@ rec_unknown* stdf_read_record(stdf_file *file)
 	return rec;
 }
 
-ssize_t _stdf_write_record(stdf_file *file, void *rec_void, unsigned char *buf)
+ssize_t stdf_write_record(stdf_file *file, void *rec_void)
 {
 	rec_unknown *rec = (rec_unknown*)rec_void;
 	/* record order is based on frequency in 'standard' files
@@ -553,69 +569,63 @@ ssize_t _stdf_write_record(stdf_file *file, void *rec_void, unsigned char *buf)
 	 */
 	switch (HEAD_TO_REC(rec->header)) {
 		/* REC_TYP_PER_EXEC */
-		case REC_PTR: return stdf_write_rec_ptr(file, (rec_ptr*)rec, buf);
-		case REC_FTR: return stdf_write_rec_ftr(file, (rec_ftr*)rec, buf);
-		case REC_MPR: return stdf_write_rec_mpr(file, (rec_mpr*)rec, buf);
+		case REC_PTR: return stdf_write_rec_ptr(file, (rec_ptr*)rec);
+		case REC_FTR: return stdf_write_rec_ftr(file, (rec_ftr*)rec);
+		case REC_MPR: return stdf_write_rec_mpr(file, (rec_mpr*)rec);
 
 		/* REC_TYP_PER_PART */
-		case REC_PIR: return stdf_write_rec_pir(file, (rec_pir*)rec, buf);
-		case REC_PRR: return stdf_write_rec_prr(file, (rec_prr*)rec, buf);
+		case REC_PIR: return stdf_write_rec_pir(file, (rec_pir*)rec);
+		case REC_PRR: return stdf_write_rec_prr(file, (rec_prr*)rec);
 
 		/* REC_TYP_PER_TEST */
-		case REC_TSR: return stdf_write_rec_tsr(file, (rec_tsr*)rec, buf);
+		case REC_TSR: return stdf_write_rec_tsr(file, (rec_tsr*)rec);
 #ifdef STDF_VER3
-		case REC_PDR: return stdf_write_rec_pdr(file, (rec_pdr*)rec, buf);
-		case REC_FDR: return stdf_write_rec_fdr(file, (rec_fdr*)rec, buf);
+		case REC_PDR: return stdf_write_rec_pdr(file, (rec_pdr*)rec);
+		case REC_FDR: return stdf_write_rec_fdr(file, (rec_fdr*)rec);
 #endif
 
 		/* REC_TYP_GENERIC */
-		case REC_DTR: return stdf_write_rec_dtr(file, (rec_dtr*)rec, buf);
-		case REC_GDR: return stdf_write_rec_gdr(file, (rec_gdr*)rec, buf);
+		case REC_DTR: return stdf_write_rec_dtr(file, (rec_dtr*)rec);
+		case REC_GDR: return stdf_write_rec_gdr(file, (rec_gdr*)rec);
 
 		/* REC_TYP_PER_PROG */
-		case REC_BPS: return stdf_write_rec_bps(file, (rec_bps*)rec, buf);
-		case REC_EPS: return stdf_write_rec_eps(file, (rec_eps*)rec, buf);
+		case REC_BPS: return stdf_write_rec_bps(file, (rec_bps*)rec);
+		case REC_EPS: return stdf_write_rec_eps(file, (rec_eps*)rec);
 
 		/* REC_TYP_PER_SITE */
 #ifdef STDF_VER3
-		case REC_SHB: return stdf_write_rec_shb(file, (rec_shb*)rec, buf);
-		case REC_SSB: return stdf_write_rec_ssb(file, (rec_ssb*)rec, buf);
-		case REC_STS: return stdf_write_rec_sts(file, (rec_sts*)rec, buf);
-		case REC_SCR: return stdf_write_rec_scr(file, (rec_scr*)rec, buf);
+		case REC_SHB: return stdf_write_rec_shb(file, (rec_shb*)rec);
+		case REC_SSB: return stdf_write_rec_ssb(file, (rec_ssb*)rec);
+		case REC_STS: return stdf_write_rec_sts(file, (rec_sts*)rec);
+		case REC_SCR: return stdf_write_rec_scr(file, (rec_scr*)rec);
 #endif
 
 		/* REC_TYP_PER_LOT */
-		case REC_PMR: return stdf_write_rec_pmr(file, (rec_pmr*)rec, buf);
-		case REC_PGR: return stdf_write_rec_pgr(file, (rec_pgr*)rec, buf);
-		case REC_HBR: return stdf_write_rec_hbr(file, (rec_hbr*)rec, buf);
-		case REC_SBR: return stdf_write_rec_sbr(file, (rec_sbr*)rec, buf);
-		case REC_PLR: return stdf_write_rec_plr(file, (rec_plr*)rec, buf);
-		case REC_RDR: return stdf_write_rec_rdr(file, (rec_rdr*)rec, buf);
-		case REC_SDR: return stdf_write_rec_sdr(file, (rec_sdr*)rec, buf);
-		case REC_MIR: return stdf_write_rec_mir(file, (rec_mir*)rec, buf);
-		case REC_MRR: return stdf_write_rec_mrr(file, (rec_mrr*)rec, buf);
-		case REC_PCR: return stdf_write_rec_pcr(file, (rec_pcr*)rec, buf);
+		case REC_PMR: return stdf_write_rec_pmr(file, (rec_pmr*)rec);
+		case REC_PGR: return stdf_write_rec_pgr(file, (rec_pgr*)rec);
+		case REC_HBR: return stdf_write_rec_hbr(file, (rec_hbr*)rec);
+		case REC_SBR: return stdf_write_rec_sbr(file, (rec_sbr*)rec);
+		case REC_PLR: return stdf_write_rec_plr(file, (rec_plr*)rec);
+		case REC_RDR: return stdf_write_rec_rdr(file, (rec_rdr*)rec);
+		case REC_SDR: return stdf_write_rec_sdr(file, (rec_sdr*)rec);
+		case REC_MIR: return stdf_write_rec_mir(file, (rec_mir*)rec);
+		case REC_MRR: return stdf_write_rec_mrr(file, (rec_mrr*)rec);
+		case REC_PCR: return stdf_write_rec_pcr(file, (rec_pcr*)rec);
 
 		/* REC_TYP_PER_WAFER */
-		case REC_WIR: return stdf_write_rec_wir(file, (rec_wir*)rec, buf);
-		case REC_WRR: return stdf_write_rec_wrr(file, (rec_wrr*)rec, buf);
-		case REC_WCR: return stdf_write_rec_wcr(file, (rec_wcr*)rec, buf);
+		case REC_WIR: return stdf_write_rec_wir(file, (rec_wir*)rec);
+		case REC_WRR: return stdf_write_rec_wrr(file, (rec_wrr*)rec);
+		case REC_WCR: return stdf_write_rec_wcr(file, (rec_wcr*)rec);
 
 		/* REC_TYP_INFO */
-		case REC_FAR: return stdf_write_rec_far(file, (rec_far*)rec, buf);
-		case REC_ATR: return stdf_write_rec_atr(file, (rec_atr*)rec, buf);
+		case REC_FAR: return stdf_write_rec_far(file, (rec_far*)rec);
+		case REC_ATR: return stdf_write_rec_atr(file, (rec_atr*)rec);
 
 		default:      return -1;
 	}
 }
 
-unsigned char __stdf_write_buffer[65536];
-
-ssize_t stdf_write_record(stdf_file *file, void *rec_void)
-{
-	return _stdf_write_record(file, rec_void, __stdf_write_buffer);
-}
-
+#if 0
 ssize_t stdf_write_record_r(stdf_file *file, void *rec_void)
 {
 	ssize_t ret;
@@ -626,3 +636,4 @@ ssize_t stdf_write_record_r(stdf_file *file, void *rec_void)
 	free(reentrant_buffer);
 	return ret;
 }
+#endif
