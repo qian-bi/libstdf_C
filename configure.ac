@@ -23,12 +23,14 @@ features.h stdarg.h sys/cdefs.h
 dnl Let's get anal with compiling while on my dev box
 if test "x$HOSTNAME" = "xvapier" ; then
 	CFLAGS="$CFLAGS -Wall -Werror"
+	enable_annoy_untested="no"
+else
+	enable_annoy_untested="yes"
 fi
 
 dnl ********************************************************
 dnl *                 Disable Warnings                     *
 dnl ********************************************************
-enable_annoy_untested="yes"
 AC_MSG_CHECKING(whether to annoy you about untested code)
 AC_ARG_ENABLE(warn-untested,
 	AC_HELP_STRING([--enable-warn-untested],[don't warn about untested code @<:@default=warn@:>@]),
