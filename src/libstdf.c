@@ -434,7 +434,7 @@ int stdf_close(stdf_file *file)
 {
 	int ret, ret_errno;
 	if (file->__output) {
-		_stdf_write_flush(file, -1);
+		_stdf_write_flush(file, (size_t)-1);
 		free(file->__output);
 	}
 	ret = file->fops->close(file);

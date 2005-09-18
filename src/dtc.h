@@ -56,92 +56,84 @@ extern void free_xCn(dtc_xCn, dtc_U2);
 extern void _stdf_read_dtc_Vn(stdf_file*, dtc_Vn*, dtc_U2);
 extern void free_Vn(dtc_Vn, dtc_U2);
 
-#define _stdf_write_nbytes(file, inbuf, cnt, outbuf) \
+#define _stdf_write_byte(file, byte) \
+	*file->_write_pos++ = byte
+#define _stdf_write_nbytes(file, inbuf, cnt) \
 	do { \
-		memcpy(outbuf, inbuf, cnt); \
-		outbuf += cnt; \
+		memcpy(file->_write_pos, inbuf, cnt); \
+		file->_write_pos += cnt; \
 	} while (0)
-#define _stdf_write_cnt_nbytes(file, inbuf, cnt, outbuf) \
+#define _stdf_write_cnt_nbytes(file, inbuf, cnt) \
 	do { \
-		*outbuf++ = cnt; \
-		_stdf_write_nbytes(file, inbuf, cnt, outbuf); \
-	} while (0)
-
-#define _stdf_write_byte(file, byte, buffer) \
-	*buffer++ = byte
-#define _stdf_write_2bytes(file, bytes, buffer) \
-	do { \
-		uint16_t mapme = bytes; \
-		_stdf_byte_order_to_src(file, &mapme, 2); \
-		uchar *map = (uchar*)&mapme; \
-		_stdf_write_byte(file, map[0], buffer); \
-		_stdf_write_byte(file, map[1], buffer); \
+		_stdf_write_byte(file, cnt); \
+		if (cnt) _stdf_write_nbytes(file, inbuf, cnt); \
 	} while (0)
 
-#define __stdf_write_4bytes(type, file, bytes, buffer) \
+#define __stdf_write_even_bytes(type, file, bytes, even) \
 	do { \
 		type mapme = bytes; \
-		_stdf_byte_order_to_src(file, &mapme, 4); \
+		_stdf_byte_order_to_src(file, &mapme, even); \
 		uchar *map = (uchar*)&mapme; \
-		_stdf_write_byte(file, map[0], buffer); \
-		_stdf_write_byte(file, map[1], buffer); \
-		_stdf_write_byte(file, map[2], buffer); \
-		_stdf_write_byte(file, map[3], buffer); \
+		_stdf_write_nbytes(file, map, even); \
 	} while (0)
-#define _stdf_write_4bytes(file, bytes, buffer) \
-	__stdf_write_4bytes(uint32_t, file, bytes, buffer)
-#define _stdf_write_4bytes_float(file, bytes, buffer) \
-	__stdf_write_4bytes(float, file, bytes, buffer)
+#define _stdf_write_2bytes(file, bytes)       __stdf_write_even_bytes(uint16_t, file, bytes, 2)
+#define _stdf_write_4bytes(file, bytes)       __stdf_write_even_bytes(uint32_t, file, bytes, 4)
+#define _stdf_write_4bytes_float(file, bytes) __stdf_write_even_bytes(float, file, bytes, 4)
+#define _stdf_write_8bytes_float(file, bytes) __stdf_write_even_bytes(double, file, bytes, 8)
 
-#define _stdf_qwrite_dtc_header(file, buffer, REC_LEN, REC_TYP, REC_SUB) \
+#define _stdf_write_dtc_C1(file, C1) _stdf_write_byte(file, C1)
+#define _stdf_write_dtc_B1(file, B1) _stdf_write_byte(file, B1)
+#define _stdf_write_dtc_N1(file, N1) _stdf_write_byte(file, N1)
+#define _stdf_write_dtc_U1(file, U1) _stdf_write_byte(file, U1)
+#define _stdf_write_dtc_I1(file, I1) _stdf_write_byte(file, I1)
+
+#define _stdf_write_dtc_U2(file, U2) _stdf_write_2bytes(file, U2)
+#define _stdf_write_dtc_I2(file, I2) _stdf_write_2bytes(file, I2)
+
+#define _stdf_write_dtc_U4(file, U4) _stdf_write_4bytes(file, U4)
+#define _stdf_write_dtc_I4(file, I4) _stdf_write_4bytes(file, I4)
+#define _stdf_write_dtc_R4(file, R4) _stdf_write_4bytes_float(file, R4)
+
+#define _stdf_write_dtc_R8(file, R8) _stdf_write_8bytes_float(file, R8)
+
+#define _stdf_qwrite_dtc_header(file, REC_LEN, REC_TYP, REC_SUB) \
 	do { \
-		_stdf_write_dtc_U2(file, REC_LEN, buffer); \
-		_stdf_write_dtc_U1(file, REC_TYP, buffer); \
-		_stdf_write_dtc_U1(file, REC_SUB, buffer); \
+		_stdf_write_dtc_U2(file, REC_LEN); \
+		_stdf_write_dtc_U1(file, REC_TYP); \
+		_stdf_write_dtc_U1(file, REC_SUB); \
 	} while (0)
-#define _stdf_write_dtc_header(file, header, buffer) \
-	_stdf_qwrite_dtc_header(file, buffer, (header)->REC_LEN, (header)->REC_TYP, (header)->REC_SUB)
+#define _stdf_write_dtc_header(file, header) \
+	_stdf_qwrite_dtc_header(file, (header)->REC_LEN, (header)->REC_TYP, (header)->REC_SUB)
 
-#define _stdf_write_dtc_C1(file, C1, buffer) _stdf_write_byte(file, C1, buffer)
-#define _stdf_write_dtc_B1(file, B1, buffer) _stdf_write_byte(file, B1, buffer)
-#define _stdf_write_dtc_N1(file, N1, buffer) _stdf_write_byte(file, N1, buffer)
-#define _stdf_write_dtc_U1(file, U1, buffer) _stdf_write_byte(file, U1, buffer)
-#define _stdf_write_dtc_I1(file, I1, buffer) _stdf_write_byte(file, I1, buffer)
-
-#define _stdf_write_dtc_U2(file, U2, buffer) _stdf_write_2bytes(file, U2, buffer)
-#define _stdf_write_dtc_I2(file, I2, buffer) _stdf_write_2bytes(file, I2, buffer)
-
-#define _stdf_write_dtc_U4(file, U4, buffer) _stdf_write_4bytes(file, U4, buffer)
-#define _stdf_write_dtc_I4(file, I4, buffer) _stdf_write_4bytes(file, I4, buffer)
-#define _stdf_write_dtc_R4(file, R4, buffer) _stdf_write_4bytes_float(file, R4, buffer)
-
-#define _stdf_write_dtc_Cn(file, Cn, buffer) _stdf_write_cnt_nbytes(file, Cn+1, *Cn, buffer)
-#define _stdf_write_dtc_Bn(file, Bn, buffer) _stdf_write_cnt_nbytes(file, Bn+1, *Bn, buffer)
-#define _stdf_write_dtc_Dn(file, Dn, buffer) \
+#define _stdf_write_dtc_Cn(file, Cn) _stdf_write_cnt_nbytes(file, Cn+1, (Cn ? *Cn : 0))
+#define _stdf_write_dtc_Bn(file, Bn) _stdf_write_dtc_Cn(file, Bn)
+#define _stdf_write_dtc_Dn(file, Dn) \
 	do { \
-		dtc_U2 cnt = *((dtc_U2*)Dn); \
-		_stdf_write_dtc_U2(file, cnt, buffer); \
-		_stdf_write_nbytes(file, Dn+2, cnt, buffer); \
+		if (Dn) { \
+			dtc_U2 cnt = *((dtc_U2*)Dn); \
+			_stdf_write_dtc_U2(file, cnt); \
+			_stdf_write_nbytes(file, Dn+2, cnt); \
+		} \
 	} while (0)
 
-#define _stdf_write_dtc_Vn(file, Vn, cnt, buffer) warnf("writing dtc_Vn is not implemented")
+#define _stdf_write_dtc_Vn(file, Vn, cnt) warnf("writing dtc_Vn is not implemented")
 
-#define _stdf_write_dtc_x(file, x, cnt, buffer, func) \
+#define _stdf_write_dtc_x(file, x, cnt, func) \
 	do { \
 		dtc_U2 i; \
 		for (i=0; i<cnt; ++i) \
-			func(file, x[i], buffer); \
+			func(file, x[i]); \
 	} while (0)
 
-#define _stdf_write_dtc_xU1(file, xU1, cnt, buffer) _stdf_write_nbytes(file, xU1, cnt, buffer)
-#define _stdf_write_dtc_xU2(file, xU2, cnt, buffer) _stdf_write_dtc_x(file, xU2, cnt, buffer, _stdf_write_dtc_U2)
-#define _stdf_write_dtc_xN1(file, xN1, cnt, buffer) _stdf_write_nbytes(file, xN1, ((cnt/2)+(cnt%1)), buffer)
-#define _stdf_write_dtc_xR4(file, xR4, cnt, buffer) _stdf_write_dtc_x(file, xR4, cnt, buffer, _stdf_write_dtc_R4)
-#define _stdf_write_dtc_xCn(file, xCn, cnt, buffer) _stdf_write_dtc_x(file, xCn, cnt, buffer, _stdf_write_dtc_Cn)
-#define _stdf_write_dtc_xBn(file, xBn, cnt, buffer) _stdf_write_dtc_xCn(file, xBn, cnt, buffer)
+#define _stdf_write_dtc_xU1(file, xU1, cnt) _stdf_write_nbytes(file, xU1, cnt)
+#define _stdf_write_dtc_xU2(file, xU2, cnt) _stdf_write_dtc_x(file, xU2, cnt, _stdf_write_dtc_U2)
+#define _stdf_write_dtc_xN1(file, xN1, cnt) _stdf_write_nbytes(file, xN1, ((cnt/2)+(cnt%1)))
+#define _stdf_write_dtc_xR4(file, xR4, cnt) _stdf_write_dtc_x(file, xR4, cnt, _stdf_write_dtc_R4)
+#define _stdf_write_dtc_xCn(file, xCn, cnt) _stdf_write_dtc_x(file, xCn, cnt, _stdf_write_dtc_Cn)
+#define _stdf_write_dtc_xBn(file, xBn, cnt) _stdf_write_dtc_xCn(file, xBn, cnt)
 
 #ifdef STDF_VER3
-#define _stdf_write_dtc_Cx(file, Cx, cnt, buffer) warnf("writing dtc_Cx is not implemented");
+#define _stdf_write_dtc_Cx(file, Cx, cnt) warnf("writing dtc_Cx is not implemented");
 #endif
 
 #endif /* _LIBSTDF_DTC_H */
