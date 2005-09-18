@@ -1498,7 +1498,7 @@ static inline size_t _calc_rec_len_dtr(stdf_file *f, rec_dtr *r)
  */
 
 
-static ssize_t _stdf_write_flush(stdf_file *file, size_t count)
+ssize_t _stdf_write_flush(stdf_file *file, size_t count)
 {
 	size_t write_ret = 1;
 
