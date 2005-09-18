@@ -1234,7 +1234,7 @@ static inline size_t _calc_rec_len_sdr(stdf_file *f, rec_sdr *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_GRP) + sizeof(r->SITE_CNT) +
-		booga(r->SITE_NUM, r->SITE_CNT) +
+		_len_dtcX(r->SITE_NUM, r->SITE_CNT) +
 		_lenCn(r->HAND_TYP) + _lenCn(r->HAND_ID) + _lenCn(r->CARD_TYP) +
 		_lenCn(r->CARD_ID) + _lenCn(r->LOAD_TYP) + _lenCn(r->LOAD_ID) +
 		_lenCn(r->DIB_TYP) + _lenCn(r->DIB_ID) + _lenCn(r->CABL_TYP) +
@@ -1408,11 +1408,11 @@ static inline size_t _calc_rec_len_mpr(stdf_file *f, rec_mpr *r)
 		sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
 		sizeof(r->TEST_FLG) + sizeof(r->PARM_FLG) + sizeof(r->RTN_ICNT) +
 		sizeof(r->RSLT_CNT) +
-		booga(r->RTN_STAT, r->RTN_ICNT) + booga(r->RTN_RSLT, r->RSLT_CNT) +
+		booga(r->RTN_STAT, r->RTN_ICNT) + _len_dtcX(r->RTN_RSLT, r->RSLT_CNT) +
 		_lenCn(r->TEST_TXT) + _lenCn(r->ALARM_ID) + sizeof(r->OPT_FLAG) +
 		sizeof(r->RES_SCAL) + sizeof(r->LLM_SCAL) + sizeof(r->HLM_SCAL) +
 		sizeof(r->LO_LIMIT) + sizeof(r->HI_LIMIT) + sizeof(r->START_IN) +
-		sizeof(r->INCR_IN) + booga(r->RTN_INDX, r->RTN_ICNT) +
+		sizeof(r->INCR_IN) + _len_dtcX(r->RTN_INDX, r->RTN_ICNT) +
 		_lenCn(r->UNITS) + _lenCn(r->UNITS_IN) + _lenCn(r->C_RESFMT) +
 		_lenCn(r->C_LLMFMT) + _lenCn(r->C_HLMFMT) + sizeof(r->LO_SPEC) +
 		sizeof(r->HI_SPEC);
@@ -1426,8 +1426,8 @@ static inline size_t _calc_rec_len_ftr(stdf_file *f, rec_ftr *r)
 		sizeof(r->REL_VADR) + sizeof(r->REPT_CNT) + sizeof(r->NUM_FAIL) +
 		sizeof(r->XFAIL_AD) + sizeof(r->YFAIL_AD) + sizeof(r->VECT_OFF) +
 		sizeof(r->RTN_ICNT) + sizeof(r->PGM_ICNT) +
-		booga(r->RTN_INDX, r->RTN_ICNT) + booga(r->RTN_STAT, r->RTN_ICNT) +
-		booga(r->PGM_INDX, r->PGM_ICNT) + booga(r->PGM_STAT, r->PGM_ICNT) +
+		_len_dtcX(r->RTN_INDX, r->RTN_ICNT) + booga(r->RTN_STAT, r->RTN_ICNT) +
+		_len_dtcX(r->PGM_INDX, r->PGM_ICNT) + booga(r->PGM_STAT, r->PGM_ICNT) +
 		_lenCn(r->FAIL_PIN) + _lenCn(r->VECT_NAM) + _lenCn(r->TIME_SET) +
 		_lenCn(r->OP_CODE) + _lenCn(r->TEST_TXT) + _lenCn(r->ALARM_ID) +
 		_lenCn(r->PROG_TXT) + _lenCn(r->RSLT_TXT) + sizeof(r->PATG_NUM) +
