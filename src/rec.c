@@ -1106,7 +1106,7 @@ rec_dtr* stdf_read_rec_dtr(stdf_file *file)
 
 static inline size_t _lenCn(dtc_Cn Cn)
 {
-	return (Cn[0] ? strlen(Cn) : 1);
+	return (Cn && Cn[0] ? strlen(Cn) : 1);
 }
 #define _len_dtcX(x, cnt) (sizeof(*(x)) * cnt)
 #define booga(a,b) 0
@@ -1142,14 +1142,13 @@ static inline size_t _calc_rec_len_mir(stdf_file *f, rec_mir *r)
 	_lenCn(r->LOT_ID) + _lenCn(r->PART_TYP) + _lenCn(r->NODE_NAM) + \
 	_lenCn(r->TSTR_TYP) + _lenCn(r->JOB_NAM) + _lenCn(r->JOB_REV) + \
 	_lenCn(r->SBLOT_ID) + _lenCn(r->OPER_NAM) + _lenCn(r->EXEC_TYP) + \
-	_lenCn(r->OPER_NAM) + _lenCn(r->EXEC_TYP) + _lenCn(r->EXEC_VER) + \
-	_lenCn(r->TEST_COD) + _lenCn(r->TST_TEMP) + _lenCn(r->USER_TXT) + \
-	_lenCn(r->AUX_FILE) + _lenCn(r->PKG_TYP) + _lenCn(r->FAMILY_ID) + \
-	_lenCn(r->DATE_COD) + _lenCn(r->FACIL_ID) + _lenCn(r->FLOOR_ID) + \
-	_lenCn(r->PROC_ID) + _lenCn(r->OPER_FRQ) + _lenCn(r->SPEC_NAM) + \
-	_lenCn(r->SPEC_VER) + _lenCn(r->FLOW_ID) + _lenCn(r->SETUP_ID) + \
-	_lenCn(r->DSGN_REV) + _lenCn(r->ENG_ID) + _lenCn(r->ROM_COD) + \
-	_lenCn(r->SERL_NUM) + _lenCn(r->SUPR_NAM) \
+	_lenCn(r->EXEC_VER) + _lenCn(r->TEST_COD) + _lenCn(r->TST_TEMP) + \
+	_lenCn(r->USER_TXT) + _lenCn(r->AUX_FILE) + _lenCn(r->PKG_TYP) + \
+	_lenCn(r->FAMILY_ID) + _lenCn(r->DATE_COD) + _lenCn(r->FACIL_ID) + \
+	_lenCn(r->FLOOR_ID) + _lenCn(r->PROC_ID) + _lenCn(r->OPER_FRQ) + \
+	_lenCn(r->SPEC_NAM) + _lenCn(r->SPEC_VER) + _lenCn(r->FLOW_ID) + \
+	_lenCn(r->SETUP_ID) + _lenCn(r->DSGN_REV) + _lenCn(r->ENG_ID) + \
+	_lenCn(r->ROM_COD) + _lenCn(r->SERL_NUM) + _lenCn(r->SUPR_NAM) \
 	)
 #ifdef STDF_VER3
 	return (f->ver == 3 ? _CALC_REC_LEN_MIR_v3(r) : _CALC_REC_LEN_MIR_v4(r));
