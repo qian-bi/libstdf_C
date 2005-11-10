@@ -352,6 +352,7 @@ include/Makefile
 src/Makefile
 doc/Makefile
 doc/man/Makefile
+doc/man/man3/Makefile
 examples/Makefile
 libstdf-config
 libstdf.pc

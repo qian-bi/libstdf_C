@@ -1,4 +1,4 @@
-SUBDIRS = include src examples tests
+SUBDIRS = doc include src examples tests
 
 bin_SCRIPTS = libstdf-config
 
@@ -11,5 +11,7 @@ install-data-hook:
 if BUILD_DOCS
 	doxygen
 	$(INSTALL) -d $(DESTDIR)/$(pkgdatadir)/
-	cp -pR doc/html/* $(DESTDIR)/$(pkgdatadir)/
+	cp -pR $(top_srcdir)/doc/html/* $(DESTDIR)/$(pkgdatadir)/
 endif
+
+AUTOMAKE_OPTIONS = dist-bzip2 no-dist-gzip

@@ -24,7 +24,10 @@ create:
 	$(EXAMPLE_DIR)/makestdf create.out
 	$(BZCMP) create.out create.good.bz2
 
+distdir:
+	@cp Makefile *.bz2 $(distdir)
+
 clean:
 	rm -f *.out
 
-.PHONY: all install check ascii html stats create clean
+.PHONY: all install check ascii html stats create distdir clean

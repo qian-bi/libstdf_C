@@ -1,4 +1,4 @@
-noinst_INCLUDES = dtc.h rec.h
+noinst_HEADERS = dtc.h rec.h
 
 INCLUDES = -I$(top_builddir)/include \
 	@ZIP_CFLAGS@ @GZIP_CFLAGS@ @BZIP2_CFLAGS@
