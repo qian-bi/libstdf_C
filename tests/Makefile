@@ -4,7 +4,7 @@ EXAMPLE_DIR  = ../examples
 STDF         = stdf.bz2
 BZCMP        = bzdiff
 
-all:
+all install:
 
 check: ascii html stats create
 
@@ -26,3 +26,5 @@ create:
 
 clean:
 	rm -f *.out
+
+.PHONY: all install check ascii html stats create clean
