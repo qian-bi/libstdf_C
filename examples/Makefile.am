@@ -1,4 +1,8 @@
 if BUILD_EXAMPLES
+extra_examples :=
+if HAVE_GDLIB
+extra_examples += stdf2img
+endif
 noinst_PROGRAMS = \
 	example \
 	record_stats \
@@ -8,7 +12,7 @@ noinst_PROGRAMS = \
 	stdf2xtdf \
 	makestdf \
 	extract_records \
-	stdf2img
+	$(extra_examples)
 else
 noinst_PROGRAMS =
 endif
@@ -20,4 +24,6 @@ INCLUDES = \
 
 LDADD = $(top_builddir)/src/libstdf.la
 record_stats_LDADD = @HASH_LIBS@ @ECORE_LIBS@ @GLIB_LIBS@ $(LDADD)
+if HAVE_GDLIB
 stdf2img_LDADD = @GDLIB_LIBS@ $(LDADD)
+endif
