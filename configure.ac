@@ -17,7 +17,7 @@ stdint.h inttypes.h sys/types.h sys/stat.h \
 errno.h unistd.h fcntl.h stdio.h stdlib.h \
 string.h endian.h sys/endian.h machine/endian.h \
 cmplrs/host.h sys/isa_defs.h byteswap.h \
-features.h stdarg.h sys/cdefs.h
+features.h stdarg.h sys/cdefs.h \
 ])
 
 dnl Let's get anal with compiling while on my dev box
@@ -266,6 +266,7 @@ PKG_CHECK_MODULES(ECORE, ecore,
 	AM_CONDITIONAL(HAVE_ECORE, false)
 	ECORE_CFLAGS=""
 	ECORE_LIBS=""
+	AC_MSG_RESULT(no)
 ])
 if test "x$HASH_LIBS" != "x" ; then
 	ECORE_CFLAGS=""
@@ -283,6 +284,7 @@ PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.0,
 	AM_CONDITIONAL(HAVE_GLIB, false)
 	GLIB_CFLAGS=""
 	GLIB_LIBS=""
+	AC_MSG_RESULT(no)
 ])
 if test "x$HASH_LIBS" != "x" -o "x$ECORE_LIBS" != "x" ; then
 	GLIB_CFLAGS=""
