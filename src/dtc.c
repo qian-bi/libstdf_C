@@ -97,14 +97,11 @@ void _stdf_read_dtc_Cn(stdf_file *f, dtc_Cn *Cn)
 	f->rec_pos += len;
 	(*Cn)[len+1] = '\0';
 }
-#ifdef strong_alias
-strong_alias(_stdf_read_dtc_Cn, _stdf_read_dtc_Bn);
-#else
+
 void _stdf_read_dtc_Bn(stdf_file *f, dtc_Bn *Bn)
 {
 	return _stdf_read_dtc_Cn(f, (dtc_Cn*)Bn);
 }
-#endif
 
 void _stdf_read_dtc_Dn(stdf_file *f, dtc_Dn *Dn)
 {
@@ -134,7 +131,7 @@ void _stdf_read_dtc_xN1(stdf_file *f, dtc_xN1 *xN1, dtc_U2 cnt)
 {
 	/* does this even work ?
 	   need a file with a MPR or FTR record in it to test ... */
-	unsigned int len = cnt / 2 + cnt % 2;
+	dtc_U2 len = cnt / 2 + cnt % 2;
 	(*xN1) = (dtc_xN1)malloc(len);
 	memcpy((*xN1), f->rec_pos, len);
 	f->rec_pos += len;
