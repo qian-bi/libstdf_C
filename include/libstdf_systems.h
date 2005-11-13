@@ -31,6 +31,9 @@
 #if defined(HAVE_SYS_STAT_H)
 # include <sys/stat.h>
 #endif
+#if defined(HAVE_CTYPE_H)
+# include <ctype.h>
+#endif
 #if defined(HAVE_ERRNO_H)
 # include <errno.h>
 #else
@@ -47,6 +50,9 @@ extern int errno;
 #endif
 #if defined(HAVE_STDLIB_H)
 # include <stdlib.h>
+#endif
+#if defined(HAVE_TIME_H)
+# include <time.h>
 #endif
 #if defined(HAVE_STRING_H)
 # include <string.h>
