@@ -10,7 +10,6 @@
  */
 
 #include <libstdf.h>
-#include <stdio.h>
 #include <gd.h>
 
 int main(int argc, char *argv[])

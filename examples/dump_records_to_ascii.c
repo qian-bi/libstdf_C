@@ -2,7 +2,7 @@
  * @file dump_records_to_ascii.c
  */
 /*
- * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2005 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  *
@@ -10,10 +10,6 @@
  */
 
 #include <libstdf.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 
 #define print_fmt(n,f,v) printf("\t" n ": " f, v)
 #define print_int(n,i) print_fmt(n, "%i\n", i)

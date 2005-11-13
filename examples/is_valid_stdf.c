@@ -2,7 +2,7 @@
  * @file is_valid_stdf.c
  */
 /*
- * Copyright (C) 2004 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2005 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  *
@@ -10,10 +10,6 @@
  */
 
 #include <libstdf.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 
 #define	print_msg(m) printf("\t" m "\n");
 #define	print_err(m) printf("\tERROR: " m "\n");

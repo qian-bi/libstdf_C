@@ -10,9 +10,6 @@
  */
 
 #include <libstdf.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #if defined(HAVE_GETOPT_H)
 # include <getopt.h>
