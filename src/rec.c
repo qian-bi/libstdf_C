@@ -980,7 +980,7 @@ rec_ftr* stdf_read_rec_ftr(stdf_file *file)
 	_stdf_read_dtc_U1(file, &(ftr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(ftr->SITE_NUM));
 	_stdf_read_dtc_B1(file, &(ftr->TEST_FLG));
-	_stdf_read_dtc_B1(file, &(ftr->OPT_FLG));
+	_stdf_read_dtc_B1(file, &(ftr->OPT_FLAG));
 	_stdf_read_dtc_U4(file, &(ftr->CYCL_CNT));
 	_stdf_read_dtc_U4(file, &(ftr->REL_VADR));
 	_stdf_read_dtc_U4(file, &(ftr->REPT_CNT));
@@ -1422,7 +1422,7 @@ static inline size_t _calc_rec_len_ftr(stdf_file *f, rec_ftr *r)
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
-		sizeof(r->TEST_FLG) + sizeof(r->OPT_FLG) + sizeof(r->CYCL_CNT) +
+		sizeof(r->TEST_FLG) + sizeof(r->OPT_FLAG) + sizeof(r->CYCL_CNT) +
 		sizeof(r->REL_VADR) + sizeof(r->REPT_CNT) + sizeof(r->NUM_FAIL) +
 		sizeof(r->XFAIL_AD) + sizeof(r->YFAIL_AD) + sizeof(r->VECT_OFF) +
 		sizeof(r->RTN_ICNT) + sizeof(r->PGM_ICNT) +
@@ -2117,7 +2117,7 @@ ssize_t stdf_write_rec_ftr(stdf_file *file, rec_ftr *ftr)
 	_stdf_write_dtc_U1(file, ftr->HEAD_NUM);
 	_stdf_write_dtc_U1(file, ftr->SITE_NUM);
 	_stdf_write_dtc_B1(file, ftr->TEST_FLG);
-	_stdf_write_dtc_B1(file, ftr->OPT_FLG);
+	_stdf_write_dtc_B1(file, ftr->OPT_FLAG);
 	_stdf_write_dtc_U4(file, ftr->CYCL_CNT);
 	_stdf_write_dtc_U4(file, ftr->REL_VADR);
 	_stdf_write_dtc_U4(file, ftr->REPT_CNT);
