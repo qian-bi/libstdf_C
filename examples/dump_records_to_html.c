@@ -44,7 +44,7 @@ void write_rec(FILE *f, rec_header *h, int type)
 				if (type == OUT_HEX)
 					fprintf(f, "%.2X", rec[i]);
 				else {
-					if (rec[i] < 0x20)
+					if (rec[i] < 0x20 || rec[i] > 0x7F)
 						fprintf(f, "%.2X", rec[i]);
 					else
 						fprintf(f, "%c", rec[i]);
@@ -158,10 +158,12 @@ int main(int argc, char *argv[])
 	}
 
 	fprintf(out,
+	        "<!DOCTYPE html PUBLIC '-//W3C//DTD HTML 4.01//EN' 'http://www.w3.org/TR/html4/strict.dtd'>\n"
 	        "<html>\n"
 	        "<head>\n"
+			" <META HTTP-EQUIV='Content-Type' CONTENT='text/html; charset=ISO-8859-1'\n>"
 	        " <title>%s</title>\n"
-	        " <style>\n"
+	        " <style type='text/css'>\n"
 	        "  table { border-collapse:collapse; font-family:monospace; }\n"
 	        "  td { border: 1px solid #C0C0C0; text-align:center; }\n"
 	        "  th { border: 1px solid black; text-align:center; }\n"
