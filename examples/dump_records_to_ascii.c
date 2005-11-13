@@ -20,20 +20,23 @@
 #define print_tim(n,d) \
 	do { time_t t = d; print_fmt(n, "%s", ctime(&t)); } while(0)
 
-#define MAKE_PRINT_X(DTC, FORMAT) \
+#define MAKE_PRINT_X(DTC, OUTPUT_FUNC, FORMAT) \
 void print_x ## DTC(char *n, dtc_x ## DTC u, dtc_U2 c) \
 { \
 	dtc_U2 i; \
 	printf("\t%s: ", n); \
 	for (i=0; i<c; ++i) { \
-		printf(FORMAT, u[i]); \
+		OUTPUT_FUNC(FORMAT, u[i]); \
 		if (i+1 < c) printf(", "); \
 	} \
 	printf("\n"); \
 }
-MAKE_PRINT_X(U1, "%u")
-MAKE_PRINT_X(U2, "%u")
-MAKE_PRINT_X(R4, "%f")
+MAKE_PRINT_X(U1, printf, "%u")
+MAKE_PRINT_X(U2, printf, "%u")
+MAKE_PRINT_X(R4, printf, "%f")
+
+#define _printf_xCn(fmt,Cn) printf(fmt, (*Cn ? Cn+1 : "(null)"))
+MAKE_PRINT_X(Cn, _printf_xCn, "%s")
 
 void print_xN1(char *member, dtc_xN1 xN1, dtc_U2 c)
 {
@@ -300,10 +303,10 @@ for (i=1; i<argc; ++i) {
 				print_xU2("GRP_INDX", plr->GRP_INDX, plr->GRP_CNT);
 				print_xU2("GRP_MODE", plr->GRP_MODE, plr->GRP_CNT);
 				print_xU1("GRP_RADX", plr->GRP_RADX, plr->GRP_CNT);
-				print_UNK("PGM_CHAR");/*, plr->PGM_CHAR, plr->GRP_CNT);*/
-				print_UNK("RTN_CHAR");/*, plr->RTN_CHAR, plr->GRP_CNT);*/
-				print_UNK("PGM_CHAL");/*, plr->PGM_CHAL, plr->GRP_CNT);*/
-				print_UNK("RTN_CHAL");/*, plr->RTN_CHAL, plr->GRP_CNT);*/
+				print_xCn("PGM_CHAR", plr->PGM_CHAR, plr->GRP_CNT);
+				print_xCn("RTN_CHAR", plr->RTN_CHAR, plr->GRP_CNT);
+				print_xCn("PGM_CHAL", plr->PGM_CHAL, plr->GRP_CNT);
+				print_xCn("RTN_CHAL", plr->RTN_CHAL, plr->GRP_CNT);
 				break;
 			}
 			case REC_RDR: {

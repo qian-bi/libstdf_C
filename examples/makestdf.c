@@ -176,7 +176,6 @@ int main(int argc, char *argv[])
 		stdf_write_record(f, &pgr);
 	}
 
-/*
 	{
 		dtc_U2 grp_indx[6] = { 2, 4, 6, 8, 10, 12 };
 		dtc_U2 grp_mode[6] = { 00, 10, 20, 21, 22, 23 };
@@ -198,7 +197,6 @@ int main(int argc, char *argv[])
 		stdf_init_header(plr.header, REC_PLR);
 		stdf_write_record(f, &plr);
 	}
-*/
 
 	{
 		dtc_U1 site_num[4] = { 5, 10, 15, 20 };

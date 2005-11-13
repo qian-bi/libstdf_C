@@ -1110,6 +1110,13 @@ static inline size_t _lenDn(dtc_Dn Dn)
 {
 	return (Dn && (*(dtc_U2*)Dn) ? strlen(Dn) : 2);
 }
+static inline size_t _len_dtcXCN(dtc_xCn xCn, dtc_U2 cnt)
+{
+	size_t ret = 0;
+	while (cnt--)
+		ret += _lenCn(xCn[cnt]);
+	return ret;
+}
 #define _len_dtcX(x, cnt) (sizeof(*(x)) * cnt)
 #define _len_dtcXN(xn, cnt) (sizeof(*(xn)) * (cnt / 2 + cnt % 2))
 #define booga(a,b) 0
@@ -1224,8 +1231,8 @@ static inline size_t _calc_rec_len_plr(stdf_file *f, rec_plr *r)
 		sizeof(r->GRP_CNT) +
 		_len_dtcX(r->GRP_INDX, r->GRP_CNT) +
 		_len_dtcX(r->GRP_MODE, r->GRP_CNT) + _len_dtcX(r->GRP_RADX, r->GRP_CNT) +
-		booga(r->PGM_CHAR, r->GRP_CNT) + booga(r->RTN_CHAR, r->GRP_CNT) +
-		booga(r->PGM_CHAL, r->GRP_CNT) + booga(r->RTN_CHAL, r->GRP_CNT);
+		_len_dtcXCN(r->PGM_CHAR, r->GRP_CNT) + _len_dtcXCN(r->RTN_CHAR, r->GRP_CNT) +
+		_len_dtcXCN(r->PGM_CHAL, r->GRP_CNT) + _len_dtcXCN(r->RTN_CHAL, r->GRP_CNT);
 }
 
 static inline size_t _calc_rec_len_rdr(stdf_file *f, rec_rdr *r)
