@@ -327,7 +327,7 @@ int main(int argc, char *argv[])
 	{
 		dtc_N1 rtn_stat[] = { 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90 };
 		dtc_R4 rtn_rslt[] = { 1.2, 2.3, 3.4, 4.5, 5.6, 6.7, 7.8, 8.9 };
-		dtc_U2 rtn_indx[] = { 1, 3, 5, 7, 9, 11, 13, 15, 17 };
+		dtc_U2 rtn_indx[] = { 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33 };
 		rec_mpr mpr = {
 			.TEST_NUM = 2024,
 			.HEAD_NUM = 1,
