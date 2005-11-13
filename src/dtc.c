@@ -47,6 +47,7 @@ MAKE_BYTE_FUNC(dtc_I1, 0)
 MAKE_BYTE_FUNC(dtc_C1, ' ')
 MAKE_BYTE_FUNC(dtc_B1, 0x00)
 MAKE_BYTE_FUNC(dtc_N1, 0x00)
+#undef MAKE_BYTE_FUNC
 
 #define MAKE_NUM_FUNC(DTC) \
 void _stdf_read_ ## DTC(stdf_file *f, DTC *dtc) \
@@ -64,6 +65,7 @@ MAKE_NUM_FUNC(dtc_I2)
 MAKE_NUM_FUNC(dtc_I4)
 MAKE_NUM_FUNC(dtc_R4)
 MAKE_NUM_FUNC(dtc_R8)
+#undef MAKE_NUM_FUNC
 
 #ifdef STDF_VER3
 void _stdf_read_dtc_Cx(stdf_file *f, dtc_Cn *Cn, int len)
@@ -129,8 +131,6 @@ void _stdf_read_dtc_Dn(stdf_file *f, dtc_Dn *Dn)
 
 void _stdf_read_dtc_xN1(stdf_file *f, dtc_xN1 *xN1, dtc_U2 cnt)
 {
-	/* does this even work ?
-	   need a file with a MPR or FTR record in it to test ... */
 	dtc_U2 len = cnt / 2 + cnt % 2;
 	(*xN1) = (dtc_xN1)malloc(len);
 	memcpy((*xN1), f->rec_pos, len);
@@ -152,6 +152,7 @@ void _stdf_read_dtc_x ## DTC(stdf_file *f, dtc_x ## DTC *x, dtc_U2 cnt) \
 MAKE_X_FUNC(U1)
 MAKE_X_FUNC(U2)
 MAKE_X_FUNC(R4)
+#undef MAKE_X_FUNC
 
 void _stdf_read_dtc_xCn(stdf_file *f, dtc_xCn *xCn, dtc_U2 cnt)
 {
@@ -236,6 +237,7 @@ void _stdf_read_dtc_Vn(stdf_file *f, dtc_Vn *pVn, dtc_U2 cnt)
 		}
 		++Vn;
 	}
+#undef DO_VN
 }
 
 void free_Vn(dtc_Vn Vn, dtc_U2 cnt)
@@ -251,4 +253,5 @@ void free_Vn(dtc_Vn Vn, dtc_U2 cnt)
 		free(Vn[cnt].data);
 	}
 	free(Vn);
+#undef DO_FREE
 }
