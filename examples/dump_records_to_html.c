@@ -58,7 +58,7 @@ void write_rec(FILE *f, rec_header *h, int type)
 				} else {
 					if (tagged == 0)		/* rec len */
 						fprintf(f, "<td class=r%i colspan=2><span class=headlen>%i</span></td>",
-						        rec_rot, h->REC_LEN);
+						        rec_rot, h->REC_LEN - 4);
 					else if (tagged == 2)	/* rec type */
 						fprintf(f, "<td class=r%i colspan=2><span class=headtype>%s</span></td>",
 						        rec_rot, stdf_get_rec_name_from_head((*h)));
