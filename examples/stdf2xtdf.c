@@ -27,17 +27,34 @@
 	void xFunc(char *n, xType u, int c) \
 	{ \
 		int i; \
-		--c; \
-		printf("\t<%s value=' ", n); \
-		for (i=0; i<=c; ++i) { \
+		printf("\t<%s value='", n); \
+		for (i=0; i<c; ++i) { \
 			printf(format, u[i]); \
-			if (i < c) printf(","); \
+			if (i+1 < c) printf(","); \
 		} \
 		printf("'/>\n"); \
 	}
 print_x(print_xU1, dtc_xU1, "%i")
 print_x(print_xU2, dtc_xU2, "%i")
 print_x(print_xR4, dtc_xR4, "%f")
+
+void print_xN1(char *member, dtc_xN1 xN1, dtc_U2 c)
+{
+	dtc_N1 *n = xN1;
+	printf("\t<%s value='", member);
+	while (c > 0) {
+		if (c > 1) {
+			printf("%X,%X", ((*n) & 0xF0) >> 4, (*n) & 0x0F);
+			c -= 2;
+			if (c) printf(",");
+		} else {
+			printf("%X", ((*n) & 0xF0) >> 4);
+			break;
+		}
+		++n;
+	}
+	printf("'/>\n");
+}
 
 void print_Vn(char *n, dtc_Vn v, int c)
 {
@@ -531,8 +548,8 @@ for (i=1; i<argc; ++i) {
 				print_hex("PARM_FLG", mpr->PARM_FLG);
 				print_int("RTN_ICNT", mpr->RTN_ICNT);
 				print_int("RSLT_CNT", mpr->RSLT_CNT);
-				print_UNK("RTN_STAT");
-				print_xR4("RTN_RSLT", mpr->RTN_RSLT, mpr->RTN_ICNT);
+				print_xN1("RTN_STAT", mpr->RTN_STAT, mpr->RTN_ICNT);
+				print_xR4("RTN_RSLT", mpr->RTN_RSLT, mpr->RSLT_CNT);
 				print_str("TEST_TXT", mpr->TEST_TXT);
 				print_str("ALARM_ID", mpr->ALARM_ID);
 				print_hex("OPT_FLAG", mpr->OPT_FLAG);
@@ -569,10 +586,10 @@ for (i=1; i<argc; ++i) {
 				print_int("VECT_OFF", ftr->VECT_OFF);
 				print_int("RTN_ICNT", ftr->RTN_ICNT);
 				print_int("PGM_ICNT", ftr->PGM_ICNT);
-				print_xU2("RTN_INDX", ftr->RTN_INDX, ftr->PGM_ICNT);
-				print_UNK("RTN_STAT");
+				print_xU2("RTN_INDX", ftr->RTN_INDX, ftr->RTN_ICNT);
+				print_xN1("RTN_STAT", ftr->RTN_STAT, ftr->RTN_ICNT);
 				print_xU2("PGM_INDX", ftr->PGM_INDX, ftr->PGM_ICNT);
-				print_UNK("PGM_STAT");
+				print_xN1("PGM_STAT", ftr->PGM_STAT, ftr->PGM_ICNT);
 				print_Dn("FAIL_PIN", ftr->FAIL_PIN);
 				print_str("VECT_NAM", ftr->VECT_NAM);
 				print_str("TIME_SET", ftr->TIME_SET);

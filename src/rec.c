@@ -941,7 +941,6 @@ rec_ptr* stdf_read_rec_ptr(stdf_file *file)
 rec_mpr* stdf_read_rec_mpr(stdf_file *file)
 {
 	rec_mpr *mpr = __malloc_rec(rec_mpr);
-	warn_untested("MPR");
 	_stdf_read_dtc_U4(file, &(mpr->TEST_NUM));
 	_stdf_read_dtc_U1(file, &(mpr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(mpr->SITE_NUM));
@@ -975,7 +974,6 @@ rec_mpr* stdf_read_rec_mpr(stdf_file *file)
 rec_ftr* stdf_read_rec_ftr(stdf_file *file)
 {
 	rec_ftr *ftr = __malloc_rec(rec_ftr);
-	warn_untested("FTR");
 	_stdf_read_dtc_U4(file, &(ftr->TEST_NUM));
 	_stdf_read_dtc_U1(file, &(ftr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(ftr->SITE_NUM));
@@ -1108,7 +1106,12 @@ static inline size_t _lenCn(dtc_Cn Cn)
 {
 	return (Cn && Cn[0] ? strlen(Cn) : 1);
 }
+static inline size_t _lenDn(dtc_Dn Dn)
+{
+	return (Dn && (*(dtc_U2*)Dn) ? strlen(Dn) : 2);
+}
 #define _len_dtcX(x, cnt) (sizeof(*(x)) * cnt)
+#define _len_dtcXN(xn, cnt) (sizeof(*(xn)) * (cnt / 2 + cnt % 2))
 #define booga(a,b) 0
 
 static inline size_t _calc_rec_len_far(stdf_file *f, rec_far *r)
@@ -1408,7 +1411,7 @@ static inline size_t _calc_rec_len_mpr(stdf_file *f, rec_mpr *r)
 		sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
 		sizeof(r->TEST_FLG) + sizeof(r->PARM_FLG) + sizeof(r->RTN_ICNT) +
 		sizeof(r->RSLT_CNT) +
-		booga(r->RTN_STAT, r->RTN_ICNT) + _len_dtcX(r->RTN_RSLT, r->RSLT_CNT) +
+		_len_dtcXN(r->RTN_STAT, r->RTN_ICNT) + _len_dtcX(r->RTN_RSLT, r->RSLT_CNT) +
 		_lenCn(r->TEST_TXT) + _lenCn(r->ALARM_ID) + sizeof(r->OPT_FLAG) +
 		sizeof(r->RES_SCAL) + sizeof(r->LLM_SCAL) + sizeof(r->HLM_SCAL) +
 		sizeof(r->LO_LIMIT) + sizeof(r->HI_LIMIT) + sizeof(r->START_IN) +
@@ -1426,12 +1429,12 @@ static inline size_t _calc_rec_len_ftr(stdf_file *f, rec_ftr *r)
 		sizeof(r->REL_VADR) + sizeof(r->REPT_CNT) + sizeof(r->NUM_FAIL) +
 		sizeof(r->XFAIL_AD) + sizeof(r->YFAIL_AD) + sizeof(r->VECT_OFF) +
 		sizeof(r->RTN_ICNT) + sizeof(r->PGM_ICNT) +
-		_len_dtcX(r->RTN_INDX, r->RTN_ICNT) + booga(r->RTN_STAT, r->RTN_ICNT) +
-		_len_dtcX(r->PGM_INDX, r->PGM_ICNT) + booga(r->PGM_STAT, r->PGM_ICNT) +
-		_lenCn(r->FAIL_PIN) + _lenCn(r->VECT_NAM) + _lenCn(r->TIME_SET) +
+		_len_dtcX(r->RTN_INDX, r->RTN_ICNT) + _len_dtcXN(r->RTN_STAT, r->RTN_ICNT) +
+		_len_dtcX(r->PGM_INDX, r->PGM_ICNT) + _len_dtcXN(r->PGM_STAT, r->PGM_ICNT) +
+		_lenDn(r->FAIL_PIN) + _lenCn(r->VECT_NAM) + _lenCn(r->TIME_SET) +
 		_lenCn(r->OP_CODE) + _lenCn(r->TEST_TXT) + _lenCn(r->ALARM_ID) +
 		_lenCn(r->PROG_TXT) + _lenCn(r->RSLT_TXT) + sizeof(r->PATG_NUM) +
-		_lenCn(r->SPIN_MAP);
+		_lenDn(r->SPIN_MAP);
 }
 
 static inline size_t _calc_rec_len_bps(stdf_file *f, rec_bps *r)
@@ -2071,7 +2074,6 @@ ssize_t stdf_write_rec_ptr(stdf_file *file, rec_ptr *ptr)
 
 ssize_t stdf_write_rec_mpr(stdf_file *file, rec_mpr *mpr)
 {
-	warn_untested("MPR");
 	if (!mpr->header.REC_LEN)
 		SET_HEADER(mpr->header, REC_MPR, _calc_rec_len_mpr(file, mpr));
 	_stdf_check_write_buffer(file, mpr->header.REC_LEN);
@@ -2108,7 +2110,6 @@ ssize_t stdf_write_rec_mpr(stdf_file *file, rec_mpr *mpr)
 
 ssize_t stdf_write_rec_ftr(stdf_file *file, rec_ftr *ftr)
 {
-	warn_untested("FTR");
 	if (!ftr->header.REC_LEN)
 		SET_HEADER(ftr->header, REC_FTR, _calc_rec_len_ftr(file, ftr));
 	_stdf_check_write_buffer(file, ftr->header.REC_LEN);

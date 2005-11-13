@@ -176,6 +176,7 @@ int main(int argc, char *argv[])
 		stdf_write_record(f, &pgr);
 	}
 
+/*
 	{
 		dtc_U2 grp_indx[6] = { 2, 4, 6, 8, 10, 12 };
 		dtc_U2 grp_mode[6] = { 00, 10, 20, 21, 22, 23 };
@@ -197,6 +198,7 @@ int main(int argc, char *argv[])
 		stdf_init_header(plr.header, REC_PLR);
 		stdf_write_record(f, &plr);
 	}
+*/
 
 	{
 		dtc_U1 site_num[4] = { 5, 10, 15, 20 };
@@ -260,9 +262,9 @@ int main(int argc, char *argv[])
 
 	{
 		rec_wcr wcr = {
-			.WAFR_SIZ = 4,
-			.DIE_HT = 2500,
-			.DIE_WID = 5200,
+			.WAFR_SIZ = 4.1,
+			.DIE_HT = 2500.2,
+			.DIE_WID = 5200.3,
 			.WF_UNITS = 2,
 			.WF_FLAT = 'D',
 			.CENTER_X = 50,
@@ -324,23 +326,82 @@ int main(int argc, char *argv[])
 	}
 */
 
-/*
 	{
+		dtc_N1 rtn_stat[] = { 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90 };
+		dtc_R4 rtn_rslt[] = { 1.2, 2.3, 3.4, 4.5, 5.6, 6.7, 7.8, 8.9 };
+		dtc_U2 rtn_indx[] = { 1, 3, 5, 7, 9, 11, 13, 15, 17 };
 		rec_mpr mpr = {
+			.TEST_NUM = 2024,
+			.HEAD_NUM = 1,
+			.SITE_NUM = 2,
+			.TEST_FLG = 0,
+			.PARM_FLG = 0xC0,
+			.RTN_ICNT = 15,
+			.RSLT_CNT = 6,
+			.RTN_STAT = rtn_stat,
+			.RTN_RSLT = rtn_rslt,
+			.TEST_TXT = "\010TEST_TXT",
+			.OPT_FLAG = 0xE,
+			.RES_SCAL = 6,
+			.LLM_SCAL = 7,
+			.HLM_SCAL = 8,
+			.LO_LIMIT = 1.9,
+			.HI_LIMIT = 9.1,
+			.START_IN = 0.2,
+			.INCR_IN  = 0.3,
+			.RTN_INDX = rtn_indx,
+			.UNITS    = "\005UNITS",
+			.UNITS_IN = "\010UNITS_IN",
+			.C_RESFMT = "\005%1.2f",
+			.C_LLMFMT = "\005%3.4f",
+			.C_HLMFMT = "\005%5.6f",
+			.LO_SPEC  = 0.9,
+			.HI_SPEC  = 9.0
 		};
 		stdf_init_header(mpr.header, REC_MPR);
 		stdf_write_record(f, &mpr);
 	}
-*/
 
-/*
 	{
+		dtc_U2 rtn_indx[] = { 1010, 2020, 3030, 4040, 5050, 6060, 7070, 8080 };
+		dtc_N1 rtn_stat[] = { 0x13, 0x24, 0x57, 0x68 };
+		dtc_U2 pgm_indx[] = { 101, 202, 303, 404, 505 };
+		dtc_N1 pgm_stat[] = { 0x42, 0x75, 0x86 };
+		char   fail_pin[] = { 0x00, 0x00 };
+		char   spin_map[] = { 0x00, 0x00 };
 		rec_ftr ftr = {
+			.TEST_NUM = 2024,
+			.HEAD_NUM = 1,
+			.SITE_NUM = 2,
+			.TEST_FLG = 0x14,
+			.OPT_FLAG = 0x00,
+			.CYCL_CNT = 1234,
+			.REL_VADR = 5678,
+			.REPT_CNT = 9012,
+			.NUM_FAIL = 3456,
+			.XFAIL_AD = 7890,
+			.YFAIL_AD = 5432,
+			.VECT_OFF = 10,
+			.RTN_ICNT = 6,
+			.PGM_ICNT = 3,
+			.RTN_INDX = rtn_indx,
+			.RTN_STAT = rtn_stat,
+			.PGM_INDX = pgm_indx,
+			.PGM_STAT = pgm_stat,
+			.FAIL_PIN = fail_pin,
+			.VECT_NAM = "\010VECT_NAM",
+			.TIME_SET = "\010TIME_SET",
+			.OP_CODE  = "\007OP_CODE",
+			.TEST_TXT = "\010TEST_TXT",
+			.ALARM_ID = "\010ALARM_ID",
+			.PROG_TXT = "\010PROG_TXT",
+			.RSLT_TXT = "\010RSLT_TXT",
+			.PATG_NUM = 254,
+			.SPIN_MAP = spin_map
 		};
 		stdf_init_header(ftr.header, REC_FTR);
 		stdf_write_record(f, &ftr);
 	}
-*/
 
 	{
 		rec_bps bps = {

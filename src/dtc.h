@@ -127,7 +127,7 @@ extern void free_Vn(dtc_Vn, dtc_U2);
 
 #define _stdf_write_dtc_xU1(file, xU1, cnt) _stdf_write_nbytes(file, xU1, cnt)
 #define _stdf_write_dtc_xU2(file, xU2, cnt) _stdf_write_dtc_x(file, xU2, cnt, _stdf_write_dtc_U2)
-#define _stdf_write_dtc_xN1(file, xN1, cnt) _stdf_write_nbytes(file, xN1, ((cnt/2)+(cnt%1)))
+#define _stdf_write_dtc_xN1(file, xN1, cnt) _stdf_write_nbytes(file, xN1, ((cnt/2)+(cnt%2)))
 #define _stdf_write_dtc_xR4(file, xR4, cnt) _stdf_write_dtc_x(file, xR4, cnt, _stdf_write_dtc_R4)
 #define _stdf_write_dtc_xCn(file, xCn, cnt) _stdf_write_dtc_x(file, xCn, cnt, _stdf_write_dtc_Cn)
 #define _stdf_write_dtc_xBn(file, xBn, cnt) _stdf_write_dtc_xCn(file, xBn, cnt)
