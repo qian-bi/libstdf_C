@@ -28,6 +28,10 @@ else
 	enable_annoy_untested="yes"
 fi
 
+dnl Internal macro to define internal libstdf stuff
+CFLAGS="$CFLAGS -D__IN_LIBSTDF"
+
+
 dnl ********************************************************
 dnl *                 Disable Warnings                     *
 dnl ********************************************************

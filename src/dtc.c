@@ -12,7 +12,6 @@
  */
 
 #include <libstdf.h>
-#include "libstdf_internal.h"
 #include "dtc.h"
 #include "rec.h"
 
