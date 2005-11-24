@@ -14,9 +14,19 @@
 #ifndef _LIBSTDF_INTERNAL_H
 #define _LIBSTDF_INTERNAL_H
 
-#define warn(fmt, args...)   fprintf(stderr, "libstdf: " fmt "\n" , ## args)
+#define _warn(fmt, args...)  fprintf(stderr, fmt , ## args)
+#define warn(fmt, args...)   _warn("libstdf: " fmt "\n" , ## args)
 #define warnf(fmt, args...)  warn("%s(): " fmt, __FUNCTION__ , ## args)
 #define warnp(fmt, args...)  warn(fmt ": %s" , ## args , strerror(errno))
 #define warnfp(fmt, args...) warnp("%s(): " fmt, __FUNCTION__ , ## args)
+
+#define dumphex(buf, cnt) \
+	do { \
+		size_t i = 0; \
+		_warn("dumphex: "); \
+		while (i < cnt) \
+			_warn("%2.2X ", buf[i++]); \
+		_warn("\n"); \
+	} while (0)
 
 #endif /* _LIBSTDF_INTERNAL_H */
