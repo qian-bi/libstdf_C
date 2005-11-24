@@ -1,0 +1,26 @@
+CROSS  	= i386-mingw32msvc-
+
+CC     	= $(CROSS)gcc
+LD     	= $(CROSS)dlltool
+
+CFLAGS 	= -Wall -Werror -I../include -O2
+LDFLAGS = 
+
+SRCS    := dtc.c rec.c libstdf.c
+OBJS    := $(SRCS:.c=.o)
+
+all: libstdf.dll
+
+%.o: ../src/%.c
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+libstdf.lib: $(OBJS)
+	$(LD) $(LDFLAGS) -e exports.o -l libstdf.lib $^
+
+libstdf.dll: $(OBJS) libstdf.lib
+	$(CC) $(CFLAGS) $(OBJS) exports.o \
+		-Wl,--out-implib,libstdf.a \
+		-shared -o libstdf.dll
+
+clean:
+	rm -f *.o libstdf.dll
