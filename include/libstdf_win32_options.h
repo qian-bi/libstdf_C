@@ -19,6 +19,7 @@
 #define	HAVE_BZIP	0
 
 /* you shouldn't have to touch anything below here */
+#define	HAVE_CTYPE_H		1
 #define	HAVE_ERRNO_H		1
 #define	HAVE_FCNTL_H		1
 #define	HAVE_STDARG_H		1
