@@ -13,7 +13,7 @@
 
 #define print_fmt(n,f,v) printf("\t" n ": " f, v)
 #define print_int(n,i) print_fmt(n, "%i\n", i)
-#define print_str(n,s) print_fmt(n, "%s\n", (*s ? s+1 : "(null)"))
+#define print_str(n,s) print_fmt(n, "%s\n", (*(s) ? (s)+1 : "(null)"))
 #define print_chr(n,c) print_fmt(n, "%c\n", c)
 #define print_hex(n,h) print_fmt(n, "%X\n", h)
 #define print_rel(n,r) print_fmt(n, "%f\n", r)
@@ -86,7 +86,7 @@ void print_Vn(char *n, dtc_Vn v, int c)
 	if (c == -1)
 		printf("\n");
 }
-void print_Bn(char *n, dtc_Bn b)
+void print_Bn(dtc_C1 *n, dtc_Bn b)
 {
 	int i;
 	printf("\t%s:", n);
@@ -96,7 +96,7 @@ void print_Bn(char *n, dtc_Bn b)
 		printf(" (null)");
 	printf("\n");
 }
-void print_Dn(char *n, dtc_Dn d)
+void print_Dn(dtc_C1 *n, dtc_Dn d)
 {
 	int i;
 	dtc_U2 *num_bits = (dtc_U2*)d, len;
