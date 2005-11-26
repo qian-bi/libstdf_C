@@ -17,7 +17,7 @@ stdint.h inttypes.h sys/types.h sys/stat.h ctype.h \
 errno.h unistd.h fcntl.h stdio.h stdlib.h time.h \
 string.h endian.h sys/endian.h machine/endian.h \
 cmplrs/host.h sys/isa_defs.h byteswap.h \
-features.h stdarg.h sys/cdefs.h \
+features.h stdarg.h sys/cdefs.h assert.h \
 ])
 
 dnl Let's get anal with compiling while on my dev box

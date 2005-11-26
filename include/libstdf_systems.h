@@ -66,6 +66,9 @@ extern int errno;
 #if defined(HAVE_SYS_CDEFS_H)
 # include <sys/cdefs.h>
 #endif
+#if defined(HAVE_ASSERT_H)
+# include <assert.h>
+#endif
 
 #if defined(HAVE_ENDIAN_H)
 # include <endian.h>
