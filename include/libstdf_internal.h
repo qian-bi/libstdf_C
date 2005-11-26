@@ -29,4 +29,9 @@
 		_warn("\n"); \
 	} while (0)
 
+#if HAVE_LZW
+# define __IN_LIBLZW
+# include <lzw.h>
+#endif
+
 #endif /* _LIBSTDF_INTERNAL_H */

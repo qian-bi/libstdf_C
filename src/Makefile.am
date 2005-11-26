@@ -5,10 +5,15 @@ INCLUDES = -I$(top_builddir)/include \
 
 lib_LTLIBRARIES = libstdf.la
 
+EXTRA_STDF_SOURCES :=
+if HAVE_LZW
+EXTRA_STDF_SOURCES += lzw.c
+endif
 libstdf_la_SOURCES = \
 	libstdf.c \
 	dtc.c \
-	rec.c
+	rec.c \
+	$(EXTRA_STDF_SOURCES)
 libstdf_la_LDFLAGS = -version-info 0:1:0
 
 libstdf_la_LIBADD = @ZIP_LIBS@ @GZIP_LIBS@ @BZIP2_LIBS@

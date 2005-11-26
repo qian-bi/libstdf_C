@@ -279,6 +279,41 @@ static __stdf_fops __stdf_fops_bzip2 = {
 
 
 
+/*
+ * LZW SUPPORT
+ */
+#if HAVE_LZW
+static int __stdf_open_lzw(void *data, int flags, uint32_t mode)
+{
+	stdf_file *stdf = (stdf_file*)data;
+	stdf->fd_lzw = NULL;
+
+	if (__stdf_open_reg(data, flags, mode) == -1)
+		return -1;
+
+	stdf->fd_lzw = lzw_fdopen(stdf->fd);
+	if (stdf->fd_lzw == NULL)
+		return -1;
+
+	return stdf->fd;
+}
+static int __stdf_read_lzw(void *data, void *buf, long count)
+{
+	return lzw_read(((stdf_file*)data)->fd_lzw, buf, count);
+}
+static int __stdf_close_lzw(void *data)
+{
+	return lzw_close(((stdf_file*)data)->fd_lzw);
+}
+static __stdf_fops __stdf_fops_lzw = {
+	__stdf_open_lzw,
+	__stdf_read_lzw,
+	__stdf_close_lzw
+};
+#endif
+
+
+
 static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mode)
 {
 	int flags, ret_errno = EINVAL;
@@ -304,6 +339,8 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mod
 		ret->file_format = STDF_FORMAT_GZIP;
 	else if (opts & STDF_OPTS_BZIP2)
 		ret->file_format = STDF_FORMAT_BZIP2;
+	else if (opts & STDF_OPTS_LZW)
+		ret->file_format = STDF_FORMAT_LZW;
 	else if (ret->filename) {
 		/* try to guess from the filename if it's compressed */
 		if (strrchr(ret->filename, '.') != NULL) {
@@ -313,6 +350,7 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mod
 			} guesses[] = {
 				{ ".zip", STDF_FORMAT_ZIP   },
 				{ ".gz",  STDF_FORMAT_GZIP  },
+				{ ".Z",   STDF_FORMAT_LZW   },
 				{ ".bz",  STDF_FORMAT_BZIP2 },
 				{ ".bz2", STDF_FORMAT_BZIP2 },
 				{ NULL,   STDF_FORMAT_REG   }
@@ -344,8 +382,13 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mod
 			ret->fops = &__stdf_fops_bzip2;
 			break;
 #endif
+#if HAVE_LZW
+		case STDF_FORMAT_LZW:
+			ret->fops = &__stdf_fops_lzw;
+			break;
+#endif
 		default:
-			fprintf(stderr, "stdf_open(): format not supported\n");
+			warn("format not supported");
 			goto out_err;
 		case STDF_FORMAT_REG:
 			ret->fops = &__stdf_fops_reg;

@@ -7,4 +7,5 @@ include_HEADERS = \
 	libstdf_sys_config.h \
 	libstdf_bswap.h
 noinst_HEADERS = \
-	libstdf_internal.h
+	libstdf_internal.h \
+	lzw.h

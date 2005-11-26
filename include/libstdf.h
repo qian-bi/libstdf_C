@@ -43,7 +43,8 @@ typedef enum {
 	STDF_FORMAT_REG,			/**< Regular file */
 	STDF_FORMAT_ZIP,			/**< Zipped file */
 	STDF_FORMAT_GZIP,			/**< gzipped file */
-	STDF_FORMAT_BZIP2			/**< bzipped file */
+	STDF_FORMAT_BZIP2,			/**< bzipped file */
+	STDF_FORMAT_LZW				/**< LZW compressed file */
 } stdf_format;
 
 /**
@@ -87,6 +88,10 @@ typedef struct {
 # if HAVE_BZIP2
 	BZFILE		*bzip2;
 #  define fd_bzip2 __fd.bzip2
+# endif
+# if HAVE_LZW
+	lzwFile		*lzw;
+#  define fd_lzw __fd.lzw
 # endif
 	} __fd;
 #endif

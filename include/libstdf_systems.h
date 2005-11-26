@@ -164,7 +164,7 @@ typedef unsigned char uchar;
 #if HAVE_BZIP2
 # include <bzlib.h>
 #endif
-#if !HAVE_ZIP && !HAVE_GZIP && !HAVE_BZIP2
+#if !HAVE_ZIP && !HAVE_GZIP && !HAVE_BZIP2 && !HAVE_LZW
 # define HAVE_NO_COMPRESSION	1
 #endif
 
