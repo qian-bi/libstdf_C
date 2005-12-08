@@ -47,6 +47,7 @@ typedef struct {
 	lzwFile		*lzw;
 #  define fd_lzw __fd.lzw
 # endif
+	uintptr_t	padding[4];
 	} __fd;
 
 	stdf_format	file_format;	/**< Compressed file format */
