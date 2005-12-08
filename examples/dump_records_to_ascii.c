@@ -127,6 +127,7 @@ int main(int argc, char *argv[])
 	char *recname;
 	rec_unknown *rec;
 	int i;
+	dtc_U4 stdf_ver;
 
 	if (argc <= 1) {
 		printf("Need some files to open!\n");
@@ -140,6 +141,7 @@ for (i=1; i<argc; ++i) {
 		perror("Could not open file");
 		continue;
 	}
+	stdf_get_setting(f, STDF_SETTING_VERSION, &stdf_ver);
 
 	while ((rec=stdf_read_record(f)) != NULL) {
 		recname = stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB);
@@ -161,7 +163,7 @@ for (i=1; i<argc; ++i) {
 			case REC_MIR: {
 				rec_mir *mir = (rec_mir*)rec;
 #ifdef STDF_VER3
-				if (f->ver == 4) {
+				if (stdf_ver == 4) {
 #endif
 				print_tim("SETUP_T", mir->SETUP_T);
 				print_tim("START_T", mir->START_T);
@@ -234,7 +236,7 @@ for (i=1; i<argc; ++i) {
 				rec_mrr *mrr = (rec_mrr*)rec;
 				print_tim("FINISH_T", mrr->FINISH_T);
 #ifdef STDF_VER3
-				if (f->ver == 3) {
+				if (stdf_ver == 3) {
 				print_int("PART_CNT", mrr->PART_CNT);
 				print_int("RTST_CNT", mrr->RTST_CNT);
 				print_int("ABRT_CNT", mrr->ABRT_CNT);
@@ -343,7 +345,7 @@ for (i=1; i<argc; ++i) {
 				rec_wir *wir = (rec_wir*)rec;
 				print_int("HEAD_NUM", wir->HEAD_NUM);
 #ifdef STDF_VER3
-				if (f->ver == 3)
+				if (stdf_ver == 3)
 				print_hex("PAD_BYTE", wir->PAD_BYTE);
 				else
 #endif
@@ -355,7 +357,7 @@ for (i=1; i<argc; ++i) {
 			case REC_WRR: {
 				rec_wrr *wrr = (rec_wrr*)rec;
 #ifdef STDF_VER3
-				if (f->ver == 4) {
+				if (stdf_ver == 4) {
 #endif
 				print_int("HEAD_NUM", wrr->HEAD_NUM);
 				print_int("SITE_GRP", wrr->SITE_GRP);
@@ -374,7 +376,7 @@ for (i=1; i<argc; ++i) {
 				print_int("FUNC_CNT", wrr->FUNC_CNT);
 				print_str("WAFER_ID", wrr->WAFER_ID);
 #ifdef STDF_VER3
-				if (f->ver == 4) {
+				if (stdf_ver == 4) {
 #endif
 				print_str("FABWF_ID", wrr->FABWF_ID);
 				print_str("FRAME_ID", wrr->FRAME_ID);
@@ -407,7 +409,7 @@ for (i=1; i<argc; ++i) {
 				print_int("HEAD_NUM", pir->HEAD_NUM);
 				print_int("SITE_NUM", pir->SITE_NUM);
 #ifdef STDF_VER3
-				if (f->ver == 3) {
+				if (stdf_ver == 3) {
 				print_int("X_COORD", pir->X_COORD);
 				print_int("Y_COORD", pir->Y_COORD);
 				print_str("PART_ID", pir->PART_ID);
@@ -420,14 +422,14 @@ for (i=1; i<argc; ++i) {
 				print_int("HEAD_NUM", prr->HEAD_NUM);
 				print_int("SITE_NUM", prr->SITE_NUM);
 #ifdef STDF_VER3
-				if (f->ver == 4)
+				if (stdf_ver == 4)
 #endif
 				print_hex("PART_FLG", prr->PART_FLG);
 				print_int("NUM_TEST", prr->NUM_TEST);
 				print_int("HARD_BIN", prr->HARD_BIN);
 				print_int("SOFT_BIN", prr->SOFT_BIN);
 #ifdef STDF_VER3
-				if (f->ver == 3) {
+				if (stdf_ver == 3) {
 				print_hex("PART_FLG", prr->PART_FLG);
 				print_hex("PAD_BYTE", prr->PAD_BYTE);
 				}
@@ -435,7 +437,7 @@ for (i=1; i<argc; ++i) {
 				print_int("X_COORD", prr->X_COORD);
 				print_int("Y_COORD", prr->Y_COORD);
 #ifdef STDF_VER3
-				if (f->ver == 4)
+				if (stdf_ver == 4)
 #endif
 				print_tim("TEST_T", prr->TEST_T);
 				print_str("PART_ID", prr->PART_ID);
@@ -479,7 +481,7 @@ for (i=1; i<argc; ++i) {
 				print_int("HEAD_NUM", tsr->HEAD_NUM);
 				print_int("SITE_NUM", tsr->SITE_NUM);
 #ifdef STDF_VER3
-				if (f->ver == 4)
+				if (stdf_ver == 4)
 #endif
 				print_chr("TEST_TYP", tsr->TEST_TYP);
 				print_int("TEST_NUM", tsr->TEST_NUM);
@@ -487,7 +489,7 @@ for (i=1; i<argc; ++i) {
 				print_int("FAIL_CNT", tsr->FAIL_CNT);
 				print_int("ALRM_CNT", tsr->ALRM_CNT);
 #ifdef STDF_VER3
-				if (f->ver == 4) {
+				if (stdf_ver == 4) {
 #endif
 				print_str("TEST_NAM", tsr->TEST_NAM);
 				print_str("SEQ_NAME", tsr->SEQ_NAME);
@@ -674,10 +676,12 @@ for (i=1; i<argc; ++i) {
 				print_str("TEXT_DAT", dtr->TEXT_DAT);
 				break;
 			}
-			case REC_UNKNOWN:
-				printf("\tBytes: %i\n", f->header.REC_LEN);
-				printf("\tTYP: 0x%X [%i]\n", f->header.REC_TYP, f->header.REC_TYP);
-				printf("\tSUB: 0x%X [%i]\n", f->header.REC_SUB, f->header.REC_SUB);
+			case REC_UNKNOWN: {
+				rec_unknown *unk = (rec_unknown*)rec;
+				printf("\tBytes: %i\n", unk->header.REC_LEN);
+				printf("\tTYP: 0x%X [%i]\n", unk->header.REC_TYP, unk->header.REC_TYP);
+				printf("\tSUB: 0x%X [%i]\n", unk->header.REC_SUB, unk->header.REC_SUB);
+			}
 		}
 		stdf_free_record(rec);
 	}

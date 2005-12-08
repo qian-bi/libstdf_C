@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
 	char cpu_name[256];
 	FILE *out;
 	int x, rec_count, max_recs, type;
+	dtc_U4 byte_order, stdf_ver;
 
 	max_recs = 25;
 	max_width = 25;
@@ -145,9 +146,11 @@ int main(int argc, char *argv[])
 		perror("Could not stdf_open file");
 		return EXIT_FAILURE;
 	}
-	if (f->byte_order == LITTLE_ENDIAN)
+	stdf_get_setting(f, STDF_SETTING_VERSION, &stdf_ver);
+	stdf_get_setting(f, STDF_SETTING_BYTE_ORDER, &byte_order);
+	if (byte_order == LITTLE_ENDIAN)
 		sprintf(cpu_name, "Little Endian [intel/x86]");
-	else if (f->byte_order == BIG_ENDIAN)
+	else if (byte_order == BIG_ENDIAN)
 		sprintf(cpu_name, "Big Endian [sun/sparc]");
 	else
 		sprintf(cpu_name, "Unknown Endian [???]");
@@ -178,11 +181,11 @@ int main(int argc, char *argv[])
 	        "<body>\n"
 	        "<h1>File: %s<br>STDF v%i<br>CPU Type: %i (%s)</h1>\n"
 	        "<table><tr>\n",
-	        argv[x], argv[x], f->ver, f->byte_order, cpu_name);
+	        argv[x], argv[x], stdf_ver, byte_order, cpu_name);
 
 	for (type=1; type<3; type++) {
-		f->fops->close(f);
-		f->fops->open(f, O_RDONLY, 0);
+		stdf_close(f);
+		f = stdf_open(argv[x]);
 
 		width = 0;
 		rec_count = max_recs;
@@ -197,7 +200,7 @@ int main(int argc, char *argv[])
 		fprintf(out, "</tr>\n<tr>");
 
 		while ((raw_rec=stdf_read_record_raw(f)) != NULL) {
-			write_rec(out, &(f->header), type);
+			write_rec(out, &(raw_rec->header), type);
 			stdf_free_record(raw_rec);
 			if (--rec_count == 0)
 				break;
