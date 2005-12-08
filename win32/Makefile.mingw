@@ -3,7 +3,7 @@ CROSS  	= i386-mingw32msvc-
 CC     	= $(CROSS)gcc
 LD     	= $(CROSS)dlltool
 
-CFLAGS 	= -Wall -Werror -I../include -O2
+CFLAGS 	= -Wall -Werror -I../include -O2 -D__IN_LIBSTDF
 LDFLAGS = 
 
 SRCS    := dtc.c rec.c libstdf.c
