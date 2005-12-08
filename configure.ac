@@ -12,6 +12,8 @@ AC_PROG_LIBTOOL
 AC_ENABLE_SHARED
 AC_ENABLE_STATIC
 
+AC_HEADER_STDC
+AC_C_CONST
 AC_CHECK_HEADERS([ \
 stdint.h inttypes.h sys/types.h sys/stat.h ctype.h \
 errno.h unistd.h fcntl.h stdio.h stdlib.h time.h \
@@ -19,6 +21,9 @@ string.h endian.h sys/endian.h machine/endian.h \
 cmplrs/host.h sys/isa_defs.h byteswap.h \
 features.h stdarg.h sys/cdefs.h assert.h \
 ])
+
+AC_TYPE_SIZE_T
+AC_CHECK_TYPE([uintptr_t], [size_t])
 
 dnl Let's get anal with compiling while on my dev box
 if test "x$HOSTNAME" = "xvapier" ; then
