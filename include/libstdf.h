@@ -23,28 +23,15 @@ extern "C" {
 #include <libstdf_const.h>
 #include <libstdf_types.h>
 
-#ifdef __IN_LIBSTDF
-# include <libstdf_internal.h>
-#endif
-
-/* STDF File structure */
-#define	__STDF_HOST_BYTE_ORDER		BYTE_ORDER
-
-typedef struct {
-	int		(*open)(void*, int, uint32_t);
-	int		(*read)(void*, void*, long);
-	int		(*close)(void*);
-} __stdf_fops;
-
 /**
  * Compressed file format
  */
 typedef enum {
-	STDF_FORMAT_REG,			/**< Regular file */
-	STDF_FORMAT_ZIP,			/**< Zipped file */
-	STDF_FORMAT_GZIP,			/**< gzipped file */
-	STDF_FORMAT_BZIP2,			/**< bzipped file */
-	STDF_FORMAT_LZW				/**< LZW compressed file */
+	STDF_FORMAT_REG    = 0x0,    /**< Regular file */
+	STDF_FORMAT_ZIP    = 0x1,    /**< Zipped file */
+	STDF_FORMAT_GZIP   = 0x2,    /**< gzipped file */
+	STDF_FORMAT_BZIP2  = 0x3,    /**< bzipped file */
+	STDF_FORMAT_LZW    = 0x4     /**< LZW compressed file */
 } stdf_format;
 
 /**
@@ -65,52 +52,17 @@ typedef enum {
 } stdf_initial_options;
 
 typedef enum {
-	STDF_OPT_WRITE_SIZE = 0x001  /**< Set the output blocksize for writing */
-} stdf_runtime_options;
+	STDF_SETTING_WRITE_SIZE = 0x001, /**< Set the output blocksize for writing */
+	STDF_SETTING_VERSION    = 0x002, /**< Query the STDF spec version */
+	STDF_SETTING_BYTE_ORDER = 0x003  /**< Query the byte order */
+} stdf_runtime_settings;
 
-/**
- * @brief The main STDF file structure.
- */
-typedef struct {
-	rec_header	header;			/**< A processed version of the last record read */
 
-	int			fd;				/**< Actual file descriptor for the backing file */
-#if !HAVE_NO_COMPRESSION
-	union {
-# if HAVE_ZIP
-	ZZIP_FILE	*zip;
-#  define fd_zip __fd.zip
-# endif
-# if HAVE_GZIP
-	gzFile		*gzip;
-#  define fd_gzip __fd.gzip
-# endif
-# if HAVE_BZIP2
-	BZFILE		*bzip2;
-#  define fd_bzip2 __fd.bzip2
-# endif
-# if HAVE_LZW
-	lzwFile		*lzw;
-#  define fd_lzw __fd.lzw
-# endif
-	} __fd;
+#ifdef __IN_LIBSTDF
+# include <libstdf_internal.h>
+#else
+typedef void stdf_file;
 #endif
-	stdf_format	file_format;	/**< Compressed file format */
-	char		*filename;		/**< Filename that was given to stdf_open() */
-	__stdf_fops	*fops;			/**< Virtual file i/o functions to hide compression details */
-
-	int			byte_order;		/**< Byte order of the file */
-	uint32_t	opts;			/**< Misc options to control libstdf behavior */
-	dtc_U1		ver;			/**< Spec version of the file */
-
-	byte_t		*__data;
-	byte_t		*rec_pos;
-	byte_t		*rec_end;
-
-	byte_t		*__output;
-	byte_t		*_write_pos;
-	dtc_U2		_write_chunk_size;
-} stdf_file;
 
 #include <libstdf_funcs.h>
 

@@ -144,17 +144,6 @@ typedef unsigned char uchar;
 # error the --enable-endian option.
 #endif
 
-#if defined(__GNUC__)
-# if !defined(weak_alias)
-#  define weak_alias(name, aliasname) \
-	extern __typeof (name) aliasname __attribute__ ((weak, alias (#name)))
-# endif
-# if !defined(strong_alias)
-#  define strong_alias(name, aliasname) \
-	extern __typeof (name) aliasname __attribute__ ((alias (#name)))
-# endif
-#endif
-
 #if HAVE_ZIP
 # include <zzip/zzip.h>
 #endif
@@ -164,8 +153,9 @@ typedef unsigned char uchar;
 #if HAVE_BZIP2
 # include <bzlib.h>
 #endif
-#if !HAVE_ZIP && !HAVE_GZIP && !HAVE_BZIP2 && !HAVE_LZW
-# define HAVE_NO_COMPRESSION	1
+#if HAVE_LZW
+# define __IN_LIBLZW
+# include <lzw.h>
 #endif
 
 /* i'll see you in hell windows */
