@@ -1579,15 +1579,6 @@ ssize_t stdf_write_rec_far(stdf_file *file, rec_far *far)
 	_stdf_write_dtc_U1(file, far->STDF_VER);
 	return _stdf_write_flush(file, far->header.REC_LEN);
 }
-ssize_t stdf_qwrite_rec_far(stdf_file *file, dtc_U1 CPU_TYPE, dtc_U1 STDF_VER)
-{
-	rec_far far = {
-		.header.REC_LEN = 0,
-		.CPU_TYPE = CPU_TYPE,
-		.STDF_VER = STDF_VER
-	};
-	return stdf_write_rec_far(file, &far);
-}
 
 ssize_t stdf_write_rec_atr(stdf_file *file, rec_atr *atr)
 {
