@@ -92,7 +92,10 @@ typedef struct {
 /**
  * @brief Internal macros for fun ELF tricks.
  */
-#if defined(__GNUC__) && defined(__ELF__)
+#ifndef __GNUC_PREREQ
+# define __GNUC_PREREQ(maj, min) 0
+#endif
+#if __GNUC_PREREQ(3,3) && defined(__ELF__)
 # if !defined(weak_alias)
 #  define weak_alias(name, aliasname) \
 	extern __typeof (name) aliasname __attribute__ ((weak, alias (#name)))
