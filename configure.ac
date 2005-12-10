@@ -39,7 +39,7 @@ dnl *                 Disable Warnings                     *
 dnl ********************************************************
 AC_MSG_CHECKING(whether to annoy you about untested code)
 AC_ARG_ENABLE(warn-untested,
-	AC_HELP_STRING([--enable-warn-untested],[don't warn about untested code @<:@default=warn@:>@]),
+	AC_HELP_STRING([--disable-warn-untested],[don't warn about untested code @<:@default=warn@:>@]),
 	[
 	if test "x$enableval" = "xyes" ; then
 		enable_annoy_untested="yes"
@@ -82,9 +82,9 @@ AC_ARG_ENABLE(endian,
 	AC_HELP_STRING([--enable-endian],[force endian type @<:@default=detect@:>@]),
 	[stdf_force_endian=$enableval])
 if test "x$stdf_force_endian" = "xlittle" ; then
-	AC_DEFINE(STDF_FORCE_ENDIAN, 1234, [Force endian size to little])
+	AC_DEFINE(STDF_FORCE_ENDIAN, 1234, [Force endian type to little])
 elif test "x$stdf_force_endian" = "xbig" ; then
-	AC_DEFINE(STDF_FORCE_ENDIAN, 4321, [Force endian size to big])
+	AC_DEFINE(STDF_FORCE_ENDIAN, 4321, [Force endian type to big])
 elif test "x$stdf_force_endian" != "xauto" ; then
 	AC_MSG_ERROR(Valid values for endian are "little", "big", or "auto")
 fi
