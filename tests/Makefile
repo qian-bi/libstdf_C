@@ -27,7 +27,7 @@ create:
 distdir:
 	@cp Makefile *.bz2 $(distdir)
 
-clean:
+distclean clean:
 	rm -f *.out
 
 .PHONY: all install check ascii html stats create distdir clean
