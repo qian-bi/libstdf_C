@@ -27,7 +27,7 @@ AC_CHECK_TYPE([uintptr_t], [size_t])
 
 dnl Let's get anal with compiling while on my dev box
 if test "x$HOSTNAME" = "xvapier" ; then
-	CFLAGS="$CFLAGS -Wall -Werror"
+	CFLAGS="$CFLAGS -Wall -Wextra -Werror"
 	enable_annoy_untested="no"
 else
 	enable_annoy_untested="yes"
@@ -52,6 +52,102 @@ if test "x$enable_annoy_untested" = "xyes" ; then
 	AC_DEFINE(WARN_UNTESTED, 1, [Annoy people about unimplemented code])
 fi
 AC_MSG_RESULT($enable_annoy_untested)
+
+dnl ********************************************************
+dnl *               Memory debug support                   *
+dnl ********************************************************
+DEBUG_CFLAGS=""
+DEBUG_LIBS=""
+
+enable_debug_mtrace="no"
+AC_MSG_CHECKING(whether to use malloc trace for debugging)
+AC_ARG_ENABLE(mtrace,
+	AC_HELP_STRING([--enable-mtrace],[use mtrace for memory debugging @<:@default=no@:>@]),
+	[
+	if test "x$enableval" = "xyes" ; then
+		enable_debug_mtrace="yes"
+	else
+		enable_debug_mtrace="no"
+	fi
+	]
+)
+AC_MSG_RESULT($enable_debug_mtrace)
+if test "x$enable_debug_mtrace" = "xyes" ; then
+	AC_CHECK_HEADERS(mcheck.h)
+	AC_CHECK_LIB(c, mtrace, [], [])
+	if test "x$ac_cv_header_mcheck_h$ac_cv_lib_c_mtrace" != "xyesyes" ; then
+		AC_MSG_ERROR([could not find mtrace])
+	fi
+fi
+
+enable_debug_dmalloc="no"
+AC_MSG_CHECKING(whether to use dmalloc for debugging)
+AC_ARG_ENABLE(dmalloc,
+	AC_HELP_STRING([--enable-dmalloc],[use dmalloc for memory debugging @<:@default=no@:>@]),
+	[
+	if test "x$enableval" = "xyes" ; then
+		enable_debug_dmalloc="yes"
+	else
+		enable_debug_dmalloc="no"
+	fi
+	]
+)
+AC_MSG_RESULT($enable_debug_dmalloc)
+if test "x$enable_debug_dmalloc" = "xyes" ; then
+	AC_CHECK_HEADERS(dmalloc.h)
+	AC_CHECK_LIB(dmalloc, dmalloc_shutdown, [], [])
+	if test "x$ac_cv_header_dmalloc_h$ac_cv_lib_dmalloc_dmalloc_shutdown" != "xyesyes" ; then
+		AC_MSG_ERROR([could not find dmalloc])
+	fi
+	DEBUG_LIBS="-ldmalloc"
+fi
+
+enable_debug_efence="no"
+AC_MSG_CHECKING(whether to use electric fence for debugging)
+AC_ARG_ENABLE(efence,
+	AC_HELP_STRING([--enable-efence],[use efence for memory debugging @<:@default=no@:>@]),
+	[
+	if test "x$enableval" = "xyes" ; then
+		enable_debug_efence="yes"
+	else
+		enable_debug_efence="no"
+	fi
+	]
+)
+AC_MSG_RESULT($enable_debug_efence)
+if test "x$enable_debug_efence" = "xyes" ; then
+	AC_CHECK_HEADERS(efence.h)
+	AC_CHECK_LIB(efence, _eff_init, [], [])
+	if test "x$ac_cv_header_efence_h$ac_cv_lib_efence__eff_init" != "xyesyes" ; then
+		AC_MSG_ERROR([could not find electric fence])
+	fi
+	DEBUG_LIBS="-lefence"
+fi
+
+enable_debug_mudflap="no"
+AC_MSG_CHECKING(whether to use mudflap for debugging)
+AC_ARG_ENABLE(mudflap,
+	AC_HELP_STRING([--enable-mudflap],[use mudflap for memory debugging @<:@default=no@:>@]),
+	[
+	if test "x$enableval" = "xyes" ; then
+		enable_debug_mudflap="yes"
+	else
+		enable_debug_mudflap="no"
+	fi
+	]
+)
+AC_MSG_RESULT($enable_debug_mudflap)
+if test "x$enable_debug_mudflap" = "xyes" ; then
+	AC_CHECK_LIB(mudflap, __mf_init, [], [])
+	if test "x$ac_cv_lib_mudflap___mf_init" != "xyes" ; then
+		AC_MSG_ERROR([could not find mudflap])
+	fi
+	DEBUG_CFLAGS="-fmudflap"
+	DEBUG_LIBS="-lmudflap"
+fi
+
+AC_SUBST(DEBUG_CFLAGS)
+AC_SUBST(DEBUG_LIBS)
 
 dnl ********************************************************
 dnl *                 SDTF v3 [stdf-ver3]                  *
@@ -96,7 +192,7 @@ dnl ********************************************************
 enable_zip_compression="maybe"
 AC_MSG_CHECKING(whether zip support should be enabled)
 AC_ARG_ENABLE(zip,
-	AC_HELP_STRING([--enable-zip],[enable support for zip (zlib) @<:@default=auto@:>@]),
+	AC_HELP_STRING([--enable-zip],[enable zip support (zziplib) @<:@default=auto@:>@]),
 	[
 	if test "x$enableval" = "xyes" ; then
 		enable_zip_compression="yes"
@@ -139,7 +235,7 @@ dnl ********************************************************
 enable_lzw_compression="no"
 AC_MSG_CHECKING(whether lzw support should be enabled)
 AC_ARG_ENABLE(lzw,
-	AC_HELP_STRING([--enable-lzw],[enable support for lzw (.Z) @<:@default=no@:>@]),
+	AC_HELP_STRING([--enable-lzw],[enable lzw (.Z) support @<:@default=no@:>@]),
 	[
 	if test "x$enableval" = "xyes" ; then
 		enable_lzw_compression="yes"
@@ -166,7 +262,7 @@ dnl ********************************************************
 enable_gzip_compression="maybe"
 AC_MSG_CHECKING(whether gzip support should be enabled)
 AC_ARG_ENABLE(gzip,
-	AC_HELP_STRING([--enable-gzip],[enable support for gzip (zlib) @<:@default=auto@:>@]),
+	AC_HELP_STRING([--enable-gzip],[enable gzip support (zlib) @<:@default=auto@:>@]),
 	[
 	if test "x$enableval" = "xyes" ; then
 		enable_gzip_compression="yes"
@@ -212,7 +308,7 @@ dnl ********************************************************
 enable_bzip2_compression="maybe"
 AC_MSG_CHECKING(whether bzip2 support should be enabled)
 AC_ARG_ENABLE(bzip2,
-	AC_HELP_STRING([--enable-bzip2],[enable support for bzip2 files @<:@default=auto@:>@]),
+	AC_HELP_STRING([--enable-bzip2],[enable bzip2 support (bzlib) @<:@default=auto@:>@]),
 	[
 	if test "x$enableval" = "xyes" ; then
 		enable_bzip2_compression="yes"

@@ -410,9 +410,7 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		rec_eps eps = {
-			/* nothing */
-		};
+		rec_eps eps;
 		stdf_init_header(eps.header, REC_EPS);
 		stdf_write_record(f, &eps);
 	}

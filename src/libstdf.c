@@ -319,7 +319,10 @@ static __stdf_fops __stdf_fops_lzw = {
 static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mode)
 {
 	int flags, ret_errno = EINVAL;
-	stdf_file *ret = (stdf_file*)malloc(sizeof(stdf_file));
+	stdf_file *ret;
+
+	_stdf_mtrace();
+	ret = (stdf_file*)malloc(sizeof(stdf_file));
 
 	if (!pathname || pathname[0] == '\0') {
 		if (fd == -1) {
@@ -430,6 +433,7 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mod
 			goto out_err;
 	}
 
+	_stdf_muntrace();
 	errno = 0;
 	return ret;
 
@@ -441,6 +445,7 @@ out_err:
 
 set_errno_and_ret:
 	errno = ret_errno;
+	_stdf_muntrace();
 	return NULL;
 }
 stdf_file* stdf_open_ex(char *pathname, uint32_t opts, ...)
@@ -477,6 +482,7 @@ stdf_file* stdf_dopen_ex(int fd, uint32_t opts, ...)
 int stdf_close(stdf_file *file)
 {
 	int ret, ret_errno;
+	_stdf_mtrace();
 	if (file->__output) {
 		_stdf_write_flush(file, (size_t)-1);
 		free(file->__output);
@@ -485,6 +491,7 @@ int stdf_close(stdf_file *file)
 	ret_errno = errno;
 	if (file->filename) free(file->filename);
 	free(file);
+	_stdf_muntrace();
 	errno = ret_errno;
 	return ret;
 }
@@ -495,10 +502,12 @@ rec_unknown* stdf_read_record_raw(stdf_file *file)
 	char header[6];
 	int cheated;
 
+	_stdf_mtrace();
+
 	if (!file->__data) {
 		/* read the record header to find out how big this next record is */
 		if (file->fops->read(file, header, 4) != 4)
-			return NULL;
+			goto ret_null;
 		cheated = 0;
 	} else {
 		memcpy(header, file->__data, 6);
@@ -508,8 +517,8 @@ rec_unknown* stdf_read_record_raw(stdf_file *file)
 	}
 	raw_rec = (rec_unknown*)malloc(sizeof(rec_unknown));
 	if (raw_rec == NULL) {
-		perror("stdf_read_record_raw():malloc.1");
-		return NULL;
+		warnfp("malloc.1");
+		goto ret_null;
 	}
 	raw_rec->header.stdf_file = (void*)file;
 	raw_rec->header.state = REC_STATE_RAW;
@@ -522,9 +531,9 @@ rec_unknown* stdf_read_record_raw(stdf_file *file)
 	/* buffer the whole record in memory */
 	raw_rec->data = (void*)malloc(file->header.REC_LEN+4);
 	if (raw_rec->data == NULL) {
-		perror("stdf_read_record_raw():malloc.2");
+		warnfp("malloc.2");
 		free(raw_rec);
-		return NULL;
+		goto ret_null;
 	}
 	if (cheated) {
 		file->fops->read(file, ((byte_t*)raw_rec->data)+6, file->header.REC_LEN-2);
@@ -534,7 +543,11 @@ rec_unknown* stdf_read_record_raw(stdf_file *file)
 		memcpy(raw_rec->data, header, 4);
 	}
 
+	_stdf_muntrace();
 	return raw_rec;
+ret_null:
+	_stdf_muntrace();
+	return NULL;
 }
 
 rec_unknown* stdf_parse_raw_record(rec_unknown *raw_rec)
@@ -544,6 +557,8 @@ rec_unknown* stdf_parse_raw_record(rec_unknown *raw_rec)
 
 	if (!raw_rec)
 		return NULL;
+
+	_stdf_mtrace();
 
 	file = (stdf_file*)(raw_rec->header.stdf_file);
 
@@ -620,6 +635,7 @@ rec_unknown* stdf_parse_raw_record(rec_unknown *raw_rec)
 
 	file->__data = NULL;
 
+	_stdf_muntrace();
 	return rec;
 }
 

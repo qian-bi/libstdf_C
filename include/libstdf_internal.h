@@ -88,6 +88,26 @@ typedef struct {
 	} while (0)
 
 
+/**
+ * @brief Misc cruft for debugging fun.
+ */
+#if HAVE_MCHECK_H
+# include <mcheck.h>
+# define _stdf_mtrace()   mtrace()
+# define _stdf_muntrace() muntrace()
+#else
+# define _stdf_mtrace()
+# define _stdf_muntrace()
+#endif
+
+#if HAVE_DMALLOC_H
+# include <dmalloc.h>
+#endif
+
+#if HAVE_EFENCE_H
+# include <efence.h>
+#endif
+
 
 /**
  * @brief Internal macros for fun ELF tricks.
@@ -96,6 +116,7 @@ typedef struct {
 # define __GNUC_PREREQ(maj, min) 0
 #endif
 #if __GNUC_PREREQ(3,3) && defined(__ELF__)
+# define attribute_unused __attribute__ ((unused))
 # if !defined(weak_alias)
 #  define weak_alias(name, aliasname) \
 	extern __typeof (name) aliasname __attribute__ ((weak, alias (#name)))
@@ -108,6 +129,7 @@ typedef struct {
 #  define attribute_hidden __attribute__ ((visibility ("hidden")))
 # endif
 #else
+# define attribute_unused
 # if !defined(attribute_hidden)
 #  define attribute_hidden
 # endif

@@ -1011,7 +1011,7 @@ rec_bps* stdf_read_rec_bps(stdf_file *file)
 	return bps;
 }
 
-rec_eps* stdf_read_rec_eps(stdf_file *file)
+rec_eps* stdf_read_rec_eps(attribute_unused stdf_file *file)
 {
 	rec_eps *eps = __malloc_rec(rec_eps);
 	return eps;
@@ -1120,12 +1120,12 @@ static inline size_t _len_dtcXCN(dtc_xCn xCn, dtc_U2 cnt)
 #define _len_dtcXN(xn, cnt) (sizeof(*(xn)) * (cnt / 2 + cnt % 2))
 #define booga(a,b) 0
 
-static inline size_t _calc_rec_len_far(stdf_file *f, rec_far *r)
+static inline size_t _calc_rec_len_far(attribute_unused stdf_file *f, rec_far *r)
 {
 	return sizeof(r->CPU_TYPE) + sizeof(r->STDF_VER);
 }
 
-static inline size_t _calc_rec_len_atr(stdf_file *f, rec_atr *r)
+static inline size_t _calc_rec_len_atr(attribute_unused stdf_file *f, rec_atr *r)
 {
 	return sizeof(r->MOD_TIM) + _lenCn(r->CMD_LINE);
 }
@@ -1159,11 +1159,11 @@ static inline size_t _calc_rec_len_mir(stdf_file *f, rec_mir *r)
 	_lenCn(r->SETUP_ID) + _lenCn(r->DSGN_REV) + _lenCn(r->ENG_ID) + \
 	_lenCn(r->ROM_COD) + _lenCn(r->SERL_NUM) + _lenCn(r->SUPR_NAM) \
 	)
-#ifdef STDF_VER3
-	return (f->ver == 3 ? _CALC_REC_LEN_MIR_v3(r) : _CALC_REC_LEN_MIR_v4(r));
-#else
-	return _CALC_REC_LEN_MIR_v4(r);
+#ifndef STDF_VER3
+# undef _CALC_REC_LEN_MIR_v3
+# define _CALC_REC_LEN_MIR_v3(r) 0
 #endif
+	return (f->ver == 3 ? _CALC_REC_LEN_MIR_v3(r) : _CALC_REC_LEN_MIR_v4(r));
 }
 
 static inline size_t _calc_rec_len_mrr(stdf_file *f, rec_mrr *r)
@@ -1180,14 +1180,14 @@ static inline size_t _calc_rec_len_mrr(stdf_file *f, rec_mrr *r)
 	sizeof(r->FINISH_T) + sizeof(r->DISP_COD) + \
 	_lenCn(r->USR_DESC) + _lenCn(r->EXC_DESC) \
 	)
-#ifdef STDF_VER3
-	return (f->ver == 3 ? _CALC_REC_LEN_MRR_v3(r) : _CALC_REC_LEN_MRR_v4(r));
-#else
-	return _CALC_REC_LEN_MRR_v4(r);
+#ifndef STDF_VER3
+# undef _CALC_REC_LEN_MRR_v3
+# define _CALC_REC_LEN_MRR_v3(r) 0
 #endif
+	return (f->ver == 3 ? _CALC_REC_LEN_MRR_v3(r) : _CALC_REC_LEN_MRR_v4(r));
 }
 
-static inline size_t _calc_rec_len_pcr(stdf_file *f, rec_pcr *r)
+static inline size_t _calc_rec_len_pcr(attribute_unused stdf_file *f, rec_pcr *r)
 {
 	return 
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->PART_CNT) +
@@ -1195,21 +1195,21 @@ static inline size_t _calc_rec_len_pcr(stdf_file *f, rec_pcr *r)
 		sizeof(r->FUNC_CNT);
 }
 
-static inline size_t _calc_rec_len_hbr(stdf_file *f, rec_hbr *r)
+static inline size_t _calc_rec_len_hbr(attribute_unused stdf_file *f, rec_hbr *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->HBIN_NUM) +
 		sizeof(r->HBIN_CNT) + sizeof(r->HBIN_PF) + _lenCn(r->HBIN_NAM);
 }
 
-static inline size_t _calc_rec_len_sbr(stdf_file *f, rec_sbr *r)
+static inline size_t _calc_rec_len_sbr(attribute_unused stdf_file *f, rec_sbr *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->SBIN_NUM) +
 		sizeof(r->SBIN_CNT) + sizeof(r->SBIN_PF) + _lenCn(r->SBIN_NAM);
 }
 
-static inline size_t _calc_rec_len_pmr(stdf_file *f, rec_pmr *r)
+static inline size_t _calc_rec_len_pmr(attribute_unused stdf_file *f, rec_pmr *r)
 {
 	return
 		sizeof(r->PMR_INDX) + sizeof(r->CHAN_TYP) + _lenCn(r->CHAN_NAM) +
@@ -1217,14 +1217,14 @@ static inline size_t _calc_rec_len_pmr(stdf_file *f, rec_pmr *r)
 		sizeof(r->SITE_NUM);
 }
 
-static inline size_t _calc_rec_len_pgr(stdf_file *f, rec_pgr *r)
+static inline size_t _calc_rec_len_pgr(attribute_unused stdf_file *f, rec_pgr *r)
 {
 	return
 		sizeof(r->GRP_INDX) + _lenCn(r->GRP_NAM) +
 		sizeof(r->INDX_CNT) + _len_dtcX(r->PMR_INDX, r->INDX_CNT);
 }
 
-static inline size_t _calc_rec_len_plr(stdf_file *f, rec_plr *r)
+static inline size_t _calc_rec_len_plr(attribute_unused stdf_file *f, rec_plr *r)
 {
 	return
 		sizeof(r->GRP_CNT) +
@@ -1234,12 +1234,12 @@ static inline size_t _calc_rec_len_plr(stdf_file *f, rec_plr *r)
 		_len_dtcXCN(r->PGM_CHAL, r->GRP_CNT) + _len_dtcXCN(r->RTN_CHAL, r->GRP_CNT);
 }
 
-static inline size_t _calc_rec_len_rdr(stdf_file *f, rec_rdr *r)
+static inline size_t _calc_rec_len_rdr(attribute_unused stdf_file *f, rec_rdr *r)
 {
 	return sizeof(r->NUM_BINS) + _len_dtcX(r->RTST_BIN, r->NUM_BINS);
 }
 
-static inline size_t _calc_rec_len_sdr(stdf_file *f, rec_sdr *r)
+static inline size_t _calc_rec_len_sdr(attribute_unused stdf_file *f, rec_sdr *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_GRP) + sizeof(r->SITE_CNT) +
@@ -1264,11 +1264,11 @@ static inline size_t _calc_rec_len_wir(stdf_file *f, rec_wir *r)
 	sizeof(r->HEAD_NUM) + sizeof(r->SITE_GRP) + \
 	sizeof(r->START_T) + _lenCn(r->WAFER_ID) \
 	)
-#ifdef STDF_VER3
-	return (f->ver == 3 ? _CALC_REC_LEN_WIR_v3(r) : _CALC_REC_LEN_WIR_v4(r));
-#else
-	return _CALC_REC_LEN_WIR_v4(r);
+#ifndef STDF_VER3
+# undef _CALC_REC_LEN_WIR_v3
+# define _CALC_REC_LEN_WIR_v3(r) 0
 #endif
+	return (f->ver == 3 ? _CALC_REC_LEN_WIR_v3(r) : _CALC_REC_LEN_WIR_v4(r));
 }
 
 static inline size_t _calc_rec_len_wrr(stdf_file *f, rec_wrr *r)
@@ -1289,14 +1289,14 @@ static inline size_t _calc_rec_len_wrr(stdf_file *f, rec_wrr *r)
 	_lenCn(r->FABWF_ID) + _lenCn(r->FRAME_ID) + _lenCn(r->MASK_ID) + \
 	_lenCn(r->USR_DESC) + _lenCn(r->EXC_DESC) \
 	)
-#ifdef STDF_VER3
-	return (f->ver == 3 ? _CALC_REC_LEN_WRR_v3(r) : _CALC_REC_LEN_WRR_v4(r));
-#else
-	return _CALC_REC_LEN_WRR_v4(r);
+#ifndef STDF_VER3
+# undef _CALC_REC_LEN_WRR_v3
+# define _CALC_REC_LEN_WRR_v3(r) 0
 #endif
+	return (f->ver == 3 ? _CALC_REC_LEN_WRR_v3(r) : _CALC_REC_LEN_WRR_v4(r));
 }
 
-static inline size_t _calc_rec_len_wcr(stdf_file *f, rec_wcr *r)
+static inline size_t _calc_rec_len_wcr(attribute_unused stdf_file *f, rec_wcr *r)
 {
 	return
 		sizeof(r->WAFR_SIZ) + sizeof(r->DIE_HT) + sizeof(r->DIE_WID) +
@@ -1315,11 +1315,11 @@ static inline size_t _calc_rec_len_pir(stdf_file *f, rec_pir *r)
 	( \
 	sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) \
 	)
-#ifdef STDF_VER3
-	return (f->ver == 3 ? _CALC_REC_LEN_PIR_v3(r) : _CALC_REC_LEN_PIR_v4(r));
-#else
-	return _CALC_REC_LEN_PIR_v4(r);
+#ifndef STDF_VER3
+# undef _CALC_REC_LEN_PIR_v3
+# define _CALC_REC_LEN_PIR_v3(r) 0
 #endif
+	return (f->ver == 3 ? _CALC_REC_LEN_PIR_v3(r) : _CALC_REC_LEN_PIR_v4(r));
 }
 
 static inline size_t _calc_rec_len_prr(stdf_file *f, rec_prr *r)
@@ -1341,16 +1341,16 @@ static inline size_t _calc_rec_len_prr(stdf_file *f, rec_prr *r)
 	sizeof(r->TEST_T) + \
 	_lenCn(r->PART_ID) + _lenCn(r->PART_TXT) + _lenCn(r->PART_FIX) \
 	)
-#ifdef STDF_VER3
-	return (f->ver == 3 ? _CALC_REC_LEN_PRR_v3(r) : _CALC_REC_LEN_PRR_v4(r));
-#else
-	return _CALC_REC_LEN_PRR_v4(r);
+#ifndef STDF_VER3
+# undef _CALC_REC_LEN_PRR_v3
+# define _CALC_REC_LEN_PRR_v3(r) 0
 #endif
+	return (f->ver == 3 ? _CALC_REC_LEN_PRR_v3(r) : _CALC_REC_LEN_PRR_v4(r));
 }
 
 #ifdef STDF_VER3
 
-static inline size_t _calc_rec_len_pdr(stdf_file *f, rec_pdr *r)
+static inline size_t _calc_rec_len_pdr(attribute_unused stdf_file *f, rec_pdr *r)
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->DESC_FLG) + sizeof(r->OPT_FLAG) +
@@ -1361,7 +1361,7 @@ static inline size_t _calc_rec_len_pdr(stdf_file *f, rec_pdr *r)
 		sizeof(r->HI_LIMIT) + _lenCn(r->TEST_NAM) + _lenCn(r->SEQ_NAME);
 }
 
-static inline size_t _calc_rec_len_fdr(stdf_file *f, rec_fdr *r)
+static inline size_t _calc_rec_len_fdr(attribute_unused stdf_file *f, rec_fdr *r)
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->DESC_FLG) +
@@ -1392,14 +1392,14 @@ static inline size_t _calc_rec_len_tsr(stdf_file *f, rec_tsr *r)
 	sizeof(r->OPT_FLAG) + sizeof(r->TEST_TIM) + sizeof(r->TEST_MIN) + \
 	sizeof(r->TEST_MAX) + sizeof(r->TST_SUMS) + sizeof(r->TST_SQRS) \
 	)
-#ifdef STDF_VER3
-	return (f->ver == 3 ? _CALC_REC_LEN_TSR_v3(r) : _CALC_REC_LEN_TSR_v4(r));
-#else
-	return _CALC_REC_LEN_TSR_v4(r);
+#ifndef STDF_VER3
+# undef _CALC_REC_LEN_TSR_v3
+# define _CALC_REC_LEN_TSR_v3(r) 0
 #endif
+	return (f->ver == 3 ? _CALC_REC_LEN_TSR_v3(r) : _CALC_REC_LEN_TSR_v4(r));
 }
 
-static inline size_t _calc_rec_len_ptr(stdf_file *f, rec_ptr *r)
+static inline size_t _calc_rec_len_ptr(attribute_unused stdf_file *f, rec_ptr *r)
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
@@ -1411,7 +1411,7 @@ static inline size_t _calc_rec_len_ptr(stdf_file *f, rec_ptr *r)
 		_lenCn(r->C_HLMFMT) + sizeof(r->LO_SPEC) + sizeof(r->HI_SPEC);
 }
 
-static inline size_t _calc_rec_len_mpr(stdf_file *f, rec_mpr *r)
+static inline size_t _calc_rec_len_mpr(attribute_unused stdf_file *f, rec_mpr *r)
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
@@ -1427,7 +1427,7 @@ static inline size_t _calc_rec_len_mpr(stdf_file *f, rec_mpr *r)
 		sizeof(r->HI_SPEC);
 }
 
-static inline size_t _calc_rec_len_ftr(stdf_file *f, rec_ftr *r)
+static inline size_t _calc_rec_len_ftr(attribute_unused stdf_file *f, rec_ftr *r)
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
@@ -1443,33 +1443,33 @@ static inline size_t _calc_rec_len_ftr(stdf_file *f, rec_ftr *r)
 		_lenDn(r->SPIN_MAP);
 }
 
-static inline size_t _calc_rec_len_bps(stdf_file *f, rec_bps *r)
+static inline size_t _calc_rec_len_bps(attribute_unused stdf_file *f, attribute_unused rec_bps *r)
 {
 	return _lenCn(r->SEQ_NAME);
 }
 
-static inline size_t _calc_rec_len_eps(stdf_file *f, rec_eps *r)
+static inline size_t _calc_rec_len_eps(attribute_unused stdf_file *f, attribute_unused rec_eps *r)
 {
 	return 0;
 }
 
 #ifdef STDF_VER3
 
-static inline size_t _calc_rec_len_shb(stdf_file *f, rec_shb *r)
+static inline size_t _calc_rec_len_shb(attribute_unused stdf_file *f, rec_shb *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->HBIN_NUM) +
 		sizeof(r->HBIN_CNT) + _lenCn(r->HBIN_NAM);
 }
 
-static inline size_t _calc_rec_len_ssb(stdf_file *f, rec_ssb *r)
+static inline size_t _calc_rec_len_ssb(attribute_unused stdf_file *f, rec_ssb *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->SBIN_NUM) +
 		sizeof(r->SBIN_CNT) + _lenCn(r->SBIN_NAM);
 }
 
-static inline size_t _calc_rec_len_sts(stdf_file *f, rec_sts *r)
+static inline size_t _calc_rec_len_sts(attribute_unused stdf_file *f, rec_sts *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->TEST_NUM) +
@@ -1480,7 +1480,7 @@ static inline size_t _calc_rec_len_sts(stdf_file *f, rec_sts *r)
 		_lenCn(r->SEQ_NAME) + _lenCn(r->TEST_LBL);
 }
 
-static inline size_t _calc_rec_len_scr(stdf_file *f, rec_scr *r)
+static inline size_t _calc_rec_len_scr(attribute_unused stdf_file *f, rec_scr *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->FINISH_T) +
@@ -1490,13 +1490,13 @@ static inline size_t _calc_rec_len_scr(stdf_file *f, rec_scr *r)
 
 #endif
 
-static inline size_t _calc_rec_len_gdr(stdf_file *f, rec_gdr *r)
+static inline size_t _calc_rec_len_gdr(attribute_unused stdf_file *f, attribute_unused rec_gdr *r)
 {
 	warnf("Not implemented");
 	return 0;
 }
 
-static inline size_t _calc_rec_len_dtr(stdf_file *f, rec_dtr *r)
+static inline size_t _calc_rec_len_dtr(attribute_unused stdf_file *f, rec_dtr *r)
 {
 	return _lenCn(r->TEXT_DAT);
 }
