@@ -30,4 +30,4 @@ distdir:
 distclean clean:
 	rm -f *.out
 
-.PHONY: all install check ascii html stats create distdir clean
+.PHONY: all install check ascii html stats create distdir distclean clean
