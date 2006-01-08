@@ -6,4 +6,5 @@
 	--enable-lzw \
 	"$@" \
 	|| exit 1
+make clean || exit 1
 make -j || exit 1
