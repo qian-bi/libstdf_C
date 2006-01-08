@@ -4,7 +4,7 @@
  * @internal
  */
 /*
- * Copyright (C) 2005 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2005-2006 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  *
@@ -73,7 +73,7 @@ typedef struct {
  * @brief Helpful debug macros.
  */
 #define _warn(fmt, args...)  fprintf(stderr, fmt , ## args)
-#define warn(fmt, args...)   _warn("libstdf: " fmt "\n" , ## args)
+#define warn(fmt, args...)   _warn(PACKAGE_STRING ": " fmt "\n" , ## args)
 #define warnf(fmt, args...)  warn("%s(): " fmt, __FUNCTION__ , ## args)
 #define warnp(fmt, args...)  warn(fmt ": %s" , ## args , strerror(errno))
 #define warnfp(fmt, args...) warnp("%s(): " fmt, __FUNCTION__ , ## args)
