@@ -14,4 +14,5 @@ if BUILD_DOCS
 	cp -pR $(top_srcdir)/doc/html/* $(DESTDIR)/$(pkgdatadir)/
 endif
 
+ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = dist-bzip2 no-dist-gzip
