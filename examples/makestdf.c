@@ -2,7 +2,7 @@
  * @file makestdf.c
  */
 /*
- * Copyright (C) 2004-2005 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  *
@@ -365,8 +365,8 @@ int main(int argc, char *argv[])
 		dtc_N1 rtn_stat[] = { 0x13, 0x24, 0x57, 0x68 };
 		dtc_U2 pgm_indx[] = { 101, 202, 303, 404, 505 };
 		dtc_N1 pgm_stat[] = { 0x42, 0x75, 0x86 };
-		char   fail_pin[] = { 0x00, 0x00 };
-		char   spin_map[] = { 0x00, 0x00 };
+		uchar  fail_pin[] = { 0x00, 0x00 };
+		uchar  spin_map[] = { 0x00, 0x00 };
 		rec_ftr ftr = {
 			.TEST_NUM = 2024,
 			.HEAD_NUM = 1,

@@ -4,7 +4,7 @@
  * @internal
  */
 /*
- * Copyright (C) 2004-2005 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  *
@@ -1107,7 +1107,7 @@ static inline size_t _lenCn(dtc_Cn Cn)
 }
 static inline size_t _lenDn(dtc_Dn Dn)
 {
-	return (Dn && (*(dtc_U2*)Dn) ? strlen(Dn) : 2);
+	return (Dn && (*(dtc_U2*)Dn) ? strlen((char*)Dn) : 2);
 }
 static inline size_t _len_dtcXCN(dtc_xCn xCn, dtc_U2 cnt)
 {
@@ -1116,6 +1116,7 @@ static inline size_t _len_dtcXCN(dtc_xCn xCn, dtc_U2 cnt)
 		ret += _lenCn(xCn[cnt]);
 	return ret;
 }
+#define _lenBn(Bn) (_lenCn((char*)Bn))
 #define _len_dtcX(x, cnt) (sizeof(*(x)) * cnt)
 #define _len_dtcXN(xn, cnt) (sizeof(*(xn)) * (cnt / 2 + cnt % 2))
 #define booga(a,b) 0
@@ -1330,7 +1331,7 @@ static inline size_t _calc_rec_len_prr(stdf_file *f, rec_prr *r)
 	sizeof(r->NUM_TEST) + sizeof(r->HARD_BIN) + sizeof(r->SOFT_BIN) + \
 	sizeof(r->PART_FLG) + sizeof(r->PAD_BYTE) + \
 	sizeof(r->X_COORD) + sizeof(r->Y_COORD) + \
-	_lenCn(r->PART_ID) + _lenCn(r->PART_TXT) + _lenCn(r->PART_FIX) \
+	_lenCn(r->PART_ID) + _lenCn(r->PART_TXT) + _lenBn(r->PART_FIX) \
 	)
 #define _CALC_REC_LEN_PRR_v4(r) \
 	( \
@@ -1339,7 +1340,7 @@ static inline size_t _calc_rec_len_prr(stdf_file *f, rec_prr *r)
 	sizeof(r->NUM_TEST) + sizeof(r->HARD_BIN) + sizeof(r->SOFT_BIN) + \
 	sizeof(r->X_COORD) + sizeof(r->Y_COORD) + \
 	sizeof(r->TEST_T) + \
-	_lenCn(r->PART_ID) + _lenCn(r->PART_TXT) + _lenCn(r->PART_FIX) \
+	_lenCn(r->PART_ID) + _lenCn(r->PART_TXT) + _lenBn(r->PART_FIX) \
 	)
 #ifndef STDF_VER3
 # undef _CALC_REC_LEN_PRR_v3
