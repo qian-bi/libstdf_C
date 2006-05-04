@@ -15,8 +15,7 @@ cmplrs/host.h sys/isa_defs.h byteswap.h \
 features.h stdarg.h sys/cdefs.h assert.h \
 ])
 
-AC_TYPE_SIZE_T
-AC_CHECK_TYPE([uintptr_t], [size_t])
+AC_STDF_TYPE_CHECKS
 
 AM_STDF_VAPIER_DEV
 AM_STDF_DEBUG_OPTIONS
