@@ -28,6 +28,13 @@ typedef signed __int32     int32_t;
 typedef signed __int64     int64_t;
 #endif
 
+#ifndef PACKAGE_STRING
+# ifndef __DATE__
+#  define __DATE__
+# endif
+# define PACKAGE_STRING "libstdf win32 " __DATE__
+#endif
+
 /* pos windows compiler doesnt like 'far' as a variable name */
 #define far _windows_is_a_pos_far
 
