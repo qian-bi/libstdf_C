@@ -19,7 +19,8 @@ AC_ARG_ENABLE(warn-untested,
 	else
 		enable_annoy_untested="no"
 	fi
-	]
+	],
+	[enable_annoy_untested="yes"]
 )
 if test "x$enable_annoy_untested" = "xyes" ; then
 	AC_DEFINE(WARN_UNTESTED, 1, [Annoy people about unimplemented code])
