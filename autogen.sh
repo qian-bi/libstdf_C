@@ -1,22 +1,18 @@
-#!/bin/sh
+#!/bin/sh -xe
 
 if test -d .svn ; then
 	if test -d ../m4 ; then
-		rm -rf m4 || exit 1
-		mkdir -p m4 || exit 1
-		cp ../m4/*.m4 m4/ || exit 1
+		rm -rf m4
+		mkdir -p m4
+		cp ../m4/*.m4 m4/
 	fi
 	if test -d ../liblzw ; then
-		cp ../liblzw/lzw.h include/ || exit 1
-		cp ../liblzw/lzw.c src/ || exit 1
+		cp ../liblzw/lzw.h include/
+		cp ../liblzw/lzw.c src/
 	fi
 fi
 
-aclocal -I m4 || exit 1
-autoheader || exit 1
-libtoolize --automake -c -f || exit 1
-autoconf || exit 1
-automake -a -c || exit 1
+autoreconf
 
 if test -x ./test.sh ; then
 	exec ./test.sh "$@"
