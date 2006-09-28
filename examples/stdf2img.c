@@ -2,11 +2,9 @@
  * @file stdf2img.c
  */
 /*
- * Copyright (C) 2005 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2005-2006 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
- *
- * $Header$
  */
 
 #include <libstdf.h>

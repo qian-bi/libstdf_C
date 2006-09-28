@@ -3,11 +3,9 @@
  * @brief Byte swapping functions.
  */
 /*
- * Copyright (C) 2004-2005 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
- *
- * $Header$
  */
 
 #ifndef _LIBSTDF_BSWAP_H
