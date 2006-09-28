@@ -7,7 +7,7 @@ If you downloaded a source tarball:
 (2) make
 (3) sudo make install
 
-If you're using CVS:
+If you're using subversion:
 (1) nano test.sh (add/remove options for configure)
 (2) ./autogen.sh
 (3) sudo make install
