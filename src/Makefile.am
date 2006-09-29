@@ -1,7 +1,8 @@
 noinst_HEADERS = dtc.h rec.h
 
 # Internal macro to define internal libstdf stuff
-AM_CFLAGS = -D__IN_LIBSTDF @DEBUG_CFLAGS@
+AM_CPPFLAGS = -D__IN_LIBSTDF
+AM_CFLAGS   = @DEBUG_CFLAGS@
 
 INCLUDES = -I$(top_builddir)/include \
 	@ZIP_CFLAGS@ @GZIP_CFLAGS@ @BZIP2_CFLAGS@
