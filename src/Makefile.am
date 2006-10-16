@@ -8,7 +8,7 @@ INCLUDES = -I$(top_builddir)/include \
 	@ZIP_CFLAGS@ @GZIP_CFLAGS@ @BZIP2_CFLAGS@
 
 lib_LTLIBRARIES = libstdf.la
-EXTRA_STDF_SOURCES :=
+EXTRA_STDF_SOURCES  =
 if HAVE_LZW
 EXTRA_STDF_SOURCES += lzw.c
 endif

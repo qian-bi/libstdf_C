@@ -1,5 +1,5 @@
 if BUILD_EXAMPLES
-extra_examples :=
+extra_examples  =
 if HAVE_GDLIB
 extra_examples += stdf2img
 endif
