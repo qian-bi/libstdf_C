@@ -195,6 +195,7 @@ AC_OUTPUT([
 Makefile
 include/Makefile
 src/Makefile
+tests/Makefile
 doc/Makefile
 doc/man/Makefile
 doc/man/man3/Makefile

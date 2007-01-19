@@ -18,7 +18,7 @@ noinst_PROGRAMS =
 endif
 
 INCLUDES = \
-	-I$(top_builddir)/include \
+	-I$(top_srcdir)/include -I$(top_builddir)/include \
 	@HASH_CFLAGS@ @ECORE_CFLAGS@ @GLIB_CFLAGS@ \
 	@GDLIB_CFLAGS@
 

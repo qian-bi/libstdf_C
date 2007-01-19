@@ -4,7 +4,8 @@ noinst_HEADERS = dtc.h rec.h
 AM_CPPFLAGS = -D__IN_LIBSTDF
 AM_CFLAGS   = @DEBUG_CFLAGS@
 
-INCLUDES = -I$(top_builddir)/include \
+INCLUDES = \
+	-I$(top_srcdir)/include -I$(top_builddir)/include \
 	@ZIP_CFLAGS@ @GZIP_CFLAGS@ @BZIP2_CFLAGS@
 
 lib_LTLIBRARIES = libstdf.la
