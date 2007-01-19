@@ -17,7 +17,7 @@ html:
 	$(BZCMP) html.out html.good.bz2
 
 stats:
-	$(EXAMPLE_DIR)/record_stats $(STDF) | sort > stats.out
+	$(EXAMPLE_DIR)/record_stats $(STDF) | env LC_ALL="C" sort > stats.out
 	$(BZCMP) stats.out stats.good.bz2
 
 create:
