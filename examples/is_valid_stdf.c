@@ -2,7 +2,7 @@
  * @file is_valid_stdf.c
  */
 /*
- * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -15,9 +15,9 @@
 int main(int argc, char *argv[])
 {
 	stdf_file *f;
-	rec_unknown *rec;
-	rec_header prev_rec;
-	long rec_mrr_cnt, rec_pcr_cnt, rec_hbr_cnt, rec_sbr_cnt, rec_wcr_cnt;
+	stdf_rec_unknown *rec;
+	stdf_rec_header prev_rec;
+	long stdf_rec_mrr_cnt, stdf_rec_pcr_cnt, stdf_rec_hbr_cnt, stdf_rec_sbr_cnt, stdf_rec_wcr_cnt;
 	int i;
 
 	if (argc <= 1) {
@@ -47,14 +47,14 @@ for (i=1; i<argc; ++i) {
 
 	/* Find the FAR record */
 	rec = stdf_read_record(f);
-	if (rec == NULL || HEAD_TO_REC(rec->header) != REC_FAR) {
+	if (rec == NULL || HEAD_TO_REC(rec->header) != STDF_REC_FAR) {
 		print_err("First record is not FAR!");
 		goto next_file;
 	}
 	stdf_free_record(rec);
 	/* Try to read all the ATR records (if they exist) */
 	while ((rec=stdf_read_record(f)) != NULL) {
-		if (HEAD_TO_REC(rec->header) != REC_ATR)
+		if (HEAD_TO_REC(rec->header) != STDF_REC_ATR)
 			break;
 		else
 			stdf_free_record(rec);
@@ -64,7 +64,7 @@ for (i=1; i<argc; ++i) {
 		goto next_file;
 	}
 	/* We should now have the MIR record already read in */
-	if (HEAD_TO_REC(rec->header) != REC_MIR) {
+	if (HEAD_TO_REC(rec->header) != STDF_REC_MIR) {
 		print_err("Initial sequence wrong: MIR not located!");
 		goto next_file;
 	}
@@ -74,7 +74,7 @@ for (i=1; i<argc; ++i) {
 		print_err("EOF found after initial sequence!");
 		goto next_file;
 	}
-	if (HEAD_TO_REC(rec->header) == REC_RDR) {
+	if (HEAD_TO_REC(rec->header) == STDF_REC_RDR) {
 		stdf_free_record(rec);
 		rec = stdf_read_record(f);
 		if (rec == NULL) {
@@ -83,7 +83,7 @@ for (i=1; i<argc; ++i) {
 		}
 	}
 	/* Try to read the SDR records (if they exist) */
-	while (HEAD_TO_REC(rec->header) == REC_SDR) {
+	while (HEAD_TO_REC(rec->header) == STDF_REC_SDR) {
 		stdf_free_record(rec);
 		rec = stdf_read_record(f);
 		if (rec == NULL) {
@@ -93,44 +93,44 @@ for (i=1; i<argc; ++i) {
 	}
 
 	/* Now we read the rest of the file */
-	rec_mrr_cnt = rec_pcr_cnt = rec_hbr_cnt = rec_sbr_cnt = rec_wcr_cnt = 0;
+	stdf_rec_mrr_cnt = stdf_rec_pcr_cnt = stdf_rec_hbr_cnt = stdf_rec_sbr_cnt = stdf_rec_wcr_cnt = 0;
 	while (1) {
-		memcpy(&prev_rec, &rec->header, sizeof(rec_header));
+		memcpy(&prev_rec, &rec->header, sizeof(stdf_rec_header));
 		stdf_free_record(rec);
 		rec = stdf_read_record(f);
 		if (rec == NULL)
 			break;
 
 		switch (HEAD_TO_REC(rec->header)) {
-			case REC_FAR:
-			case REC_ATR:
-			case REC_MIR:
-			case REC_RDR:
-			case REC_SDR:
+			case STDF_REC_FAR:
+			case STDF_REC_ATR:
+			case STDF_REC_MIR:
+			case STDF_REC_RDR:
+			case STDF_REC_SDR:
 				printf("\tFound %s outside of initial sequence!\n",
 				       stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB));
 				goto next_file;
-			case REC_MRR:
-				if (++rec_mrr_cnt > 1) {
-					print_err("More than one REC_MRR was found!");
+			case STDF_REC_MRR:
+				if (++stdf_rec_mrr_cnt > 1) {
+					print_err("More than one STDF_REC_MRR was found!");
 					goto next_file;
 				}
 				break;
-			case REC_PCR: ++rec_pcr_cnt; break;
-			case REC_HBR: ++rec_hbr_cnt; break;
-			case REC_SBR: ++rec_sbr_cnt; break;
+			case STDF_REC_PCR: ++stdf_rec_pcr_cnt; break;
+			case STDF_REC_HBR: ++stdf_rec_hbr_cnt; break;
+			case STDF_REC_SBR: ++stdf_rec_sbr_cnt; break;
 
 			/* need some logic with these ... */
-			case REC_PMR: break;
-			case REC_PGR: break;
-			case REC_PLR: break;
+			case STDF_REC_PMR: break;
+			case STDF_REC_PGR: break;
+			case STDF_REC_PLR: break;
 
-			case REC_WIR: break; /* only 1 per wafer */
-			case REC_WRR: break; /* only 1 per wafer */
+			case STDF_REC_WIR: break; /* only 1 per wafer */
+			case STDF_REC_WRR: break; /* only 1 per wafer */
 
-			case REC_WCR:
-				if (++rec_wcr_cnt > 1) {
-					print_err("More than one REC_WCR was found!");
+			case STDF_REC_WCR:
+				if (++stdf_rec_wcr_cnt > 1) {
+					print_err("More than one STDF_REC_WCR was found!");
 					goto next_file;
 				}
 				break;
@@ -138,24 +138,24 @@ for (i=1; i<argc; ++i) {
 			/* each PIR must have a PRR for same HEAD/SITE */
 			/* PTR/MPR/FTR records must appear between the right PIR/PRR pairs */
 			/* each BPS/EPS pair must be inside the PIR/PRR pair */
-			case REC_PIR: break; /* only 1 per part tested */
-			case REC_PTR: break; /* only 1 per part tested */
-			case REC_MPR: break; /* only 1 per part tested */
-			case REC_FTR: break; /* only 1 per part tested */
-			case REC_BPS: break;
-			case REC_EPS: break;
-			case REC_PRR: break; /* only 1 per part tested */
+			case STDF_REC_PIR: break; /* only 1 per part tested */
+			case STDF_REC_PTR: break; /* only 1 per part tested */
+			case STDF_REC_MPR: break; /* only 1 per part tested */
+			case STDF_REC_FTR: break; /* only 1 per part tested */
+			case STDF_REC_BPS: break;
+			case STDF_REC_EPS: break;
+			case STDF_REC_PRR: break; /* only 1 per part tested */
 
-			case REC_TSR: break;
-			case REC_GDR: break;
+			case STDF_REC_TSR: break;
+			case STDF_REC_GDR: break;
 	
 			default:
 				print_err("Uknown record found!");
 				goto next_file;
 		}
 	}
-	if (HEAD_TO_REC(prev_rec) != REC_MRR) {
-		print_err("REC_MRR was not the last record in the stream!");
+	if (HEAD_TO_REC(prev_rec) != STDF_REC_MRR) {
+		print_err("STDF_REC_MRR was not the last record in the stream!");
 		goto next_file;
 	}
 

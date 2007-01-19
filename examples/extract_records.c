@@ -2,7 +2,7 @@
  * @file extract_records.c
  */
 /*
- * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -16,7 +16,7 @@ void usage(char *prog)
 
 int main(int argc, char *argv[])
 {
-	rec_unknown *raw_rec, *parsed_rec;
+	stdf_rec_unknown *raw_rec, *parsed_rec;
 	stdf_file *f;
 	char *filename_in, *filename_out;
 	FILE *out;

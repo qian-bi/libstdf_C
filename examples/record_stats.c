@@ -2,7 +2,7 @@
  * @file record_stats.c
  */
 /*
- * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 {
 	stdf_file *f;
 	char *recname;
-	rec_unknown *rec;
+	stdf_rec_unknown *rec;
 	long cnt;
 	int i;
 	HASH_VARS

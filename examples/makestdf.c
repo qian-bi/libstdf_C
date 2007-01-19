@@ -2,7 +2,7 @@
  * @file makestdf.c
  */
 /*
- * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -25,25 +25,25 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		rec_far far = {
-			.CPU_TYPE = CPU_TYPE_X86,
+		stdf_rec_far far = {
+			.CPU_TYPE = STDF_CPU_TYPE_X86,
 			.STDF_VER = 4
 		};
-		stdf_init_header(far.header, REC_FAR);
+		stdf_init_header(far.header, STDF_REC_FAR);
 		stdf_write_record(f, &far);
 	}
 
 	{
-		rec_atr atr = {
+		stdf_rec_atr atr = {
 			.MOD_TIM = 3,
 			.CMD_LINE = "\010CMD_LINE"
 		};
-		stdf_init_header(atr.header, REC_ATR);
+		stdf_init_header(atr.header, STDF_REC_ATR);
 		stdf_write_record(f, &atr);
 	}
 
 	{
-		rec_mir mir = {
+		stdf_rec_mir mir = {
 			.SETUP_T = 0,
 			.START_T = 1,
 			.STAT_NUM = 2,
@@ -83,33 +83,33 @@ int main(int argc, char *argv[])
 			.SERL_NUM = "\010SERL_NUM",
 			.SUPR_NAM = "\010SUPR_NAM"
 		};
-		stdf_init_header(mir.header, REC_MIR);
+		stdf_init_header(mir.header, STDF_REC_MIR);
 		stdf_write_record(f, &mir);
 	}
 
 	{
-		rec_mrr mrr = {
+		stdf_rec_mrr mrr = {
 			.FINISH_T = 4,
 			.DISP_COD = ' ',
 			.USR_DESC = "\010USR_DESC",
 			.EXC_DESC = "\010EXC_DESC"
 		};
-		stdf_init_header(mrr.header, REC_MRR);
+		stdf_init_header(mrr.header, STDF_REC_MRR);
 		stdf_write_record(f, &mrr);
 	}
 
 	{
-		dtc_U2 rtst_bin[10] = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 };
-		rec_rdr rdr = {
+		stdf_dtc_U2 rtst_bin[10] = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 };
+		stdf_rec_rdr rdr = {
 			.NUM_BINS = 10,
 			.RTST_BIN = rtst_bin
 		};
-		stdf_init_header(rdr.header, REC_RDR);
+		stdf_init_header(rdr.header, STDF_REC_RDR);
 		stdf_write_record(f, &rdr);
 	}
 
 	{
-		rec_pcr pcr = {
+		stdf_rec_pcr pcr = {
 			.HEAD_NUM = 1,
 			.SITE_NUM = 2,
 			.PART_CNT = 5,
@@ -118,12 +118,12 @@ int main(int argc, char *argv[])
 			.GOOD_CNT = 8,
 			.FUNC_CNT = 9
 		};
-		stdf_init_header(pcr.header, REC_PCR);
+		stdf_init_header(pcr.header, STDF_REC_PCR);
 		stdf_write_record(f, &pcr);
 	}
 
 	{
-		rec_hbr hbr = {
+		stdf_rec_hbr hbr = {
 			.HEAD_NUM = 1,
 			.SITE_NUM = 2,
 			.HBIN_NUM = 6,
@@ -131,12 +131,12 @@ int main(int argc, char *argv[])
 			.HBIN_PF = 'F',
 			.HBIN_NAM = "\010HBIN_NAM"
 		};
-		stdf_init_header(hbr.header, REC_HBR);
+		stdf_init_header(hbr.header, STDF_REC_HBR);
 		stdf_write_record(f, &hbr);
 	}
 
 	{
-		rec_sbr sbr = {
+		stdf_rec_sbr sbr = {
 			.HEAD_NUM = 1,
 			.SITE_NUM = 2,
 			.SBIN_NUM = 0,
@@ -144,12 +144,12 @@ int main(int argc, char *argv[])
 			.SBIN_PF = 'P',
 			.SBIN_NAM = "\010SBIN_NAM"
 		};
-		stdf_init_header(sbr.header, REC_SBR);
+		stdf_init_header(sbr.header, STDF_REC_SBR);
 		stdf_write_record(f, &sbr);
 	}
 
 	{
-		rec_pmr pmr = {
+		stdf_rec_pmr pmr = {
 			.PMR_INDX = 3,
 			.CHAN_TYP = 78,
 			.CHAN_NAM = "\010CHAN_NAM",
@@ -158,31 +158,31 @@ int main(int argc, char *argv[])
 			.HEAD_NUM = 68,
 			.SITE_NUM = 4
 		};
-		stdf_init_header(pmr.header, REC_PMR);
+		stdf_init_header(pmr.header, STDF_REC_PMR);
 		stdf_write_record(f, &pmr);
 	}
 
 	{
-		dtc_U2 pmr_indx[3] = { 10, 20, 30};
-		rec_pgr pgr = {
+		stdf_dtc_U2 pmr_indx[3] = { 10, 20, 30};
+		stdf_rec_pgr pgr = {
 			.GRP_INDX = 45678,
 			.GRP_NAM = "\007GRP_NAM",
 			.INDX_CNT = 3,
 			.PMR_INDX = pmr_indx
 		};
-		stdf_init_header(pgr.header, REC_PGR);
+		stdf_init_header(pgr.header, STDF_REC_PGR);
 		stdf_write_record(f, &pgr);
 	}
 
 	{
-		dtc_U2 grp_indx[6] = { 2, 4, 6, 8, 10, 12 };
-		dtc_U2 grp_mode[6] = { 00, 10, 20, 21, 22, 23 };
-		dtc_U1 grp_radx[6] = { 0, 2, 8, 10, 16, 20 };
-		dtc_Cn pgm_char[6] = { "\001A", "\001B", "\001C", "\001D", "\001E", "\001F" };
-		dtc_Cn rtn_char[6] = { "\001G", "\001H", "\001I", "\001J", "\001K", "\001L" };
-		dtc_Cn pgm_chal[6] = { "\001M", "\001N", "\001O", "\001P", "\001Q", "\001R" };
-		dtc_Cn rtn_chal[6] = { "\001S", "\001T", "\001U", "\001V", "\001W", "\001X" };
-		rec_plr plr = {
+		stdf_dtc_U2 grp_indx[6] = { 2, 4, 6, 8, 10, 12 };
+		stdf_dtc_U2 grp_mode[6] = { 00, 10, 20, 21, 22, 23 };
+		stdf_dtc_U1 grp_radx[6] = { 0, 2, 8, 10, 16, 20 };
+		stdf_dtc_Cn pgm_char[6] = { "\001A", "\001B", "\001C", "\001D", "\001E", "\001F" };
+		stdf_dtc_Cn rtn_char[6] = { "\001G", "\001H", "\001I", "\001J", "\001K", "\001L" };
+		stdf_dtc_Cn pgm_chal[6] = { "\001M", "\001N", "\001O", "\001P", "\001Q", "\001R" };
+		stdf_dtc_Cn rtn_chal[6] = { "\001S", "\001T", "\001U", "\001V", "\001W", "\001X" };
+		stdf_rec_plr plr = {
 			.GRP_CNT = 6,
 			.GRP_INDX = grp_indx,
 			.GRP_MODE = grp_mode,
@@ -192,13 +192,13 @@ int main(int argc, char *argv[])
 			.PGM_CHAL = pgm_chal,
 			.RTN_CHAL = rtn_chal
 		};
-		stdf_init_header(plr.header, REC_PLR);
+		stdf_init_header(plr.header, STDF_REC_PLR);
 		stdf_write_record(f, &plr);
 	}
 
 	{
-		dtc_U1 site_num[4] = { 5, 10, 15, 20 };
-		rec_sdr sdr = {
+		stdf_dtc_U1 site_num[4] = { 5, 10, 15, 20 };
+		stdf_rec_sdr sdr = {
 			.HEAD_NUM = 2,
 			.SITE_GRP = 3,
 			.SITE_CNT = 4,
@@ -220,23 +220,23 @@ int main(int argc, char *argv[])
 			.EXTR_TYP = "\010EXTR_TYP",
 			.EXTR_ID  = "\007EXTR_ID"
 		};
-		stdf_init_header(sdr.header, REC_SDR);
+		stdf_init_header(sdr.header, STDF_REC_SDR);
 		stdf_write_record(f, &sdr);
 	}
 
 	{
-		rec_wir wir = {
+		stdf_rec_wir wir = {
 			.HEAD_NUM = 2,
 			.SITE_GRP = 3,
 			.START_T = 4,
 			.WAFER_ID = "\010WAFER_ID"
 		};
-		stdf_init_header(wir.header, REC_WIR);
+		stdf_init_header(wir.header, STDF_REC_WIR);
 		stdf_write_record(f, &wir);
 	}
 
 	{
-		rec_wrr wrr = {
+		stdf_rec_wrr wrr = {
 			.HEAD_NUM = 20,
 			.SITE_GRP = 10,
 			.FINISH_T = 5,
@@ -252,12 +252,12 @@ int main(int argc, char *argv[])
 			.USR_DESC = "\010USR_DESC",
 			.EXC_DESC = "\010EXC_DESC"
 		};
-		stdf_init_header(wrr.header, REC_WRR);
+		stdf_init_header(wrr.header, STDF_REC_WRR);
 		stdf_write_record(f, &wrr);
 	}
 
 	{
-		rec_wcr wcr = {
+		stdf_rec_wcr wcr = {
 			.WAFR_SIZ = 4.1,
 			.DIE_HT = 2500.2,
 			.DIE_WID = 5200.3,
@@ -268,30 +268,30 @@ int main(int argc, char *argv[])
 			.POS_X = 'L',
 			.POS_Y = 'U'
 		};
-		stdf_init_header(wcr.header, REC_WCR);
+		stdf_init_header(wcr.header, STDF_REC_WCR);
 		stdf_write_record(f, &wcr);
 	}
 
 	{
-		rec_pir pir = {
+		stdf_rec_pir pir = {
 			.HEAD_NUM = 30,
 			.SITE_NUM = 60
 		};
-		stdf_init_header(pir.header, REC_PIR);
+		stdf_init_header(pir.header, STDF_REC_PIR);
 		stdf_write_record(f, &pir);
 	}
 
 /*
 	{
-		rec_prr prr = {
+		stdf_rec_prr prr = {
 		};
-		stdf_init_header(prr.header, REC_PRR);
+		stdf_init_header(prr.header, STDF_REC_PRR);
 		stdf_write_record(f, &prr);
 	}
 */
 
 	{
-		rec_tsr tsr = {
+		stdf_rec_tsr tsr = {
 			.HEAD_NUM = 13,
 			.SITE_NUM = 23,
 			.TEST_TYP = 'P',
@@ -309,24 +309,24 @@ int main(int argc, char *argv[])
 			.TST_SUMS = 66.66,
 			.TST_SQRS = 8.125
 		};
-		stdf_init_header(tsr.header, REC_TSR);
+		stdf_init_header(tsr.header, STDF_REC_TSR);
 		stdf_write_record(f, &tsr);
 	}
 
 /*
 	{
-		rec_ptr ptr = {
+		stdf_rec_ptr ptr = {
 		};
-		stdf_init_header(ptr.header, REC_PTR);
+		stdf_init_header(ptr.header, STDF_REC_PTR);
 		stdf_write_record(f, &ptr);
 	}
 */
 
 	{
-		dtc_N1 rtn_stat[] = { 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90 };
-		dtc_R4 rtn_rslt[] = { 1.2, 2.3, 3.4, 4.5, 5.6, 6.7, 7.8, 8.9 };
-		dtc_U2 rtn_indx[] = { 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33 };
-		rec_mpr mpr = {
+		stdf_dtc_N1 rtn_stat[] = { 0xAB, 0xCD, 0xEF, 0x12, 0x34, 0x56, 0x78, 0x90 };
+		stdf_dtc_R4 rtn_rslt[] = { 1.2, 2.3, 3.4, 4.5, 5.6, 6.7, 7.8, 8.9 };
+		stdf_dtc_U2 rtn_indx[] = { 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33 };
+		stdf_rec_mpr mpr = {
 			.TEST_NUM = 2024,
 			.HEAD_NUM = 1,
 			.SITE_NUM = 2,
@@ -354,18 +354,18 @@ int main(int argc, char *argv[])
 			.LO_SPEC  = 0.9,
 			.HI_SPEC  = 9.0
 		};
-		stdf_init_header(mpr.header, REC_MPR);
+		stdf_init_header(mpr.header, STDF_REC_MPR);
 		stdf_write_record(f, &mpr);
 	}
 
 	{
-		dtc_U2 rtn_indx[] = { 1010, 2020, 3030, 4040, 5050, 6060, 7070, 8080 };
-		dtc_N1 rtn_stat[] = { 0x13, 0x24, 0x57, 0x68 };
-		dtc_U2 pgm_indx[] = { 101, 202, 303, 404, 505 };
-		dtc_N1 pgm_stat[] = { 0x42, 0x75, 0x86 };
-		uchar  fail_pin[] = { 0x00, 0x00 };
-		uchar  spin_map[] = { 0x00, 0x00 };
-		rec_ftr ftr = {
+		stdf_dtc_U2 rtn_indx[] = { 1010, 2020, 3030, 4040, 5050, 6060, 7070, 8080 };
+		stdf_dtc_N1 rtn_stat[] = { 0x13, 0x24, 0x57, 0x68 };
+		stdf_dtc_U2 pgm_indx[] = { 101, 202, 303, 404, 505 };
+		stdf_dtc_N1 pgm_stat[] = { 0x42, 0x75, 0x86 };
+		unsigned char fail_pin[] = { 0x00, 0x00 };
+		unsigned char spin_map[] = { 0x00, 0x00 };
+		stdf_rec_ftr ftr = {
 			.TEST_NUM = 2024,
 			.HEAD_NUM = 1,
 			.SITE_NUM = 2,
@@ -395,38 +395,38 @@ int main(int argc, char *argv[])
 			.PATG_NUM = 254,
 			.SPIN_MAP = spin_map
 		};
-		stdf_init_header(ftr.header, REC_FTR);
+		stdf_init_header(ftr.header, STDF_REC_FTR);
 		stdf_write_record(f, &ftr);
 	}
 
 	{
-		rec_bps bps = {
+		stdf_rec_bps bps = {
 			.SEQ_NAME = "\010SEQ_NAME"
 		};
-		stdf_init_header(bps.header, REC_BPS);
+		stdf_init_header(bps.header, STDF_REC_BPS);
 		stdf_write_record(f, &bps);
 	}
 
 	{
-		rec_eps eps;
-		stdf_init_header(eps.header, REC_EPS);
+		stdf_rec_eps eps;
+		stdf_init_header(eps.header, STDF_REC_EPS);
 		stdf_write_record(f, &eps);
 	}
 
 /*
 	{
-		rec_gdr gdr = {
+		stdf_rec_gdr gdr = {
 		};
-		stdf_init_header(gdr.header, REC_GDR);
+		stdf_init_header(gdr.header, STDF_REC_GDR);
 		stdf_write_record(f, &gdr);
 	}
 */
 
 	{
-		rec_dtr dtr = {
+		stdf_rec_dtr dtr = {
 			.TEXT_DAT = "\010TEXT_DAT"
 		};
-		stdf_init_header(dtr.header, REC_DTR);
+		stdf_init_header(dtr.header, STDF_REC_DTR);
 		stdf_write_record(f, &dtr);
 	}
 

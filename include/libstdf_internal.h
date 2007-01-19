@@ -4,7 +4,7 @@
  * @internal
  */
 /*
- * Copyright (C) 2005-2006 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2005-2007 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -21,48 +21,43 @@ typedef struct {
 	int (*close)(void*);
 } __stdf_fops;
 
+typedef	uint8_t byte_t;
+
 /**
  * @brief The main STDF file structure.
  */
 typedef struct {
-	rec_header	header;			/**< A processed version of the last record read */
+	stdf_rec_header header;           /**< A processed version of the last record read */
 
-	int			fd;				/**< Actual file descriptor for the backing file */
+	int fd;                           /**< Actual file descriptor for the backing file */
 	union {
-# if HAVE_ZIP
-	ZZIP_FILE	*zip;
-#  define fd_zip __fd.zip
-# endif
-# if HAVE_GZIP
-	gzFile		*gzip;
-#  define fd_gzip __fd.gzip
-# endif
-# if HAVE_BZIP2
-	BZFILE		*bzip2;
-#  define fd_bzip2 __fd.bzip2
-# endif
-# if HAVE_LZW
-	lzwFile		*lzw;
-#  define fd_lzw __fd.lzw
-# endif
-	uintptr_t	padding[4];
+		USE_ZIP   (ZZIP_FILE *zip;)
+		USE_GZIP  (gzFile *gzip;)
+		USE_BZIP2 (BZFILE *bzip2;)
+		USE_LZW   (lzwFile *lzw;)
+		/* leave space for 8 compression type ... */
+		uintptr_t  padding[8];
 	} __fd;
+#define fd_zip    __fd.zip
+#define fd_gzip   __fd.gzip
+#define fd_bzip2  __fd.bzip2
+#define fd_lzw    __fd.lzw
 
-	stdf_format	file_format;	/**< Compressed file format */
-	char		*filename;		/**< Filename that was given to stdf_open() */
-	__stdf_fops	*fops;			/**< Virtual file i/o functions to hide compression details */
+	stdf_format   file_format;        /**< Compressed file format */
+	char         *filename;           /**< Filename that was given to stdf_open() */
+	__stdf_fops  *fops;               /**< Virtual file i/o functions to hide compression details */
 
-	int			byte_order;		/**< Byte order of the file */
-	uint32_t	opts;			/**< Misc options to control libstdf behavior */
-	dtc_U1		ver;			/**< Spec version of the file */
+	int           byte_order;         /**< Byte order of the file */
+	uint32_t      opts;               /**< Misc options to control libstdf behavior */
+	stdf_dtc_U1   ver;                /**< Spec version of the file */
 
-	byte_t		*__data;
-	byte_t		*rec_pos;
-	byte_t		*rec_end;
+	byte_t       *__data;
+	byte_t       *rec_pos;
+	byte_t       *rec_end;
 
-	byte_t		*__output;
-	byte_t		*_write_pos;
-	dtc_U2		_write_chunk_size;
+	byte_t       *__output;
+	byte_t       *_write_pos;
+	stdf_dtc_U2   _write_chunk_size;
 } stdf_file;
 
 

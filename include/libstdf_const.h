@@ -3,7 +3,7 @@
  * @brief Constants for specific records/members.
  */
 /*
- * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -13,17 +13,17 @@
 
 /* FAR: File Attributes Record [page 18] */
 typedef enum {
-	CPU_TYPE_DEC		= 0,				/**< PDP-11 / VAX */
-	CPU_TYPE_SPARC		= 1,				/**< sparc [Solaris] */
-	CPU_TYPE_X86		= 2,				/**< x86 [Sun386i / Windows / DOS] */
-	CPU_TYPE_UNKNOWN	= 123,				/**< Unknown kind of CPU */
+	STDF_CPU_TYPE_DEC        = 0,                    /**< PDP-11 / VAX */
+	STDF_CPU_TYPE_SPARC      = 1,                    /**< sparc [Solaris] */
+	STDF_CPU_TYPE_X86        = 2,                    /**< x86 [Sun386i / Windows / DOS] */
+	STDF_CPU_TYPE_UNKNOWN    = 123,                  /**< Unknown kind of CPU */
 #ifdef STDF_VER3
-	CPU_TYPE_SUN_680XX	= CPU_TYPE_SPARC,	/**< sparc [Solaris] */
-	CPU_TYPE_SUN_80386	= CPU_TYPE_X86,		/**< x86 [Sun386i] */
-	CPU_TYPE_LTX		= 3,				/**< WTF is LTX ? */
-	CPU_TYPE_APOLLO		= 4					/**< WTF is Apollo ? */
+	STDF_CPU_TYPE_SUN_680XX  = STDF_CPU_TYPE_SPARC,  /**< sparc [Solaris] */
+	STDF_CPU_TYPE_SUN_80386  = STDF_CPU_TYPE_X86,    /**< x86 [Sun386i] */
+	STDF_CPU_TYPE_LTX        = 3,                    /**< WTF is LTX ? */
+	STDF_CPU_TYPE_APOLLO     = 4                   	 /**< WTF is Apollo ? */
 #endif
-} cpu_types;
+} stdf_cpu_types;
 
 /* MIR: Master Information Record [page 20] */
 #define	MODE_AEL			'A'
@@ -107,19 +107,19 @@ typedef enum {
 
 /* GDR: Generic Data Record [page 64] */
 typedef enum {
-	GDR_B0				= 0,
-	GDR_U1				= 1,
-	GDR_U2				= 2,
-	GDR_U4				= 3,
-	GDR_I1				= 4,
-	GDR_I2				= 5,
-	GDR_I4				= 6,
-	GDR_R4				= 7,
-	GDR_R8				= 8,
-	GDR_Cn				= 10,
-	GDR_Bn				= 11,
-	GDR_Dn				= 12,
-	GDR_N1				= 13
-} dtc_Vn_type;
+	STDF_GDR_B0				= 0,
+	STDF_GDR_U1				= 1,
+	STDF_GDR_U2				= 2,
+	STDF_GDR_U4				= 3,
+	STDF_GDR_I1				= 4,
+	STDF_GDR_I2				= 5,
+	STDF_GDR_I4				= 6,
+	STDF_GDR_R4				= 7,
+	STDF_GDR_R8				= 8,
+	STDF_GDR_Cn				= 10,
+	STDF_GDR_Bn				= 11,
+	STDF_GDR_Dn				= 12,
+	STDF_GDR_N1				= 13
+} stdf_dtc_Vn_type;
 
 #endif /* _LIBSTDF_CONST_H */

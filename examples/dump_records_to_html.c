@@ -2,7 +2,7 @@
  * @file dump_records_to_html.c
  */
 /*
- * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -14,17 +14,17 @@
 #endif
 
 #define	MAX_REC_STYLES	4
-int max_width, width, rec_rot;
-rec_unknown *raw_rec;
+int max_width, width, stdf_rec_rot;
+stdf_rec_unknown *raw_rec;
 
 #define	OUT_HEX			1
 #define	OUT_ASCII		2
 
-void write_rec(FILE *f, rec_header *h, int type)
+void write_rec(FILE *f, stdf_rec_header *h, int type)
 {
 	int i;
 	int towrite, written;
-	byte_t *rec;
+	unsigned char *rec;
 	int tagged;
 
 	rec = raw_rec->data;
@@ -38,7 +38,7 @@ void write_rec(FILE *f, rec_header *h, int type)
 			towrite = h->REC_LEN - written;
 		for (i=0; i<towrite; ++i) {
 			if (tagged > 3) {						/* raw data */
-				fprintf(f, "<td class=r%i>", rec_rot);
+				fprintf(f, "<td class=r%i>", stdf_rec_rot);
 				if (type == OUT_HEX)
 					fprintf(f, "%.2X", rec[i]);
 				else {
@@ -50,18 +50,18 @@ void write_rec(FILE *f, rec_header *h, int type)
 				fprintf(f, "</td>");
 			} else {								/* record header */
 				if (type == OUT_HEX) {
-					fprintf(f, "<td class=r%i><span class='head", rec_rot);
+					fprintf(f, "<td class=r%i><span class='head", stdf_rec_rot);
 					fprintf(f, (tagged<2)?"len":"type");
 					fprintf(f, "'>%.2X</span></td>", rec[i]);
 				} else {
 					if (tagged == 0)		/* rec len */
 						fprintf(f, "<td class=r%i colspan=2><span class=headlen>%i</span></td>",
-						        rec_rot, h->REC_LEN - 4);
+						        stdf_rec_rot, h->REC_LEN - 4);
 					else if (tagged == 2)	/* rec type */
 						fprintf(f, "<td class=r%i colspan=2><span class=headtype>%s</span></td>",
-						        rec_rot, stdf_get_rec_name_from_head((*h)));
+						        stdf_rec_rot, stdf_get_rec_name_from_head((*h)));
 					else if (width == 0 && i == 0)
-						fprintf(f, "<td class=r%i></td>", rec_rot);
+						fprintf(f, "<td class=r%i></td>", stdf_rec_rot);
 				}
 				tagged++;
 			}
@@ -96,8 +96,8 @@ int main(int argc, char *argv[])
 	stdf_file *f;
 	char cpu_name[256];
 	FILE *out;
-	int x, rec_count, max_recs, type;
-	dtc_U4 byte_order, stdf_ver;
+	int x, stdf_rec_count, max_recs, type;
+	stdf_dtc_U4 byte_order, stdf_ver;
 
 	max_recs = 25;
 	max_width = 25;
@@ -186,8 +186,8 @@ int main(int argc, char *argv[])
 		f = stdf_open(argv[x]);
 
 		width = 0;
-		rec_count = max_recs;
-		rec_rot = 1;
+		stdf_rec_count = max_recs;
+		stdf_rec_rot = 1;
 
 		fprintf(out, "<td><table>\n<tr>");
 		for (width=0; width<max_width; ++width)
@@ -200,10 +200,10 @@ int main(int argc, char *argv[])
 		while ((raw_rec=stdf_read_record_raw(f)) != NULL) {
 			write_rec(out, &(raw_rec->header), type);
 			stdf_free_record(raw_rec);
-			if (--rec_count == 0)
+			if (--stdf_rec_count == 0)
 				break;
-			if (++rec_rot > MAX_REC_STYLES)
-				rec_rot = 1;
+			if (++stdf_rec_rot > MAX_REC_STYLES)
+				stdf_rec_rot = 1;
 		}
 		if (width != 0)
 			fprintf(out, "</tr>\n");

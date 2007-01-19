@@ -4,7 +4,7 @@
  * @internal
  */
 /*
- * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -21,38 +21,38 @@ extern void __byte_order_change(int, int, byte_t*, int) attribute_hidden;
 #define	_stdf_byte_order_to_src(f,v,l) __byte_order_to_src(f->byte_order, (byte_t*)(v), l)
 
 #ifdef	STDF_VER3
-extern void _stdf_read_dtc_Cx(stdf_file*, dtc_Cn*, int) attribute_hidden;
+extern void _stdf_read_dtc_Cx(stdf_file*, stdf_dtc_Cn*, int) attribute_hidden;
 #endif
-extern void _stdf_read_dtc_Cn(stdf_file*, dtc_Cn*) attribute_hidden;
-extern void _stdf_read_dtc_Bn(stdf_file*, dtc_Bn*) attribute_hidden;
-extern void _stdf_read_dtc_Dn(stdf_file*, dtc_Dn*) attribute_hidden;
+extern void _stdf_read_dtc_Cn(stdf_file*, stdf_dtc_Cn*) attribute_hidden;
+extern void _stdf_read_dtc_Bn(stdf_file*, stdf_dtc_Bn*) attribute_hidden;
+extern void _stdf_read_dtc_Dn(stdf_file*, stdf_dtc_Dn*) attribute_hidden;
 
-extern void _stdf_read_dtc_C1(stdf_file*, dtc_C1*) attribute_hidden;
-extern void _stdf_read_dtc_B1(stdf_file*, dtc_B1*) attribute_hidden;
-extern void _stdf_read_dtc_N1(stdf_file*, dtc_N1*) attribute_hidden;
-extern void _stdf_read_dtc_U1(stdf_file*, dtc_U1*) attribute_hidden;
-extern void _stdf_read_dtc_U2(stdf_file*, dtc_U2*) attribute_hidden;
-extern void _stdf_read_dtc_U4(stdf_file*, dtc_U4*) attribute_hidden;
-extern void _stdf_read_dtc_I1(stdf_file*, dtc_I1*) attribute_hidden;
-extern void _stdf_read_dtc_I2(stdf_file*, dtc_I2*) attribute_hidden;
-extern void _stdf_read_dtc_I4(stdf_file*, dtc_I4*) attribute_hidden;
-extern void _stdf_read_dtc_R4(stdf_file*, dtc_R4*) attribute_hidden;
-extern void _stdf_read_dtc_R8(stdf_file*, dtc_R8*) attribute_hidden;
+extern void _stdf_read_dtc_C1(stdf_file*, stdf_dtc_C1*) attribute_hidden;
+extern void _stdf_read_dtc_B1(stdf_file*, stdf_dtc_B1*) attribute_hidden;
+extern void _stdf_read_dtc_N1(stdf_file*, stdf_dtc_N1*) attribute_hidden;
+extern void _stdf_read_dtc_U1(stdf_file*, stdf_dtc_U1*) attribute_hidden;
+extern void _stdf_read_dtc_U2(stdf_file*, stdf_dtc_U2*) attribute_hidden;
+extern void _stdf_read_dtc_U4(stdf_file*, stdf_dtc_U4*) attribute_hidden;
+extern void _stdf_read_dtc_I1(stdf_file*, stdf_dtc_I1*) attribute_hidden;
+extern void _stdf_read_dtc_I2(stdf_file*, stdf_dtc_I2*) attribute_hidden;
+extern void _stdf_read_dtc_I4(stdf_file*, stdf_dtc_I4*) attribute_hidden;
+extern void _stdf_read_dtc_R4(stdf_file*, stdf_dtc_R4*) attribute_hidden;
+extern void _stdf_read_dtc_R8(stdf_file*, stdf_dtc_R8*) attribute_hidden;
 
-extern void _stdf_read_dtc_xN1(stdf_file*, dtc_xN1*, dtc_U2) attribute_hidden;
-extern void _stdf_read_dtc_xU1(stdf_file*, dtc_xU1*, dtc_U2) attribute_hidden;
-extern void _stdf_read_dtc_xU2(stdf_file*, dtc_xU2*, dtc_U2) attribute_hidden;
-extern void _stdf_read_dtc_xR4(stdf_file*, dtc_xR4*, dtc_U2) attribute_hidden;
+extern void _stdf_read_dtc_xN1(stdf_file*, stdf_dtc_xN1*, stdf_dtc_U2) attribute_hidden;
+extern void _stdf_read_dtc_xU1(stdf_file*, stdf_dtc_xU1*, stdf_dtc_U2) attribute_hidden;
+extern void _stdf_read_dtc_xU2(stdf_file*, stdf_dtc_xU2*, stdf_dtc_U2) attribute_hidden;
+extern void _stdf_read_dtc_xR4(stdf_file*, stdf_dtc_xR4*, stdf_dtc_U2) attribute_hidden;
 #define	free_x(x) if (x) free(x)
 #define	free_xU1(x) free_x(x)
 #define	free_xU2(x) free_x(x)
 #define	free_xR4(x) free_x(x)
 
-extern void _stdf_read_dtc_xCn(stdf_file*, dtc_xCn*, dtc_U2) attribute_hidden;
-extern void free_xCn(dtc_xCn, dtc_U2) attribute_hidden;
+extern void _stdf_read_dtc_xCn(stdf_file*, stdf_dtc_xCn*, stdf_dtc_U2) attribute_hidden;
+extern void free_xCn(stdf_dtc_xCn, stdf_dtc_U2) attribute_hidden;
 
-extern void _stdf_read_dtc_Vn(stdf_file*, dtc_Vn*, dtc_U2) attribute_hidden;
-extern void free_Vn(dtc_Vn, dtc_U2) attribute_hidden;
+extern void _stdf_read_dtc_Vn(stdf_file*, stdf_dtc_Vn*, stdf_dtc_U2) attribute_hidden;
+extern void free_Vn(stdf_dtc_Vn, stdf_dtc_U2) attribute_hidden;
 
 #define _stdf_write_byte(file, byte) \
 	*file->_write_pos++ = byte
@@ -71,7 +71,7 @@ extern void free_Vn(dtc_Vn, dtc_U2) attribute_hidden;
 	do { \
 		type mapme = bytes; \
 		_stdf_byte_order_to_src(file, &mapme, even); \
-		uchar *map = (uchar*)&mapme; \
+		unsigned char *map = (unsigned char*)&mapme; \
 		_stdf_write_nbytes(file, map, even); \
 	} while (0)
 #define _stdf_write_2bytes(file, bytes)       __stdf_write_even_bytes(uint16_t, file, bytes, 2)
@@ -108,17 +108,17 @@ extern void free_Vn(dtc_Vn, dtc_U2) attribute_hidden;
 #define _stdf_write_dtc_Dn(file, Dn) \
 	do { \
 		if (Dn) { \
-			dtc_U2 cnt = *((dtc_U2*)Dn); \
+			stdf_dtc_U2 cnt = *((stdf_dtc_U2*)Dn); \
 			_stdf_write_dtc_U2(file, cnt); \
 			_stdf_write_nbytes(file, Dn+2, cnt); \
 		} \
 	} while (0)
 
-#define _stdf_write_dtc_Vn(file, Vn, cnt) warnf("writing dtc_Vn is not implemented")
+#define _stdf_write_dtc_Vn(file, Vn, cnt) warnf("writing stdf_dtc_Vn is not implemented")
 
 #define _stdf_write_dtc_x(file, x, cnt, func) \
 	do { \
-		dtc_U2 i; \
+		stdf_dtc_U2 i; \
 		for (i=0; i<cnt; ++i) \
 			func(file, x[i]); \
 	} while (0)
@@ -131,7 +131,7 @@ extern void free_Vn(dtc_Vn, dtc_U2) attribute_hidden;
 #define _stdf_write_dtc_xBn(file, xBn, cnt) _stdf_write_dtc_xCn(file, xBn, cnt)
 
 #ifdef STDF_VER3
-#define _stdf_write_dtc_Cx(file, Cx, cnt) warnf("writing dtc_Cx is not implemented");
+#define _stdf_write_dtc_Cx(file, Cx, cnt) warnf("writing stdf_dtc_Cx is not implemented");
 #endif
 
 #endif /* _LIBSTDF_DTC_H */

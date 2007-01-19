@@ -3,7 +3,7 @@
  * @brief System specific include files / features.
  */
 /*
- * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -98,8 +98,6 @@ typedef int32 int32_t;
 typedef int64 int64_t;
 #endif
 
-typedef unsigned char uchar;
-
 #if !defined(STDF_FORCE_ENDIAN) && !defined(BYTE_ORDER)
 
 /* Workaround for random systems */
@@ -132,28 +130,36 @@ typedef unsigned char uchar;
 #endif
 
 #if !defined(BYTE_ORDER) || !defined(LITTLE_ENDIAN) || !defined(BIG_ENDIAN)
-# error Unable to detect appropriate endian
-# error settings for your system.  Please
-# error send a bug report to the
-# error freestdf-devel@lists.sourceforge.net
-# error mailing list.
-# error You can work around the problem
-# error by re-running ./configure with
-# error the --enable-endian option.
+# error Unable to detect appropriate endian settings for your system.
+# error Please send a bug report to the freestdf-devel@lists.sourceforge.net
+# error mailing list.  You can work around the problem by re-running
+# error the configure script with the --enable-endian option.
 #endif
 
 #if HAVE_ZIP
 # include <zzip/zzip.h>
+# define USE_ZIP(x) x
+#else
+# define USE_ZIP(x)
 #endif
 #if HAVE_GZIP
 # include <zlib.h>
+# define USE_GZIP(x) x
+#else
+# define USE_GZIP(x)
 #endif
 #if HAVE_BZIP2
 # include <bzlib.h>
+# define USE_BZIP2(x) x
+#else
+# define USE_BZIP2(x)
 #endif
 #if HAVE_LZW
 # define __IN_LIBLZW
 # include <lzw.h>
+# define USE_LZW(x) x
+#else
+# define USE_LZW(x)
 #endif
 
 /* i'll see you in hell windows */

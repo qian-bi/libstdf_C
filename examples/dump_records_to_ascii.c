@@ -2,7 +2,7 @@
  * @file dump_records_to_ascii.c
  */
 /*
- * Copyright (C) 2004-2006 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -19,9 +19,9 @@
 	do { time_t t = d; print_fmt(n, "%s", ctime(&t)); } while(0)
 
 #define MAKE_PRINT_X(DTC, OUTPUT_FUNC, FORMAT) \
-void print_x ## DTC(char *n, dtc_x ## DTC u, dtc_U2 c) \
+void print_x ## DTC(char *n, stdf_dtc_x ## DTC u, stdf_dtc_U2 c) \
 { \
-	dtc_U2 i; \
+	stdf_dtc_U2 i; \
 	printf("\t%s: ", n); \
 	for (i=0; i<c; ++i) { \
 		OUTPUT_FUNC(FORMAT, u[i]); \
@@ -36,9 +36,9 @@ MAKE_PRINT_X(R4, printf, "%f")
 #define _printf_xCn(fmt,Cn) printf(fmt, (*Cn ? Cn+1 : "(null)"))
 MAKE_PRINT_X(Cn, _printf_xCn, "%s")
 
-void print_xN1(char *member, dtc_xN1 xN1, dtc_U2 c)
+void print_xN1(char *member, stdf_dtc_xN1 xN1, stdf_dtc_U2 c)
 {
-	dtc_N1 *n = xN1;
+	stdf_dtc_N1 *n = xN1;
 	printf("\t%s: ", member);
 	while (c > 0) {
 		if (c > 1) {
@@ -53,7 +53,7 @@ void print_xN1(char *member, dtc_xN1 xN1, dtc_U2 c)
 	printf("\n");
 }
 
-void print_Vn(char *n, dtc_Vn v, int c)
+void print_Vn(char *n, stdf_dtc_Vn v, int c)
 {
 	int i;
 	--c;
@@ -61,30 +61,30 @@ void print_Vn(char *n, dtc_Vn v, int c)
 	for (i=0; i<=c; ++i) {
 		printf("\t\t%s: ", stdf_get_Vn_name(v[i].type));
 		switch (v[i].type) {
-			case GDR_B0: printf("(pad)"); break;
-			case GDR_U1: printf("%i", *((dtc_U1*)v[i].data)); break;
-			case GDR_U2: printf("%i", *((dtc_U2*)v[i].data)); break;
-			case GDR_U4: printf("%i", *((dtc_U4*)v[i].data)); break;
-			case GDR_I1: printf("%i", *((dtc_I1*)v[i].data)); break;
-			case GDR_I2: printf("%i", *((dtc_I2*)v[i].data)); break;
-			case GDR_I4: printf("%i", *((dtc_I4*)v[i].data)); break;
-			case GDR_R4: printf("%f", *((dtc_R4*)v[i].data)); break;
-			case GDR_R8: printf("%f", *((dtc_R8*)v[i].data)); break;
-			case GDR_Cn: {
-				dtc_Cn Cn = *((dtc_Cn*)v[i].data);
+			case STDF_GDR_B0: printf("(pad)"); break;
+			case STDF_GDR_U1: printf("%i", *((stdf_dtc_U1*)v[i].data)); break;
+			case STDF_GDR_U2: printf("%i", *((stdf_dtc_U2*)v[i].data)); break;
+			case STDF_GDR_U4: printf("%i", *((stdf_dtc_U4*)v[i].data)); break;
+			case STDF_GDR_I1: printf("%i", *((stdf_dtc_I1*)v[i].data)); break;
+			case STDF_GDR_I2: printf("%i", *((stdf_dtc_I2*)v[i].data)); break;
+			case STDF_GDR_I4: printf("%i", *((stdf_dtc_I4*)v[i].data)); break;
+			case STDF_GDR_R4: printf("%f", *((stdf_dtc_R4*)v[i].data)); break;
+			case STDF_GDR_R8: printf("%f", *((stdf_dtc_R8*)v[i].data)); break;
+			case STDF_GDR_Cn: {
+				stdf_dtc_Cn Cn = *((stdf_dtc_Cn*)v[i].data);
 				printf("%s", (*Cn ? Cn+1 : "(null"));
 				break;
 			}
-			case GDR_Bn: printf("[??]"); break;
-			case GDR_Dn: printf("[??]"); break;
-			case GDR_N1: printf("%X", *((dtc_N1*)v[i].data)); break;
+			case STDF_GDR_Bn: printf("[??]"); break;
+			case STDF_GDR_Dn: printf("[??]"); break;
+			case STDF_GDR_N1: printf("%X", *((stdf_dtc_N1*)v[i].data)); break;
 		}
 		printf("\n");
 	}
 	if (c == -1)
 		printf("\n");
 }
-void print_Bn(dtc_C1 *n, dtc_Bn b)
+void print_Bn(stdf_dtc_C1 *n, stdf_dtc_Bn b)
 {
 	int i;
 	printf("\t%s:", n);
@@ -94,10 +94,10 @@ void print_Bn(dtc_C1 *n, dtc_Bn b)
 		printf(" (null)");
 	printf("\n");
 }
-void print_Dn(dtc_C1 *n, dtc_Dn d)
+void print_Dn(stdf_dtc_C1 *n, stdf_dtc_Dn d)
 {
 	int i;
-	dtc_U2 *num_bits = (dtc_U2*)d, len;
+	stdf_dtc_U2 *num_bits = (stdf_dtc_U2*)d, len;
 	len = *num_bits / 8;
 	if (*num_bits % 8) ++len;
 	printf("\t%s:", n);
@@ -123,9 +123,9 @@ int main(int argc, char *argv[])
 {
 	stdf_file *f;
 	char *recname;
-	rec_unknown *rec;
+	stdf_rec_unknown *rec;
 	int i;
-	dtc_U4 stdf_ver;
+	stdf_dtc_U4 stdf_ver;
 
 	if (argc <= 1) {
 		printf("Need some files to open!\n");
@@ -146,20 +146,20 @@ for (i=1; i<argc; ++i) {
 		printf("Record %s (%3i,%3i) %i bytes:\n", recname, rec->header.REC_TYP,
 		       rec->header.REC_SUB, rec->header.REC_LEN);
 		switch (HEAD_TO_REC(rec->header)) {
-			case REC_FAR: {
-				rec_far *far = (rec_far*)rec;
+			case STDF_REC_FAR: {
+				stdf_rec_far *far = (stdf_rec_far*)rec;
 				print_int("CPU_TYPE", far->CPU_TYPE);
 				print_int("STDF_VER", far->STDF_VER);
 				break;
 			}
-			case REC_ATR: {
-				rec_atr *atr = (rec_atr*)rec;
+			case STDF_REC_ATR: {
+				stdf_rec_atr *atr = (stdf_rec_atr*)rec;
 				print_tim("MOD_TIM", atr->MOD_TIM);
 				print_str("CMD_LINE", atr->CMD_LINE);
 				break;
 			}
-			case REC_MIR: {
-				rec_mir *mir = (rec_mir*)rec;
+			case STDF_REC_MIR: {
+				stdf_rec_mir *mir = (stdf_rec_mir*)rec;
 #ifdef STDF_VER3
 				if (stdf_ver == 4) {
 #endif
@@ -230,8 +230,8 @@ for (i=1; i<argc; ++i) {
 #endif
 				break;
 			}
-			case REC_MRR: {
-				rec_mrr *mrr = (rec_mrr*)rec;
+			case STDF_REC_MRR: {
+				stdf_rec_mrr *mrr = (stdf_rec_mrr*)rec;
 				print_tim("FINISH_T", mrr->FINISH_T);
 #ifdef STDF_VER3
 				if (stdf_ver == 3) {
@@ -247,8 +247,8 @@ for (i=1; i<argc; ++i) {
 				print_str("EXC_DESC", mrr->EXC_DESC);
 				break;
 			}
-			case REC_PCR: {
-				rec_pcr *pcr = (rec_pcr*)rec;
+			case STDF_REC_PCR: {
+				stdf_rec_pcr *pcr = (stdf_rec_pcr*)rec;
 				print_int("HEAD_NUM", pcr->HEAD_NUM);
 				print_int("SITE_NUM", pcr->SITE_NUM);
 				print_int("PART_CNT", pcr->PART_CNT);
@@ -258,8 +258,8 @@ for (i=1; i<argc; ++i) {
 				print_int("FUNC_CNT", pcr->FUNC_CNT);
 				break;
 			}
-			case REC_HBR: {
-				rec_hbr *hbr = (rec_hbr*)rec;
+			case STDF_REC_HBR: {
+				stdf_rec_hbr *hbr = (stdf_rec_hbr*)rec;
 				print_int("HEAD_NUM", hbr->HEAD_NUM);
 				print_int("SITE_NUM", hbr->SITE_NUM);
 				print_int("HBIN_NUM", hbr->HBIN_NUM);
@@ -268,8 +268,8 @@ for (i=1; i<argc; ++i) {
 				print_str("HBIN_NAM", hbr->HBIN_NAM);
 				break;
 			}
-			case REC_SBR: {
-				rec_sbr *sbr = (rec_sbr*)rec;
+			case STDF_REC_SBR: {
+				stdf_rec_sbr *sbr = (stdf_rec_sbr*)rec;
 				print_int("HEAD_NUM", sbr->HEAD_NUM);
 				print_int("SITE_NUM", sbr->SITE_NUM);
 				print_int("SBIN_NUM", sbr->SBIN_NUM);
@@ -278,8 +278,8 @@ for (i=1; i<argc; ++i) {
 				print_str("SBIN_NAM", sbr->SBIN_NAM);
 				break;
 			}
-			case REC_PMR: {
-				rec_pmr *pmr = (rec_pmr*)rec;
+			case STDF_REC_PMR: {
+				stdf_rec_pmr *pmr = (stdf_rec_pmr*)rec;
 				print_int("PMR_INDX", pmr->PMR_INDX);
 				print_int("CHAN_TYP", pmr->CHAN_TYP);
 				print_str("CHAN_NAM", pmr->CHAN_NAM);
@@ -289,16 +289,16 @@ for (i=1; i<argc; ++i) {
 				print_int("SITE_NUM", pmr->SITE_NUM);
 				break;
 			}
-			case REC_PGR: {
-				rec_pgr *pgr = (rec_pgr*)rec;
+			case STDF_REC_PGR: {
+				stdf_rec_pgr *pgr = (stdf_rec_pgr*)rec;
 				print_int("GRP_INDX", pgr->GRP_INDX);
 				print_str("GRP_NAM", pgr->GRP_NAM);
 				print_int("INDX_CNT", pgr->INDX_CNT);
 				print_xU2("PMR_INDX", pgr->PMR_INDX, pgr->INDX_CNT);
 				break;
 			}
-			case REC_PLR: {
-				rec_plr *plr = (rec_plr*)rec;
+			case STDF_REC_PLR: {
+				stdf_rec_plr *plr = (stdf_rec_plr*)rec;
 				print_int("GRP_CNT", plr->GRP_CNT);
 				print_xU2("GRP_INDX", plr->GRP_INDX, plr->GRP_CNT);
 				print_xU2("GRP_MODE", plr->GRP_MODE, plr->GRP_CNT);
@@ -309,14 +309,14 @@ for (i=1; i<argc; ++i) {
 				print_xCn("RTN_CHAL", plr->RTN_CHAL, plr->GRP_CNT);
 				break;
 			}
-			case REC_RDR: {
-				rec_rdr *rdr = (rec_rdr*)rec;
+			case STDF_REC_RDR: {
+				stdf_rec_rdr *rdr = (stdf_rec_rdr*)rec;
 				print_int("NUM_BINS", rdr->NUM_BINS);
 				print_xU2("RTST_BIN", rdr->RTST_BIN, rdr->NUM_BINS);
 				break;
 			}
-			case REC_SDR: {
-				rec_sdr *sdr = (rec_sdr*)rec;
+			case STDF_REC_SDR: {
+				stdf_rec_sdr *sdr = (stdf_rec_sdr*)rec;
 				print_int("HEAD_NUM", sdr->HEAD_NUM);
 				print_int("SITE_GRP", sdr->SITE_GRP);
 				print_int("SITE_CNT", sdr->SITE_CNT);
@@ -339,8 +339,8 @@ for (i=1; i<argc; ++i) {
 				print_str("EXTR_ID", sdr->EXTR_ID);
 				break;
 			}
-			case REC_WIR: {
-				rec_wir *wir = (rec_wir*)rec;
+			case STDF_REC_WIR: {
+				stdf_rec_wir *wir = (stdf_rec_wir*)rec;
 				print_int("HEAD_NUM", wir->HEAD_NUM);
 #ifdef STDF_VER3
 				if (stdf_ver == 3)
@@ -352,8 +352,8 @@ for (i=1; i<argc; ++i) {
 				print_str("WAFER_ID", wir->WAFER_ID);
 				break;
 			}
-			case REC_WRR: {
-				rec_wrr *wrr = (rec_wrr*)rec;
+			case STDF_REC_WRR: {
+				stdf_rec_wrr *wrr = (stdf_rec_wrr*)rec;
 #ifdef STDF_VER3
 				if (stdf_ver == 4) {
 #endif
@@ -389,8 +389,8 @@ for (i=1; i<argc; ++i) {
 				print_str("EXC_DESC", wrr->EXC_DESC);
 				break;
 			}
-			case REC_WCR: {
-				rec_wcr *wcr = (rec_wcr*)rec;
+			case STDF_REC_WCR: {
+				stdf_rec_wcr *wcr = (stdf_rec_wcr*)rec;
 				print_rel("WAFR_SIZ", wcr->WAFR_SIZ);
 				print_rel("DIE_HT", wcr->DIE_HT);
 				print_rel("DIE_WID", wcr->DIE_WID);
@@ -402,8 +402,8 @@ for (i=1; i<argc; ++i) {
 				print_chr("POS_Y", wcr->POS_Y);
 				break;
 			}
-			case REC_PIR: {
-				rec_pir *pir = (rec_pir*)rec;
+			case STDF_REC_PIR: {
+				stdf_rec_pir *pir = (stdf_rec_pir*)rec;
 				print_int("HEAD_NUM", pir->HEAD_NUM);
 				print_int("SITE_NUM", pir->SITE_NUM);
 #ifdef STDF_VER3
@@ -415,8 +415,8 @@ for (i=1; i<argc; ++i) {
 #endif
 				break;
 			}
-			case REC_PRR: {
-				rec_prr *prr = (rec_prr*)rec;
+			case STDF_REC_PRR: {
+				stdf_rec_prr *prr = (stdf_rec_prr*)rec;
 				print_int("HEAD_NUM", prr->HEAD_NUM);
 				print_int("SITE_NUM", prr->SITE_NUM);
 #ifdef STDF_VER3
@@ -444,8 +444,8 @@ for (i=1; i<argc; ++i) {
 				break;
 			}
 #ifdef STDF_VER3
-			case REC_PDR: {
-				rec_pdr *pdr = (rec_pdr*)rec;
+			case STDF_REC_PDR: {
+				stdf_rec_pdr *pdr = (stdf_rec_pdr*)rec;
 				print_int("TEST_NUM", pdr->TEST_NUM);
 				print_hex("DESC_FLG", pdr->DESC_FLG);
 				print_hex("OPT_FLAG", pdr->OPT_FLAG);
@@ -465,8 +465,8 @@ for (i=1; i<argc; ++i) {
 				print_str("SEQ_NAME", pdr->SEQ_NAME);
 				break;
 			}
-			case REC_FDR: {
-				rec_fdr *fdr = (rec_fdr*)rec;
+			case STDF_REC_FDR: {
+				stdf_rec_fdr *fdr = (stdf_rec_fdr*)rec;
 				print_int("TEST_NUM", fdr->TEST_NUM);
 				print_hex("DESC_FLG", fdr->DESC_FLG);
 				print_str("TEST_NAM", fdr->TEST_NAM);
@@ -474,8 +474,8 @@ for (i=1; i<argc; ++i) {
 				break;
 			}
 #endif
-			case REC_TSR: {
-				rec_tsr *tsr = (rec_tsr*)rec;
+			case STDF_REC_TSR: {
+				stdf_rec_tsr *tsr = (stdf_rec_tsr*)rec;
 				print_int("HEAD_NUM", tsr->HEAD_NUM);
 				print_int("SITE_NUM", tsr->SITE_NUM);
 #ifdef STDF_VER3
@@ -514,8 +514,8 @@ for (i=1; i<argc; ++i) {
 #endif
 				break;
 			}
-			case REC_PTR: {
-				rec_ptr *ptr = (rec_ptr*)rec;
+			case STDF_REC_PTR: {
+				stdf_rec_ptr *ptr = (stdf_rec_ptr*)rec;
 				print_int("TEST_NUM", ptr->TEST_NUM);
 				print_int("HEAD_NUM", ptr->HEAD_NUM);
 				print_int("SITE_NUM", ptr->SITE_NUM);
@@ -538,8 +538,8 @@ for (i=1; i<argc; ++i) {
 				print_rel("HI_SPEC", ptr->HI_SPEC);
 				break;
 			}
-			case REC_MPR: {
-				rec_mpr *mpr = (rec_mpr*)rec;
+			case STDF_REC_MPR: {
+				stdf_rec_mpr *mpr = (stdf_rec_mpr*)rec;
 				print_int("TEST_NUM", mpr->TEST_NUM);
 				print_int("HEAD_NUM", mpr->HEAD_NUM);
 				print_int("SITE_NUM", mpr->SITE_NUM);
@@ -569,8 +569,8 @@ for (i=1; i<argc; ++i) {
 				print_rel("HI_SPEC", mpr->HI_SPEC);
 				break;
 			}
-			case REC_FTR: {
-				rec_ftr *ftr = (rec_ftr*)rec;
+			case STDF_REC_FTR: {
+				stdf_rec_ftr *ftr = (stdf_rec_ftr*)rec;
 				print_int("TEST_NUM", ftr->TEST_NUM);
 				print_int("HEAD_NUM", ftr->HEAD_NUM);
 				print_int("SITE_NUM", ftr->SITE_NUM);
@@ -601,18 +601,18 @@ for (i=1; i<argc; ++i) {
 				print_Dn("SPIN_MAP", ftr->SPIN_MAP);
 				break;
 			}
-			case REC_BPS: {
-				rec_bps *bps = (rec_bps*)rec;
+			case STDF_REC_BPS: {
+				stdf_rec_bps *bps = (stdf_rec_bps*)rec;
 				print_str("SEQ_NAME", bps->SEQ_NAME);
 				break;
 			}
-			case REC_EPS: {
-				/*rec_eps *eps = (rec_eps*)rec;*/
+			case STDF_REC_EPS: {
+				/*stdf_rec_eps *eps = (stdf_rec_eps*)rec;*/
 				break;
 			}
 #ifdef STDF_VER3
-			case REC_SHB: {
-				rec_shb *shb = (rec_shb*)rec;
+			case STDF_REC_SHB: {
+				stdf_rec_shb *shb = (stdf_rec_shb*)rec;
 				print_int("HEAD_NUM", shb->HEAD_NUM);
 				print_int("SITE_NUM", shb->SITE_NUM);
 				print_int("HBIN_NUM", shb->HBIN_NUM);
@@ -620,8 +620,8 @@ for (i=1; i<argc; ++i) {
 				print_str("HBIN_NAM", shb->HBIN_NAM);
 				break;
 			}
-			case REC_SSB: {
-				rec_ssb *ssb = (rec_ssb*)rec;
+			case STDF_REC_SSB: {
+				stdf_rec_ssb *ssb = (stdf_rec_ssb*)rec;
 				print_int("HEAD_NUM", ssb->HEAD_NUM);
 				print_int("SITE_NUM", ssb->SITE_NUM);
 				print_int("SBIN_NUM", ssb->SBIN_NUM);
@@ -629,8 +629,8 @@ for (i=1; i<argc; ++i) {
 				print_str("SBIN_NAM", ssb->SBIN_NAM);
 				break;
 			}
-			case REC_STS: {
-				rec_sts *sts = (rec_sts*)rec;
+			case STDF_REC_STS: {
+				stdf_rec_sts *sts = (stdf_rec_sts*)rec;
 				print_int("HEAD_NUM", sts->HEAD_NUM);
 				print_int("SITE_NUM", sts->SITE_NUM);
 				print_int("TEST_NUM", sts->TEST_NUM);
@@ -650,8 +650,8 @@ for (i=1; i<argc; ++i) {
 				print_str("TEST_LBL", sts->TEST_LBL);
 				break;
 			}
-			case REC_SCR: {
-				rec_scr *scr = (rec_scr*)rec;
+			case STDF_REC_SCR: {
+				stdf_rec_scr *scr = (stdf_rec_scr*)rec;
 				print_int("HEAD_NUM", scr->HEAD_NUM);
 				print_int("SITE_NUM", scr->SITE_NUM);
 				print_int("FINISH_T", scr->FINISH_T);
@@ -663,19 +663,19 @@ for (i=1; i<argc; ++i) {
 				break;
 			}
 #endif
-			case REC_GDR: {
-				rec_gdr *gdr = (rec_gdr*)rec;
+			case STDF_REC_GDR: {
+				stdf_rec_gdr *gdr = (stdf_rec_gdr*)rec;
 				print_int("FLD_CNT", gdr->FLD_CNT);
 				print_Vn("GEN_DATA", gdr->GEN_DATA, gdr->FLD_CNT);
 				break;
 			}
-			case REC_DTR: {
-				rec_dtr *dtr = (rec_dtr*)rec;
+			case STDF_REC_DTR: {
+				stdf_rec_dtr *dtr = (stdf_rec_dtr*)rec;
 				print_str("TEXT_DAT", dtr->TEXT_DAT);
 				break;
 			}
-			case REC_UNKNOWN: {
-				rec_unknown *unk = (rec_unknown*)rec;
+			case STDF_REC_UNKNOWN: {
+				stdf_rec_unknown *unk = (stdf_rec_unknown*)rec;
 				printf("\tBytes: %i\n", unk->header.REC_LEN);
 				printf("\tTYP: 0x%X [%i]\n", unk->header.REC_TYP, unk->header.REC_TYP);
 				printf("\tSUB: 0x%X [%i]\n", unk->header.REC_SUB, unk->header.REC_SUB);
