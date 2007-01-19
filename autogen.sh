@@ -1,4 +1,4 @@
-#!/bin/sh -xe
+#!/bin/bash -ex
 
 if test -d .svn ; then
 	if test -d ../m4 ; then
@@ -13,6 +13,9 @@ if test -d .svn ; then
 fi
 
 autoreconf -i -f
+
+# broken autotools wrongly clobbers our INSTALL
+svn revert INSTALL >& /dev/null || true
 
 if test -x ./test.sh ; then
 	exec ./test.sh "$@"
