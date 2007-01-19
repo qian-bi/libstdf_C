@@ -1,10 +1,22 @@
-#!/bin/sh
+#!/bin/bash -ex
 
-./configure \
-	--disable-static \
-	--enable-stdf-ver3 \
-	--enable-lzw \
-	"$@" \
-	|| exit 1
-make clean || exit 1
-make -j || exit 1
+doit() {
+	$d/configure \
+		--disable-static \
+		--enable-stdf-ver3 \
+		--enable-lzw \
+		"$@"
+	make clean
+	make -j
+	make check
+	make distclean
+}
+
+# build up in src tree
+d=. doit "$@"
+
+# make sure out of tree building works
+rm -rf build
+mkdir build
+cd build
+d=.. doit "$@"
