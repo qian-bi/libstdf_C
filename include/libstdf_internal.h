@@ -32,7 +32,7 @@ typedef struct {
 	int fd;                           /**< Actual file descriptor for the backing file */
 	union {
 		USE_ZIP   (ZZIP_FILE *zip;)
-		USE_GZIP  (gzFile *gzip;)
+		USE_GZIP  (gzFile gzip;)
 		USE_BZIP2 (BZFILE *bzip2;)
 		USE_LZW   (lzwFile *lzw;)
 		/* leave space for 8 compression type ... */
