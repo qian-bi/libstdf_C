@@ -159,9 +159,6 @@ static __stdf_fops __stdf_fops_reg = {
 static int __stdf_open_zip(void *data, int flags, uint32_t mode)
 {
 	stdf_file *stdf = (stdf_file*)data;
-
-	/* am i doing something wrong or does
-	   zziplib really suck this much ? */
 	ZZIP_DIR *d;
 	ZZIP_DIRENT *de;
 	zzip_error_t err;
