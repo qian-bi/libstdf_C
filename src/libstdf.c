@@ -522,8 +522,8 @@ stdf_rec_unknown* stdf_read_record_raw(stdf_file *file)
 	raw_rec->header.stdf_file = (void*)file;
 	raw_rec->header.state = STDF_REC_STATE_RAW;
 	memcpy(&(raw_rec->header.REC_LEN), header, 2);
-	raw_rec->header.REC_TYP = header[2];
-	raw_rec->header.REC_SUB = header[3];
+	raw_rec->header.REC_TYP = (stdf_rec_typ)header[2];
+	raw_rec->header.REC_SUB = (stdf_rec_sub)header[3];
 	memcpy(&(file->header), &(raw_rec->header), sizeof(stdf_rec_header));
 	_stdf_byte_order_to_host(file, &(file->header.REC_LEN), sizeof(stdf_dtc_U2));
 
