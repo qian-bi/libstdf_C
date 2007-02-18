@@ -69,7 +69,7 @@ typedef enum {
 #define	MAKE_REC(typ,sub)	((typ << 8) + sub)
 #define	BREAK_REC(h,t)		do { h.REC_TYP = (stdf_rec_typ)(t >> 8); h.REC_SUB = (stdf_rec_sub)(t & 0xFF); } while (0)
 #define	SET_HEADER(h,t,l)	do { BREAK_REC(h, t); h.REC_LEN = l; } while (0)
-#define	INIT_HEADER(h,t)	do { SET_HEADER(h, t, 0); h.state = REC_STATE_PARSED; } while (0)
+#define	INIT_HEADER(h,t)	do { SET_HEADER(h, t, 0); h.state = STDF_REC_STATE_PARSED; } while (0)
 #define	HEAD_TO_REC(h)		MAKE_REC(h.REC_TYP,h.REC_SUB)
 #define	STDF_REC_FAR		MAKE_REC(STDF_REC_TYP_INFO, STDF_REC_SUB_FAR)
 #define	STDF_REC_ATR		MAKE_REC(STDF_REC_TYP_INFO, STDF_REC_SUB_ATR)
