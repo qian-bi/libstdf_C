@@ -1,7 +1,7 @@
 AC_DEFUN([AM_STDF_VAPIER_DEV],
 [dnl Let's get anal with compiling while on my dev box
 if test "x$HOSTNAME" = "xvapier" ; then
-	CFLAGS="$CFLAGS -Wall -Wextra -Werror"
+	CFLAGS="$CFLAGS -Wall -Wextra -Wnonnull -Wundef -Werror"
 	enable_annoy_untested="no"
 else
 	enable_annoy_untested="yes"
