@@ -47,7 +47,8 @@ static int __stdf_init(stdf_file *f, stdf_dtc_U1 cpu_type, stdf_dtc_U1 stdf_ver,
 #endif
 		default:
 			f->byte_order = __STDF_HOST_BYTE_ORDER;
-			warnf("Unknown STDF_CPU type 0x%X; you may have incorrect output", cpu_type);
+			if (!(opts & STDF_OPTS_CREATE))
+				warnf("Unknown STDF_CPU type 0x%X; you may have incorrect output", cpu_type);
 			break;
 	}
 
