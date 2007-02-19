@@ -19,7 +19,7 @@
  */
 
 
-char *stdf_rec_names[] = {
+static char *stdf_rec_names[] = {
 	"???",
 	"FAR", "ATR", "MIR", "MRR", "PCR", "HBR",
 	"SBR", "PMR", "PGR", "PLR", "RDR", "SDR",
@@ -72,7 +72,7 @@ static int _stdf_header_to_idx(stdf_rec_typ type, stdf_rec_sub sub)
 		default:		return 0;
 	}
 }
-int stdf_rec_to_idx_count()
+int stdf_rec_to_idx_count(void)
 {
 	return 32;
 }
@@ -1009,7 +1009,7 @@ stdf_rec_bps* stdf_read_rec_bps(stdf_file *file)
 	return bps;
 }
 
-stdf_rec_eps* stdf_read_rec_eps(attribute_unused stdf_file *file)
+stdf_rec_eps* stdf_read_rec_eps(stdf_attribute_unused stdf_file *file)
 {
 	stdf_rec_eps *eps = __malloc_rec(stdf_rec_eps);
 	return eps;
@@ -1119,12 +1119,12 @@ static inline size_t _len_dtcXCN(stdf_dtc_xCn xCn, stdf_dtc_U2 cnt)
 #define _len_dtcXN(xn, cnt) (sizeof(*(xn)) * (cnt / 2 + cnt % 2))
 #define booga(a,b) 0
 
-static inline size_t _calc_rec_len_far(attribute_unused stdf_file *f, stdf_rec_far *r)
+static inline size_t _calc_rec_len_far(stdf_attribute_unused stdf_file *f, stdf_rec_far *r)
 {
 	return sizeof(r->CPU_TYPE) + sizeof(r->STDF_VER);
 }
 
-static inline size_t _calc_rec_len_atr(attribute_unused stdf_file *f, stdf_rec_atr *r)
+static inline size_t _calc_rec_len_atr(stdf_attribute_unused stdf_file *f, stdf_rec_atr *r)
 {
 	return sizeof(r->MOD_TIM) + _lenCn(r->CMD_LINE);
 }
@@ -1186,7 +1186,7 @@ static inline size_t _calc_rec_len_mrr(stdf_file *f, stdf_rec_mrr *r)
 	return (f->ver == 3 ? _CALC_REC_LEN_MRR_v3(r) : _CALC_REC_LEN_MRR_v4(r));
 }
 
-static inline size_t _calc_rec_len_pcr(attribute_unused stdf_file *f, stdf_rec_pcr *r)
+static inline size_t _calc_rec_len_pcr(stdf_attribute_unused stdf_file *f, stdf_rec_pcr *r)
 {
 	return 
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->PART_CNT) +
@@ -1194,21 +1194,21 @@ static inline size_t _calc_rec_len_pcr(attribute_unused stdf_file *f, stdf_rec_p
 		sizeof(r->FUNC_CNT);
 }
 
-static inline size_t _calc_rec_len_hbr(attribute_unused stdf_file *f, stdf_rec_hbr *r)
+static inline size_t _calc_rec_len_hbr(stdf_attribute_unused stdf_file *f, stdf_rec_hbr *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->HBIN_NUM) +
 		sizeof(r->HBIN_CNT) + sizeof(r->HBIN_PF) + _lenCn(r->HBIN_NAM);
 }
 
-static inline size_t _calc_rec_len_sbr(attribute_unused stdf_file *f, stdf_rec_sbr *r)
+static inline size_t _calc_rec_len_sbr(stdf_attribute_unused stdf_file *f, stdf_rec_sbr *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->SBIN_NUM) +
 		sizeof(r->SBIN_CNT) + sizeof(r->SBIN_PF) + _lenCn(r->SBIN_NAM);
 }
 
-static inline size_t _calc_rec_len_pmr(attribute_unused stdf_file *f, stdf_rec_pmr *r)
+static inline size_t _calc_rec_len_pmr(stdf_attribute_unused stdf_file *f, stdf_rec_pmr *r)
 {
 	return
 		sizeof(r->PMR_INDX) + sizeof(r->CHAN_TYP) + _lenCn(r->CHAN_NAM) +
@@ -1216,14 +1216,14 @@ static inline size_t _calc_rec_len_pmr(attribute_unused stdf_file *f, stdf_rec_p
 		sizeof(r->SITE_NUM);
 }
 
-static inline size_t _calc_rec_len_pgr(attribute_unused stdf_file *f, stdf_rec_pgr *r)
+static inline size_t _calc_rec_len_pgr(stdf_attribute_unused stdf_file *f, stdf_rec_pgr *r)
 {
 	return
 		sizeof(r->GRP_INDX) + _lenCn(r->GRP_NAM) +
 		sizeof(r->INDX_CNT) + _len_dtcX(r->PMR_INDX, r->INDX_CNT);
 }
 
-static inline size_t _calc_rec_len_plr(attribute_unused stdf_file *f, stdf_rec_plr *r)
+static inline size_t _calc_rec_len_plr(stdf_attribute_unused stdf_file *f, stdf_rec_plr *r)
 {
 	return
 		sizeof(r->GRP_CNT) +
@@ -1233,12 +1233,12 @@ static inline size_t _calc_rec_len_plr(attribute_unused stdf_file *f, stdf_rec_p
 		_len_dtcXCN(r->PGM_CHAL, r->GRP_CNT) + _len_dtcXCN(r->RTN_CHAL, r->GRP_CNT);
 }
 
-static inline size_t _calc_rec_len_rdr(attribute_unused stdf_file *f, stdf_rec_rdr *r)
+static inline size_t _calc_rec_len_rdr(stdf_attribute_unused stdf_file *f, stdf_rec_rdr *r)
 {
 	return sizeof(r->NUM_BINS) + _len_dtcX(r->RTST_BIN, r->NUM_BINS);
 }
 
-static inline size_t _calc_rec_len_sdr(attribute_unused stdf_file *f, stdf_rec_sdr *r)
+static inline size_t _calc_rec_len_sdr(stdf_attribute_unused stdf_file *f, stdf_rec_sdr *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_GRP) + sizeof(r->SITE_CNT) +
@@ -1295,7 +1295,7 @@ static inline size_t _calc_rec_len_wrr(stdf_file *f, stdf_rec_wrr *r)
 	return (f->ver == 3 ? _CALC_REC_LEN_WRR_v3(r) : _CALC_REC_LEN_WRR_v4(r));
 }
 
-static inline size_t _calc_rec_len_wcr(attribute_unused stdf_file *f, stdf_rec_wcr *r)
+static inline size_t _calc_rec_len_wcr(stdf_attribute_unused stdf_file *f, stdf_rec_wcr *r)
 {
 	return
 		sizeof(r->WAFR_SIZ) + sizeof(r->DIE_HT) + sizeof(r->DIE_WID) +
@@ -1349,7 +1349,7 @@ static inline size_t _calc_rec_len_prr(stdf_file *f, stdf_rec_prr *r)
 
 #ifdef STDF_VER3
 
-static inline size_t _calc_rec_len_pdr(attribute_unused stdf_file *f, stdf_rec_pdr *r)
+static inline size_t _calc_rec_len_pdr(stdf_attribute_unused stdf_file *f, stdf_rec_pdr *r)
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->DESC_FLG) + sizeof(r->OPT_FLAG) +
@@ -1360,7 +1360,7 @@ static inline size_t _calc_rec_len_pdr(attribute_unused stdf_file *f, stdf_rec_p
 		sizeof(r->HI_LIMIT) + _lenCn(r->TEST_NAM) + _lenCn(r->SEQ_NAME);
 }
 
-static inline size_t _calc_rec_len_fdr(attribute_unused stdf_file *f, stdf_rec_fdr *r)
+static inline size_t _calc_rec_len_fdr(stdf_attribute_unused stdf_file *f, stdf_rec_fdr *r)
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->DESC_FLG) +
@@ -1398,7 +1398,7 @@ static inline size_t _calc_rec_len_tsr(stdf_file *f, stdf_rec_tsr *r)
 	return (f->ver == 3 ? _CALC_REC_LEN_TSR_v3(r) : _CALC_REC_LEN_TSR_v4(r));
 }
 
-static inline size_t _calc_rec_len_ptr(attribute_unused stdf_file *f, stdf_rec_ptr *r)
+static inline size_t _calc_rec_len_ptr(stdf_attribute_unused stdf_file *f, stdf_rec_ptr *r)
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
@@ -1410,7 +1410,7 @@ static inline size_t _calc_rec_len_ptr(attribute_unused stdf_file *f, stdf_rec_p
 		_lenCn(r->C_HLMFMT) + sizeof(r->LO_SPEC) + sizeof(r->HI_SPEC);
 }
 
-static inline size_t _calc_rec_len_mpr(attribute_unused stdf_file *f, stdf_rec_mpr *r)
+static inline size_t _calc_rec_len_mpr(stdf_attribute_unused stdf_file *f, stdf_rec_mpr *r)
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
@@ -1426,7 +1426,7 @@ static inline size_t _calc_rec_len_mpr(attribute_unused stdf_file *f, stdf_rec_m
 		sizeof(r->HI_SPEC);
 }
 
-static inline size_t _calc_rec_len_ftr(attribute_unused stdf_file *f, stdf_rec_ftr *r)
+static inline size_t _calc_rec_len_ftr(stdf_attribute_unused stdf_file *f, stdf_rec_ftr *r)
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
@@ -1442,33 +1442,33 @@ static inline size_t _calc_rec_len_ftr(attribute_unused stdf_file *f, stdf_rec_f
 		_lenDn(r->SPIN_MAP);
 }
 
-static inline size_t _calc_rec_len_bps(attribute_unused stdf_file *f, attribute_unused stdf_rec_bps *r)
+static inline size_t _calc_rec_len_bps(stdf_attribute_unused stdf_file *f, stdf_attribute_unused stdf_rec_bps *r)
 {
 	return _lenCn(r->SEQ_NAME);
 }
 
-static inline size_t _calc_rec_len_eps(attribute_unused stdf_file *f, attribute_unused stdf_rec_eps *r)
+static inline size_t _calc_rec_len_eps(stdf_attribute_unused stdf_file *f, stdf_attribute_unused stdf_rec_eps *r)
 {
 	return 0;
 }
 
 #ifdef STDF_VER3
 
-static inline size_t _calc_rec_len_shb(attribute_unused stdf_file *f, stdf_rec_shb *r)
+static inline size_t _calc_rec_len_shb(stdf_attribute_unused stdf_file *f, stdf_rec_shb *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->HBIN_NUM) +
 		sizeof(r->HBIN_CNT) + _lenCn(r->HBIN_NAM);
 }
 
-static inline size_t _calc_rec_len_ssb(attribute_unused stdf_file *f, stdf_rec_ssb *r)
+static inline size_t _calc_rec_len_ssb(stdf_attribute_unused stdf_file *f, stdf_rec_ssb *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->SBIN_NUM) +
 		sizeof(r->SBIN_CNT) + _lenCn(r->SBIN_NAM);
 }
 
-static inline size_t _calc_rec_len_sts(attribute_unused stdf_file *f, stdf_rec_sts *r)
+static inline size_t _calc_rec_len_sts(stdf_attribute_unused stdf_file *f, stdf_rec_sts *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->TEST_NUM) +
@@ -1479,7 +1479,7 @@ static inline size_t _calc_rec_len_sts(attribute_unused stdf_file *f, stdf_rec_s
 		_lenCn(r->SEQ_NAME) + _lenCn(r->TEST_LBL);
 }
 
-static inline size_t _calc_rec_len_scr(attribute_unused stdf_file *f, stdf_rec_scr *r)
+static inline size_t _calc_rec_len_scr(stdf_attribute_unused stdf_file *f, stdf_rec_scr *r)
 {
 	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->FINISH_T) +
@@ -1489,13 +1489,13 @@ static inline size_t _calc_rec_len_scr(attribute_unused stdf_file *f, stdf_rec_s
 
 #endif
 
-static inline size_t _calc_rec_len_gdr(attribute_unused stdf_file *f, attribute_unused stdf_rec_gdr *r)
+static inline size_t _calc_rec_len_gdr(stdf_attribute_unused stdf_file *f, stdf_attribute_unused stdf_rec_gdr *r)
 {
 	warnf("Not implemented");
 	return 0;
 }
 
-static inline size_t _calc_rec_len_dtr(attribute_unused stdf_file *f, stdf_rec_dtr *r)
+static inline size_t _calc_rec_len_dtr(stdf_attribute_unused stdf_file *f, stdf_rec_dtr *r)
 {
 	return _lenCn(r->TEXT_DAT);
 }

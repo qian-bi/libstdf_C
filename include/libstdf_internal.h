@@ -12,6 +12,27 @@
 #ifndef _LIBSTDF_INTERNAL_H
 #define _LIBSTDF_INTERNAL_H
 
+#ifdef HAVE_ZIP
+# define USE_ZIP(x) x
+#else
+# define USE_ZIP(x)
+#endif
+#ifdef HAVE_GZIP
+# define USE_GZIP(x) x
+#else
+# define USE_GZIP(x)
+#endif
+#ifdef HAVE_BZIP2
+# define USE_BZIP2(x) x
+#else
+# define USE_BZIP2(x)
+#endif
+#ifdef HAVE_LZW
+# define USE_LZW(x) x
+#else
+# define USE_LZW(x)
+#endif
+
 /* STDF File structure */
 #define	__STDF_HOST_BYTE_ORDER		BYTE_ORDER
 
@@ -99,33 +120,6 @@ typedef struct {
 
 #if HAVE_EFENCE_H
 # include <efence.h>
-#endif
-
-
-/**
- * @brief Internal macros for fun ELF tricks.
- */
-#ifndef __GNUC_PREREQ
-# define __GNUC_PREREQ(maj, min) 0
-#endif
-#if __GNUC_PREREQ(3,3) && defined(__ELF__)
-# define attribute_unused __attribute__ ((unused))
-# if !defined(weak_alias)
-#  define weak_alias(name, aliasname) \
-	extern __typeof (name) aliasname __attribute__ ((weak, alias (#name)))
-# endif
-# if !defined(strong_alias)
-#  define strong_alias(name, aliasname) \
-	extern __typeof (name) aliasname __attribute__ ((alias (#name)))
-# endif
-# if !defined(attribute_hidden)
-#  define attribute_hidden __attribute__ ((visibility ("hidden")))
-# endif
-#else
-# define attribute_unused
-# if !defined(attribute_hidden)
-#  define attribute_hidden
-# endif
 #endif
 
 #endif /* _LIBSTDF_INTERNAL_H */

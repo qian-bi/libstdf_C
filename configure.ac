@@ -16,6 +16,7 @@ features.h stdarg.h sys/cdefs.h assert.h \
 ])
 
 AC_STDF_TYPE_CHECKS
+AC_STDF_GCC_ATTRIBUTES
 
 AM_STDF_VAPIER_DEV
 AM_STDF_DEBUG_OPTIONS
