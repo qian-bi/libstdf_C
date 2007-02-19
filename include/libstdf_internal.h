@@ -105,7 +105,7 @@ typedef struct {
 /**
  * @brief Misc cruft for debugging fun.
  */
-#if HAVE_MCHECK_H
+#ifdef HAVE_MCHECK_H
 # include <mcheck.h>
 # define _stdf_mtrace()   mtrace()
 # define _stdf_muntrace() muntrace()
@@ -114,11 +114,11 @@ typedef struct {
 # define _stdf_muntrace()
 #endif
 
-#if HAVE_DMALLOC_H
+#ifdef HAVE_DMALLOC_H
 # include <dmalloc.h>
 #endif
 
-#if HAVE_EFENCE_H
+#ifdef HAVE_EFENCE_H
 # include <efence.h>
 #endif
 

@@ -155,7 +155,7 @@ static __stdf_fops __stdf_fops_reg = {
 /*
  * ZIP SUPPORT
  */
-#if HAVE_ZIP
+#ifdef HAVE_ZIP
 static int __stdf_open_zip(void *data, int flags, uint32_t mode)
 {
 	stdf_file *stdf = (stdf_file*)data;
@@ -204,7 +204,7 @@ static __stdf_fops __stdf_fops_zip = {
 /*
  * GZIP SUPPORT
  */
-#if HAVE_GZIP
+#ifdef HAVE_GZIP
 static int __stdf_open_gzip(void *data, int flags, uint32_t mode)
 {
 	stdf_file *stdf = (stdf_file*)data;
@@ -242,7 +242,7 @@ static __stdf_fops __stdf_fops_gzip = {
 /*
  * BZIP2 SUPPORT
  */
-#if HAVE_BZIP2
+#ifdef HAVE_BZIP2
 static int __stdf_open_bzip2(void *data, int flags, uint32_t mode)
 {
 	stdf_file *stdf = (stdf_file*)data;
@@ -280,7 +280,7 @@ static __stdf_fops __stdf_fops_bzip2 = {
 /*
  * LZW SUPPORT
  */
-#if HAVE_LZW
+#ifdef HAVE_LZW
 static int __stdf_open_lzw(void *data, int flags, uint32_t mode)
 {
 	stdf_file *stdf = (stdf_file*)data;
@@ -368,22 +368,22 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mod
 	}
 
 	switch (ret->file_format) {
-#if HAVE_ZIP
+#ifdef HAVE_ZIP
 		case STDF_FORMAT_ZIP:
 			ret->fops = &__stdf_fops_zip;
 			break;
 #endif
-#if HAVE_GZIP
+#ifdef HAVE_GZIP
 		case STDF_FORMAT_GZIP:
 			ret->fops = &__stdf_fops_gzip;
 			break;
 #endif
-#if HAVE_BZIP2
+#ifdef HAVE_BZIP2
 		case STDF_FORMAT_BZIP2:
 			ret->fops = &__stdf_fops_bzip2;
 			break;
 #endif
-#if HAVE_LZW
+#ifdef HAVE_LZW
 		case STDF_FORMAT_LZW:
 			ret->fops = &__stdf_fops_lzw;
 			break;

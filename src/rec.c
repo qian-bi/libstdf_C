@@ -94,7 +94,7 @@ char* stdf_get_rec_name(stdf_rec_typ type, stdf_rec_sub sub)
 	return stdf_rec_names[_stdf_header_to_idx(type, sub)];
 }
 
-#if WARN_UNTESTED
+#ifdef WARN_UNTESTED
 #define	warn_untested(type) \
 	do { \
 		warnf("*********************************************"); \
