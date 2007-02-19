@@ -9,6 +9,7 @@ doit() {
 	make clean
 	make -j
 	make check
+	[[ $d == "." ]] && make distcheck
 	make distclean
 }
 

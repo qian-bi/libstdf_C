@@ -37,5 +37,7 @@ distdir:
 
 distclean clean:
 	rm -f *.out
+	if test "$(srcdir)" != "$(builddir)" ; then rm -f $(STDF) ; fi
 
-.PHONY: all install check ascii html stats create distdir distclean clean
+.PHONY: all install check ascii html stats create distdir distclean clean \
+	dvi installcheck uninstall

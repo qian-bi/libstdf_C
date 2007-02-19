@@ -20,3 +20,6 @@ unknown:
      If so, then remove duplicate entries after the first occurence
 
  - stop polluting exported name space with HAVE_* defines
+
+ - figure out how to integrate tests/Makefile.in properly so i dont have
+   to keep tweaking it
