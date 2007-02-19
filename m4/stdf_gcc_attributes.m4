@@ -1,0 +1,37 @@
+dnl
+dnl AC_STDF_GCC_ATTR_CHECK(define suffix, checking display, compile global, compile body)
+dnl
+AC_DEFUN([AC_STDF_GCC_ATTR_CHECK],
+[dnl
+	AC_MSG_CHECKING(if the compiler supports __attribute__ (( [$2] )) )
+	AC_TRY_COMPILE([$3], [$4], [stdf_gcc_attr="1"], [stdf_gcc_attr="0"])
+	AC_DEFINE_UNQUOTED(STDF_HAVE_GCC_ATTRIBUTE_$1, $stdf_gcc_attr, [compiler supports __attribute__ (($1))])
+	test $stdf_gcc_attr = 1 && stdf_gcc_attr="yes" || stdf_gcc_attr="no"
+	AC_MSG_RESULT($stdf_gcc_attr)
+])
+AC_DEFUN([AC_STDF_GCC_ATTRIBUTES],
+[dnl
+dnl ********************************************************
+dnl *                    gcc attributes                    *
+dnl ********************************************************
+AC_STDF_GCC_ATTR_CHECK([UNUSED],
+	[__unused__],
+	[],
+	[int i __attribute__ ((__unused__))])
+AC_STDF_GCC_ATTR_CHECK([CONST],
+	[__const__],
+	[__attribute__((__const__)) void stdf_foo_moo(void) {}],
+	[])
+AC_STDF_GCC_ATTR_CHECK([VISIBILITY],
+	[__visibility__("hidden")],
+	[__attribute__((__visibility__("hidden"))) void stdf_foo_moo(void) {}],
+	[])
+AC_STDF_GCC_ATTR_CHECK([STRONG_ALIAS],
+	[__alias__("symbol")],
+	[int stdf_foo(void) {} extern int stdf_moo(void) __attribute__ (( __alias__ ("stdf_foo")));],
+	[int i = stdf_moo();])
+AC_STDF_GCC_ATTR_CHECK([WEAK_ALIAS],
+	[__weak__, __alias__("symbol")],
+	[int stdf_foo(void) {} extern int stdf_moo(void) __attribute__ (( __weak__, __alias__ ("stdf_foo")));],
+	[int i = stdf_moo();])
+])
