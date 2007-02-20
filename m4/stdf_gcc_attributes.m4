@@ -2,11 +2,15 @@ dnl
 dnl AC_STDF_GCC_ATTR_CHECK(define suffix, checking display, compile global, compile body)
 dnl
 AC_DEFUN([AC_STDF_GCC_ATTR_CHECK],
-[dnl
+[dnl The usage of -Werror is catch things where gcc will simply warn about the attribute not being supported
 	AC_MSG_CHECKING(if the compiler supports __attribute__ (( [$2] )) )
-	AC_TRY_COMPILE([$3], [$4], [stdf_gcc_attr="1"], [stdf_gcc_attr="0"])
-	AC_DEFINE_UNQUOTED(STDF_HAVE_GCC_ATTRIBUTE_$1, $stdf_gcc_attr, [compiler supports __attribute__ (($1))])
-	test $stdf_gcc_attr = 1 && stdf_gcc_attr="yes" || stdf_gcc_attr="no"
+	save_CFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS -Wattributes -Werror"
+	AC_TRY_COMPILE([$3], [$4], [stdf_gcc_attr="yes"], [stdf_gcc_attr="no"])
+	if test x"$stdf_gcc_attr" = xyes ; then
+		AC_DEFINE(STDF_HAVE_GCC_ATTRIBUTE_$1, 1, [compiler supports __attribute__ (($1))])
+	fi
+	CFLAGS="$save_CFLAGS"
 	AC_MSG_RESULT($stdf_gcc_attr)
 ])
 AC_DEFUN([AC_STDF_GCC_ATTRIBUTES],
