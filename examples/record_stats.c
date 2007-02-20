@@ -12,7 +12,7 @@
 /*
  * libhash
  */
-#if HAVE_HASH_H
+#if defined(HAVE_HASH_H)
 #include <hash.h>
 #define HASH_VARS \
 	void *key, *val; \
@@ -41,7 +41,7 @@
 /*
  * Ecore
  */
-#elif HAVE_ECORE
+#elif defined(HAVE_ECORE)
 #include <Ecore.h>
 #define HASH_VARS \
 	Ecore_Hash *hash_table; \
@@ -68,7 +68,7 @@ void print_stat(void *value, void *user_data)
 /*
  * glib
  */
-#elif HAVE_GLIB
+#elif defined(HAVE_GLIB)
 #include <glib.h>
 #define HASH_VARS \
 	GHashTable *hash_table; \

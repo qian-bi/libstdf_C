@@ -19,6 +19,6 @@ libstdf_la_SOURCES = \
 	rec.c \
 	$(EXTRA_STDF_SOURCES)
 libstdf_la_CFLAGS = -no-suppress
-libstdf_la_LDFLAGS = -no-suppress -version-info 0:1:0
+libstdf_la_LDFLAGS = -no-suppress -version-info 0:1:0 -no-undefined
 
 libstdf_la_LIBADD = @ZIP_LIBS@ @GZIP_LIBS@ @BZIP2_LIBS@ @DEBUG_LIBS@

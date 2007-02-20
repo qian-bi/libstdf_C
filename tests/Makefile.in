@@ -4,6 +4,7 @@ srcdir       = @srcdir@
 top_srcdir   = @top_srcdir@
 builddir     = @builddir@
 top_builddir = @top_builddir@
+EXEEXT       = @EXEEXT@
 
 EXAMPLE_DIR  = $(top_builddir)/examples
 STDF         = stdf.bz2
@@ -17,19 +18,19 @@ $(STDF): $(srcdir)/$(STDF)
 	cp $(srcdir)/$(STDF) $(STDF)
 
 ascii: $(STDF)
-	$(EXAMPLE_DIR)/dump_records_to_ascii $(STDF) > ascii.out
+	$(EXAMPLE_DIR)/dump_records_to_ascii$(EXEEXT) $(STDF) > ascii.out
 	$(BZCMP) ascii.out $(srcdir)/ascii.good.bz2
 
 html: $(STDF)
-	$(EXAMPLE_DIR)/dump_records_to_html $(STDF) html.out
+	$(EXAMPLE_DIR)/dump_records_to_html$(EXEEXT) $(STDF) html.out
 	$(BZCMP) html.out $(srcdir)/html.good.bz2
 
 stats: $(STDF)
-	$(EXAMPLE_DIR)/record_stats $(STDF) | env LC_ALL="C" sort > stats.out
+	$(EXAMPLE_DIR)/record_stats$(EXEEXT) $(STDF) | env LC_ALL="C" sort > stats.out
 	$(BZCMP) stats.out $(srcdir)/stats.good.bz2
 
 create:
-	$(EXAMPLE_DIR)/makestdf create.out
+	$(EXAMPLE_DIR)/makestdf$(EXEEXT) create.out
 	$(BZCMP) create.out $(srcdir)/create.good.bz2
 
 distdir:

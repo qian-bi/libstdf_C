@@ -11,7 +11,7 @@
 #ifndef _LIBSTDF_SYSTEMS_H
 #define _LIBSTDF_SYSTEMS_H
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
 # include <libstdf_win32.h>
 #else
 # include <libstdf_sys_config.h>
@@ -79,6 +79,9 @@ extern int errno;
 #endif
 #if defined(HAVE_SYS_ISA_DEFS_H)
 # include <sys/isa_defs.h>
+#endif
+#if defined(HAVE_SYS_PARAM_H)
+# include <sys/param.h>
 #endif
 
 #if defined(HAVE_BYTESWAP_H)
