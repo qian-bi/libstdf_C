@@ -153,9 +153,13 @@ int main(int argc, char *argv[])
 	else
 		sprintf(cpu_name, "Unknown Endian [???]");
 
-	if ((out=fopen(argv[x+1], "w")) == NULL) {
-		perror("Could not open html file");
-		return EXIT_FAILURE;
+	if (!strcmp(argv[x+1], "-")) {
+		out = stdout;
+	} else {
+		if ((out=fopen(argv[x+1], "w")) == NULL) {
+			perror("Could not open html file");
+			return EXIT_FAILURE;
+		}
 	}
 
 	fprintf(out,
