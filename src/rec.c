@@ -866,16 +866,6 @@ stdf_rec_tsr* stdf_read_rec_tsr(stdf_file *file)
 	_stdf_read_dtc_U4(file, &(tsr->EXEC_CNT));
 	_stdf_read_dtc_U4(file, &(tsr->FAIL_CNT));
 	_stdf_read_dtc_U4(file, &(tsr->ALRM_CNT));
-#ifdef STDF_VER3
-	} else {
-	_stdf_read_dtc_I4(file, &(tsr->EXEC_CNT));
-	_stdf_read_dtc_I4(file, &(tsr->FAIL_CNT));
-	_stdf_read_dtc_I4(file, &(tsr->ALRM_CNT));
-	}
-#endif
-#ifdef STDF_VER3
-	if (file->ver == 4) {
-#endif
 	_stdf_read_dtc_Cn(file, &(tsr->TEST_NAM));
 	_stdf_read_dtc_Cn(file, &(tsr->SEQ_NAME));
 	_stdf_read_dtc_Cn(file, &(tsr->TEST_LBL));
@@ -887,6 +877,9 @@ stdf_rec_tsr* stdf_read_rec_tsr(stdf_file *file)
 	_stdf_read_dtc_R4(file, &(tsr->TST_SQRS));
 #ifdef STDF_VER3
 	} else {
+	_stdf_read_dtc_I4(file, &(tsr->EXEC_CNT));
+	_stdf_read_dtc_I4(file, &(tsr->FAIL_CNT));
+	_stdf_read_dtc_I4(file, &(tsr->ALRM_CNT));
 	_stdf_read_dtc_B1(file, &(tsr->OPT_FLAG));
 	_stdf_read_dtc_B1(file, &(tsr->PAD_BYTE));
 	_stdf_read_dtc_R4(file, &(tsr->TEST_MIN));
@@ -916,14 +909,8 @@ stdf_rec_ptr* stdf_read_rec_ptr(stdf_file *file)
 #endif
 	_stdf_read_dtc_Cn(file, &(ptr->TEST_TXT));
 	_stdf_read_dtc_Cn(file, &(ptr->ALARM_ID));
-#ifdef STDF_VER3
-	}
-#endif
 	_stdf_read_dtc_B1(file, &(ptr->OPT_FLAG));
 	_stdf_read_dtc_I1(file, &(ptr->RES_SCAL));
-#ifdef STDF_VER3
-	if (file->ver == 4) {
-#endif
 	_stdf_read_dtc_I1(file, &(ptr->LLM_SCAL));
 	_stdf_read_dtc_I1(file, &(ptr->HLM_SCAL));
 	_stdf_read_dtc_R4(file, &(ptr->LO_LIMIT));
@@ -936,6 +923,8 @@ stdf_rec_ptr* stdf_read_rec_ptr(stdf_file *file)
 	_stdf_read_dtc_R4(file, &(ptr->HI_SPEC));
 #ifdef STDF_VER3
 	} else {
+	_stdf_read_dtc_B1(file, &(ptr->OPT_FLAG));
+	_stdf_read_dtc_I1(file, &(ptr->RES_SCAL));
 	_stdf_read_dtc_U1(file, &(ptr->RES_LDIG));
 	_stdf_read_dtc_U1(file, &(ptr->RES_RDIG));
 	_stdf_read_dtc_B1(file, &(ptr->DESC_FLG));
@@ -2049,12 +2038,12 @@ ssize_t stdf_write_rec_tsr(stdf_file *file, stdf_rec_tsr *tsr)
 #endif
 	_stdf_write_dtc_C1(file, tsr->TEST_TYP);
 	_stdf_write_dtc_U4(file, tsr->TEST_NUM);
-	_stdf_write_dtc_U4(file, tsr->EXEC_CNT);
-	_stdf_write_dtc_U4(file, tsr->FAIL_CNT);
-	_stdf_write_dtc_U4(file, tsr->ALRM_CNT);
 #ifdef STDF_VER3
 	if (file->ver == 4) {
 #endif
+	_stdf_write_dtc_U4(file, tsr->EXEC_CNT);
+	_stdf_write_dtc_U4(file, tsr->FAIL_CNT);
+	_stdf_write_dtc_U4(file, tsr->ALRM_CNT);
 	_stdf_write_dtc_Cn(file, tsr->TEST_NAM);
 	_stdf_write_dtc_Cn(file, tsr->SEQ_NAME);
 	_stdf_write_dtc_Cn(file, tsr->TEST_LBL);
@@ -2066,6 +2055,9 @@ ssize_t stdf_write_rec_tsr(stdf_file *file, stdf_rec_tsr *tsr)
 	_stdf_write_dtc_R4(file, tsr->TST_SQRS);
 #ifdef STDF_VER3
 	} else {
+	_stdf_write_dtc_I4(file, tsr->EXEC_CNT);
+	_stdf_write_dtc_I4(file, tsr->FAIL_CNT);
+	_stdf_write_dtc_I4(file, tsr->ALRM_CNT);
 	_stdf_write_dtc_B1(file, tsr->OPT_FLAG);
 	_stdf_write_dtc_B1(file, tsr->PAD_BYTE);
 	_stdf_write_dtc_R4(file, tsr->TEST_MIN);
@@ -2093,6 +2085,9 @@ ssize_t stdf_write_rec_ptr(stdf_file *file, stdf_rec_ptr *ptr)
 	_stdf_write_dtc_B1(file, ptr->TEST_FLG);
 	_stdf_write_dtc_B1(file, ptr->PARM_FLG);
 	_stdf_write_dtc_R4(file, ptr->RESULT);
+#ifdef STDF_VER3
+	if (file->ver == 4) {
+#endif
 	_stdf_write_dtc_Cn(file, ptr->TEST_TXT);
 	_stdf_write_dtc_Cn(file, ptr->ALARM_ID);
 	_stdf_write_dtc_B1(file, ptr->OPT_FLAG);
@@ -2107,6 +2102,27 @@ ssize_t stdf_write_rec_ptr(stdf_file *file, stdf_rec_ptr *ptr)
 	_stdf_write_dtc_Cn(file, ptr->C_HLMFMT);
 	_stdf_write_dtc_R4(file, ptr->LO_SPEC);
 	_stdf_write_dtc_R4(file, ptr->HI_SPEC);
+#ifdef STDF_VER3
+	} else {
+	_stdf_write_dtc_B1(file, ptr->OPT_FLAG);
+	_stdf_write_dtc_I1(file, ptr->RES_SCAL);
+	_stdf_write_dtc_U1(file, ptr->RES_LDIG);
+	_stdf_write_dtc_U1(file, ptr->RES_RDIG);
+	_stdf_write_dtc_B1(file, ptr->DESC_FLG);
+	_stdf_write_dtc_Cx(file, ptr->UNITS, 7);
+	_stdf_write_dtc_I1(file, ptr->LLM_SCAL);
+	_stdf_write_dtc_I1(file, ptr->HLM_SCAL);
+	_stdf_write_dtc_U1(file, ptr->LLM_LDIG);
+	_stdf_write_dtc_U1(file, ptr->LLM_RDIG);
+	_stdf_write_dtc_U1(file, ptr->HLM_LDIG);
+	_stdf_write_dtc_U1(file, ptr->HLM_RDIG);
+	_stdf_write_dtc_R4(file, ptr->LO_LIMIT);
+	_stdf_write_dtc_R4(file, ptr->HI_LIMIT);
+	_stdf_write_dtc_Cn(file, ptr->TEST_NAM);
+	_stdf_write_dtc_Cn(file, ptr->SEQ_NAME);
+	_stdf_write_dtc_Cn(file, ptr->TEST_TXT);
+	}
+#endif
 	return _stdf_write_flush(file, ptr->header.REC_LEN);
 }
 
@@ -2156,6 +2172,9 @@ ssize_t stdf_write_rec_ftr(stdf_file *file, stdf_rec_ftr *ftr)
 	_stdf_write_dtc_U1(file, ftr->HEAD_NUM);
 	_stdf_write_dtc_U1(file, ftr->SITE_NUM);
 	_stdf_write_dtc_B1(file, ftr->TEST_FLG);
+#ifdef STDF_VER3
+	if (file->ver == 4) {
+#endif
 	_stdf_write_dtc_B1(file, ftr->OPT_FLAG);
 	_stdf_write_dtc_U4(file, ftr->CYCL_CNT);
 	_stdf_write_dtc_U4(file, ftr->REL_VADR);
@@ -2180,6 +2199,25 @@ ssize_t stdf_write_rec_ftr(stdf_file *file, stdf_rec_ftr *ftr)
 	_stdf_write_dtc_Cn(file, ftr->RSLT_TXT);
 	_stdf_write_dtc_U1(file, ftr->PATG_NUM);
 	_stdf_write_dtc_Dn(file, ftr->SPIN_MAP);
+#ifdef STDF_VER3
+	} else {
+	_stdf_write_dtc_B1(file, ftr->DESC_FLG);
+	_stdf_write_dtc_B1(file, ftr->OPT_FLAG);
+	_stdf_write_dtc_U1(file, ftr->TIME_SET);
+	_stdf_write_dtc_U4(file, ftr->VECT_ADR);
+	_stdf_write_dtc_U4(file, ftr->CYCL_CNT);
+	_stdf_write_dtc_U2(file, ftr->REPT_CNT);
+	_stdf_write_dtc_U2(file, ftr->PCP_ADDR);
+	_stdf_write_dtc_U4(file, ftr->NUM_FAIL);
+	_stdf_write_dtc_Bn(file, ftr->FAIL_PIN);
+	_stdf_write_dtc_Bn(file, ftr->VECT_DAT);
+	_stdf_write_dtc_Bn(file, ftr->DEV_DAT);
+	_stdf_write_dtc_Bn(file, ftr->RPIN_MAP);
+	_stdf_write_dtc_Cn(file, ftr->TEST_NAM);
+	_stdf_write_dtc_Cn(file, ftr->SEQ_NAME);
+	_stdf_write_dtc_Cn(file, ftr->TEST_TXT);
+	}
+#endif
 	return _stdf_write_flush(file, ftr->header.REC_LEN);
 }
 
