@@ -25,7 +25,7 @@
 #define HASH_UPDATE \
 	key = (void*)recname; \
 	if (!hash_retrieve(&hash_table, key, (void**)&val)) { \
-		val = (void*)malloc(sizeof(long)); \
+		val = malloc(sizeof(long)); \
 		*(long*)val = 0; \
 		hash_insert(&hash_table, key, val); \
 	} \
@@ -51,7 +51,7 @@
 #define HASH_UPDATE \
 	stat = ecore_hash_get(hash_table, recname); \
 	if (!stat) { \
-		stat = (long*)malloc(sizeof(long)); \
+		stat = malloc(sizeof(long)); \
 		*stat = 0; \
 		ecore_hash_set(hash_table, strdup(recname), stat); \
 	} \
@@ -78,7 +78,7 @@ void print_stat(void *value, void *user_data)
 #define HASH_UPDATE \
 	stat = g_hash_table_lookup(hash_table, recname); \
 	if (!stat) { \
-		stat = (long*)malloc(sizeof(long)); \
+		stat = malloc(sizeof(long)); \
 		*stat = 0; \
 		g_hash_table_insert(hash_table, g_strdup(recname), stat); \
 	} \

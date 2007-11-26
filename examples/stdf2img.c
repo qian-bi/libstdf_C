@@ -49,11 +49,11 @@ int main(int argc, char *argv[])
 	x_range = x_max - x_min + 1	;
 	y_range = y_max - y_min + 1;
 
-	hard_bins = (stdf_dtc_U2*)malloc(sizeof(stdf_dtc_U2) * x_range * y_range);
+	hard_bins = malloc(sizeof(stdf_dtc_U2) * x_range * y_range);
 	if (!hard_bins) perror("hard_bins malloc failed");
 	memset(hard_bins, 0, sizeof(stdf_dtc_U2) * x_range * y_range);
 
-	soft_bins = (stdf_dtc_U2*)malloc(sizeof(stdf_dtc_U2) * x_range * y_range);
+	soft_bins = malloc(sizeof(stdf_dtc_U2) * x_range * y_range);
 	if (!soft_bins) perror("soft_bins malloc failed");
 	memset(soft_bins, 0, sizeof(stdf_dtc_U2) * x_range * y_range);
 

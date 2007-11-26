@@ -70,7 +70,7 @@ static int __stdf_init(stdf_file *f, stdf_dtc_U1 cpu_type, stdf_dtc_U1 stdf_ver,
 
 	if (f->opts & STDF_OPTS_WRITE) {
 		/* make the buffer big enough to hold the largest record possible */
-		f->__output = (byte_t*)malloc(sizeof(byte_t) * (stdf_dtc_U2)-1);
+		f->__output = malloc(sizeof(byte_t) * (stdf_dtc_U2)-1);
 		if (f->__output == NULL)
 			return 1;
 	} else
@@ -319,7 +319,7 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mod
 	stdf_file *ret;
 
 	_stdf_mtrace();
-	ret = (stdf_file*)malloc(sizeof(stdf_file));
+	ret = malloc(sizeof(*ret));
 
 	if (!pathname || pathname[0] == '\0') {
 		if (fd == -1) {
@@ -413,7 +413,7 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mod
 
 	if (!(opts & STDF_OPTS_WRITE)) {
 		/* try to peek at the FAR record to figure out the CPU type/STDF ver */
-		ret->__data = (byte_t*)malloc(6);
+		ret->__data = malloc(6);
 		if (ret->fops->read(ret, ret->__data, 6) != 6)
 			goto out_err;
 		if ((MAKE_REC(ret->__data[2], ret->__data[3]) != STDF_REC_FAR)
@@ -512,7 +512,7 @@ stdf_rec_unknown* stdf_read_record_raw(stdf_file *file)
 		file->__data = NULL;
 		cheated = 1;
 	}
-	raw_rec = (stdf_rec_unknown*)malloc(sizeof(stdf_rec_unknown));
+	raw_rec = malloc(sizeof(*raw_rec));
 	if (raw_rec == NULL) {
 		warnfp("malloc.1");
 		goto ret_null;
@@ -526,7 +526,7 @@ stdf_rec_unknown* stdf_read_record_raw(stdf_file *file)
 	_stdf_byte_order_to_host(file, &(file->header.REC_LEN), sizeof(stdf_dtc_U2));
 
 	/* buffer the whole record in memory */
-	raw_rec->data = (void*)malloc(file->header.REC_LEN+4);
+	raw_rec->data = malloc(file->header.REC_LEN+4);
 	if (raw_rec->data == NULL) {
 		warnfp("malloc.2");
 		free(raw_rec);
@@ -720,7 +720,7 @@ ssize_t stdf_write_record_r(stdf_file *file, void *stdf_rec_void)
 	ssize_t ret;
 	stdf_rec_unknown *rec = (stdf_rec_unknown*)stdf_rec_void;
 	unsigned char *reentrant_buffer;
-	reentrant_buffer = (unsigned char *)malloc(rec->header.STDF_REC_LEN);
+	reentrant_buffer = malloc(rec->header.STDF_REC_LEN);
 	ret = _stdf_write_record(file, rec, reentrant_buffer);
 	free(reentrant_buffer);
 	return ret;

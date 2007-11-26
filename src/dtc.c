@@ -84,7 +84,7 @@ void _stdf_read_dtc_Cn(stdf_file *f, stdf_dtc_Cn *Cn)
 {
 	unsigned char len;
 	if (f->rec_pos == f->rec_end) {
-		(*Cn) = (stdf_dtc_Cn)malloc(sizeof(stdf_dtc_C1));
+		(*Cn) = malloc(sizeof(stdf_dtc_C1));
 		(*Cn)[0] = 0;
 		return;
 	}
@@ -108,7 +108,7 @@ void _stdf_read_dtc_Dn(stdf_file *f, stdf_dtc_Dn *Dn)
 	unsigned int len;
 
 	if (f->rec_pos == f->rec_end) {
-		(*Dn) = (stdf_dtc_Dn)malloc(2);
+		(*Dn) = malloc(2);
 		((stdf_dtc_U2*)(*Dn))[0] = 0;
 		return;
 	}
@@ -119,7 +119,7 @@ void _stdf_read_dtc_Dn(stdf_file *f, stdf_dtc_Dn *Dn)
 
 	len = bit_cnt / (sizeof(stdf_dtc_B1) * 8);
 	if (bit_cnt % 8) ++len;
-	(*Dn) = (stdf_dtc_Dn)malloc(len + 3);
+	(*Dn) = malloc(len + 3);
 	((stdf_dtc_U2*)(*Dn))[0] = bit_cnt;
 	memcpy(((byte_t*)(*Dn))+2, f->rec_pos, len);
 	f->rec_pos += len;
@@ -129,7 +129,7 @@ void _stdf_read_dtc_Dn(stdf_file *f, stdf_dtc_Dn *Dn)
 void _stdf_read_dtc_xN1(stdf_file *f, stdf_dtc_xN1 *xN1, stdf_dtc_U2 cnt)
 {
 	stdf_dtc_U2 len = cnt / 2 + cnt % 2;
-	(*xN1) = (stdf_dtc_xN1)malloc(len);
+	(*xN1) = malloc(len);
 	memcpy((*xN1), f->rec_pos, len);
 	f->rec_pos += len;
 }
@@ -205,7 +205,7 @@ void _stdf_read_dtc_Vn(stdf_file *f, stdf_dtc_Vn *pVn, stdf_dtc_U2 cnt)
 	}
 
 #define DO_VN(DTC) \
-		Vn->data = (void*)malloc(sizeof(stdf_##DTC)); \
+		Vn->data = malloc(sizeof(stdf_##DTC)); \
 		_stdf_read_ ## DTC(f, ((stdf_##DTC*)Vn->data));
 
 	(*pVn) = (stdf_dtc_Vn)calloc(cnt, sizeof(stdf_dtc_Vn_ele));

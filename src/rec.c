@@ -100,8 +100,6 @@ char* stdf_get_rec_name(stdf_rec_typ type, stdf_rec_sub sub)
  */
 
 
-#define __malloc_rec(r) ((r*)malloc(sizeof(r)))
-
 void stdf_free_record(stdf_rec_unknown *rec)
 {
 	stdf_file *file;
@@ -472,9 +470,9 @@ void stdf_free_record(stdf_rec_unknown *rec)
 
 stdf_rec_unknown* stdf_read_rec_unknown(stdf_file *file)
 {
-	stdf_rec_unknown *rec = __malloc_rec(stdf_rec_unknown);
+	stdf_rec_unknown *rec = malloc(sizeof(*rec));
 #if 0
-	rec->data = (void*)malloc(file->header.REC_LEN);
+	rec->data = malloc(file->header.REC_LEN);
 	memcpy(rec->data, file->stdf_rec_data, file->header.REC_LEN);
 #else
 	rec->data = NULL;
@@ -485,7 +483,8 @@ stdf_rec_unknown* stdf_read_rec_unknown(stdf_file *file)
 
 stdf_rec_far* stdf_read_rec_far(stdf_file *file)
 {
-	stdf_rec_far *far = __malloc_rec(stdf_rec_far);
+	stdf_rec_far *far = malloc(sizeof(*far));
+
 	_stdf_read_dtc_U1(file, &(far->CPU_TYPE));
 	_stdf_read_dtc_U1(file, &(far->STDF_VER));
 	return far;
@@ -493,7 +492,7 @@ stdf_rec_far* stdf_read_rec_far(stdf_file *file)
 
 stdf_rec_atr* stdf_read_rec_atr(stdf_file *file)
 {
-	stdf_rec_atr *atr = __malloc_rec(stdf_rec_atr);
+	stdf_rec_atr *atr = malloc(sizeof(*atr));
 	_stdf_read_dtc_U4(file, &(atr->MOD_TIM));
 	_stdf_read_dtc_Cn(file, &(atr->CMD_LINE));
 	return atr;
@@ -501,7 +500,7 @@ stdf_rec_atr* stdf_read_rec_atr(stdf_file *file)
 
 stdf_rec_mir* stdf_read_rec_mir(stdf_file *file)
 {
-	stdf_rec_mir *mir = __malloc_rec(stdf_rec_mir);
+	stdf_rec_mir *mir = malloc(sizeof(*mir));
 #ifdef STDF_VER3
 	if (file->ver == 4) {
 #endif
@@ -575,7 +574,7 @@ stdf_rec_mir* stdf_read_rec_mir(stdf_file *file)
 
 stdf_rec_mrr* stdf_read_rec_mrr(stdf_file *file)
 {
-	stdf_rec_mrr *mrr = __malloc_rec(stdf_rec_mrr);
+	stdf_rec_mrr *mrr = malloc(sizeof(*mrr));
 	_stdf_read_dtc_U4(file, &(mrr->FINISH_T));
 #ifdef STDF_VER3
 	if (file->ver == 3) {
@@ -594,7 +593,7 @@ stdf_rec_mrr* stdf_read_rec_mrr(stdf_file *file)
 
 stdf_rec_pcr* stdf_read_rec_pcr(stdf_file *file)
 {
-	stdf_rec_pcr *pcr = __malloc_rec(stdf_rec_pcr);
+	stdf_rec_pcr *pcr = malloc(sizeof(*pcr));
 	_stdf_read_dtc_U1(file, &(pcr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(pcr->SITE_NUM));
 	_stdf_read_dtc_U4(file, &(pcr->PART_CNT));
@@ -607,7 +606,7 @@ stdf_rec_pcr* stdf_read_rec_pcr(stdf_file *file)
 
 stdf_rec_hbr* stdf_read_rec_hbr(stdf_file *file)
 {
-	stdf_rec_hbr *hbr = __malloc_rec(stdf_rec_hbr);
+	stdf_rec_hbr *hbr = malloc(sizeof(*hbr));
 	_stdf_read_dtc_U1(file, &(hbr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(hbr->SITE_NUM));
 	_stdf_read_dtc_U2(file, &(hbr->HBIN_NUM));
@@ -619,7 +618,7 @@ stdf_rec_hbr* stdf_read_rec_hbr(stdf_file *file)
 
 stdf_rec_sbr* stdf_read_rec_sbr(stdf_file *file)
 {
-	stdf_rec_sbr *sbr = __malloc_rec(stdf_rec_sbr);
+	stdf_rec_sbr *sbr = malloc(sizeof(*sbr));
 	_stdf_read_dtc_U1(file, &(sbr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(sbr->SITE_NUM));
 	_stdf_read_dtc_U2(file, &(sbr->SBIN_NUM));
@@ -631,7 +630,7 @@ stdf_rec_sbr* stdf_read_rec_sbr(stdf_file *file)
 
 stdf_rec_pmr* stdf_read_rec_pmr(stdf_file *file)
 {
-	stdf_rec_pmr *pmr = __malloc_rec(stdf_rec_pmr);
+	stdf_rec_pmr *pmr = malloc(sizeof(*pmr));
 	_stdf_read_dtc_U2(file, &(pmr->PMR_INDX));
 	_stdf_read_dtc_U2(file, &(pmr->CHAN_TYP));
 	_stdf_read_dtc_Cn(file, &(pmr->CHAN_NAM));
@@ -644,7 +643,7 @@ stdf_rec_pmr* stdf_read_rec_pmr(stdf_file *file)
 
 stdf_rec_pgr* stdf_read_rec_pgr(stdf_file *file)
 {
-	stdf_rec_pgr *pgr = __malloc_rec(stdf_rec_pgr);
+	stdf_rec_pgr *pgr = malloc(sizeof(*pgr));
 	_stdf_read_dtc_U2(file, &(pgr->GRP_INDX));
 	_stdf_read_dtc_Cn(file, &(pgr->GRP_NAM));
 	_stdf_read_dtc_U2(file, &(pgr->INDX_CNT));
@@ -654,7 +653,7 @@ stdf_rec_pgr* stdf_read_rec_pgr(stdf_file *file)
 
 stdf_rec_plr* stdf_read_rec_plr(stdf_file *file)
 {
-	stdf_rec_plr *plr = __malloc_rec(stdf_rec_plr);
+	stdf_rec_plr *plr = malloc(sizeof(*plr));
 	_stdf_read_dtc_U2(file, &(plr->GRP_CNT));
 	_stdf_read_dtc_xU2(file, &(plr->GRP_INDX), plr->GRP_CNT);
 	_stdf_read_dtc_xU2(file, &(plr->GRP_MODE), plr->GRP_CNT);
@@ -668,7 +667,7 @@ stdf_rec_plr* stdf_read_rec_plr(stdf_file *file)
 
 stdf_rec_rdr* stdf_read_rec_rdr(stdf_file *file)
 {
-	stdf_rec_rdr *rdr = __malloc_rec(stdf_rec_rdr);
+	stdf_rec_rdr *rdr = malloc(sizeof(*rdr));
 	_stdf_read_dtc_U2(file, &(rdr->NUM_BINS));
 	_stdf_read_dtc_xU2(file, &(rdr->RTST_BIN), rdr->NUM_BINS);
 	return rdr;
@@ -676,7 +675,7 @@ stdf_rec_rdr* stdf_read_rec_rdr(stdf_file *file)
 
 stdf_rec_sdr* stdf_read_rec_sdr(stdf_file *file)
 {
-	stdf_rec_sdr *sdr = __malloc_rec(stdf_rec_sdr);
+	stdf_rec_sdr *sdr = malloc(sizeof(*sdr));
 	_stdf_read_dtc_U1(file, &(sdr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(sdr->SITE_GRP));
 	_stdf_read_dtc_U1(file, &(sdr->SITE_CNT));
@@ -702,7 +701,7 @@ stdf_rec_sdr* stdf_read_rec_sdr(stdf_file *file)
 
 stdf_rec_wir* stdf_read_rec_wir(stdf_file *file)
 {
-	stdf_rec_wir *wir = __malloc_rec(stdf_rec_wir);
+	stdf_rec_wir *wir = malloc(sizeof(*wir));
 	_stdf_read_dtc_U1(file, &(wir->HEAD_NUM));
 #ifdef STDF_VER3
 	if (file->ver == 3)
@@ -717,7 +716,7 @@ stdf_rec_wir* stdf_read_rec_wir(stdf_file *file)
 
 stdf_rec_wrr* stdf_read_rec_wrr(stdf_file *file)
 {
-	stdf_rec_wrr *wrr = __malloc_rec(stdf_rec_wrr);
+	stdf_rec_wrr *wrr = malloc(sizeof(*wrr));
 #ifdef STDF_VER3
 	if (file->ver == 4) {
 #endif
@@ -756,7 +755,7 @@ stdf_rec_wrr* stdf_read_rec_wrr(stdf_file *file)
 
 stdf_rec_wcr* stdf_read_rec_wcr(stdf_file *file)
 {
-	stdf_rec_wcr *wcr = __malloc_rec(stdf_rec_wcr);
+	stdf_rec_wcr *wcr = malloc(sizeof(*wcr));
 	_stdf_read_dtc_R4(file, &(wcr->WAFR_SIZ));
 	_stdf_read_dtc_R4(file, &(wcr->DIE_HT));
 	_stdf_read_dtc_R4(file, &(wcr->DIE_WID));
@@ -771,7 +770,7 @@ stdf_rec_wcr* stdf_read_rec_wcr(stdf_file *file)
 
 stdf_rec_pir* stdf_read_rec_pir(stdf_file *file)
 {
-	stdf_rec_pir *pir = __malloc_rec(stdf_rec_pir);
+	stdf_rec_pir *pir = malloc(sizeof(*pir));
 	_stdf_read_dtc_U1(file, &(pir->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(pir->SITE_NUM));
 #ifdef STDF_VER3
@@ -786,7 +785,7 @@ stdf_rec_pir* stdf_read_rec_pir(stdf_file *file)
 
 stdf_rec_prr* stdf_read_rec_prr(stdf_file *file)
 {
-	stdf_rec_prr *prr = __malloc_rec(stdf_rec_prr);
+	stdf_rec_prr *prr = malloc(sizeof(*prr));
 	_stdf_read_dtc_U1(file, &(prr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(prr->SITE_NUM));
 #ifdef STDF_VER3
@@ -818,7 +817,7 @@ stdf_rec_prr* stdf_read_rec_prr(stdf_file *file)
 
 stdf_rec_pdr* stdf_read_rec_pdr(stdf_file *file)
 {
-	stdf_rec_pdr *pdr = __malloc_rec(stdf_rec_pdr);
+	stdf_rec_pdr *pdr = malloc(sizeof(*pdr));
 	_stdf_read_dtc_U4(file, &(pdr->TEST_NUM));
 	_stdf_read_dtc_B1(file, &(pdr->DESC_FLG));
 	_stdf_read_dtc_B1(file, &(pdr->OPT_FLAG));
@@ -841,7 +840,7 @@ stdf_rec_pdr* stdf_read_rec_pdr(stdf_file *file)
 
 stdf_rec_fdr* stdf_read_rec_fdr(stdf_file *file)
 {
-	stdf_rec_fdr *fdr = __malloc_rec(stdf_rec_fdr);
+	stdf_rec_fdr *fdr = malloc(sizeof(*fdr));
 	_stdf_read_dtc_U4(file, &(fdr->TEST_NUM));
 	_stdf_read_dtc_B1(file, &(fdr->DESC_FLG));
 	_stdf_read_dtc_Cn(file, &(fdr->TEST_NAM));
@@ -853,7 +852,7 @@ stdf_rec_fdr* stdf_read_rec_fdr(stdf_file *file)
 
 stdf_rec_tsr* stdf_read_rec_tsr(stdf_file *file)
 {
-	stdf_rec_tsr *tsr = __malloc_rec(stdf_rec_tsr);
+	stdf_rec_tsr *tsr = malloc(sizeof(*tsr));
 	_stdf_read_dtc_U1(file, &(tsr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(tsr->SITE_NUM));
 #ifdef STDF_VER3
@@ -895,7 +894,7 @@ stdf_rec_tsr* stdf_read_rec_tsr(stdf_file *file)
 
 stdf_rec_ptr* stdf_read_rec_ptr(stdf_file *file)
 {
-	stdf_rec_ptr *ptr = __malloc_rec(stdf_rec_ptr);
+	stdf_rec_ptr *ptr = malloc(sizeof(*ptr));
 	_stdf_read_dtc_U4(file, &(ptr->TEST_NUM));
 	_stdf_read_dtc_U1(file, &(ptr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(ptr->SITE_NUM));
@@ -921,7 +920,7 @@ stdf_rec_ptr* stdf_read_rec_ptr(stdf_file *file)
 
 stdf_rec_mpr* stdf_read_rec_mpr(stdf_file *file)
 {
-	stdf_rec_mpr *mpr = __malloc_rec(stdf_rec_mpr);
+	stdf_rec_mpr *mpr = malloc(sizeof(*mpr));
 	_stdf_read_dtc_U4(file, &(mpr->TEST_NUM));
 	_stdf_read_dtc_U1(file, &(mpr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(mpr->SITE_NUM));
@@ -954,7 +953,7 @@ stdf_rec_mpr* stdf_read_rec_mpr(stdf_file *file)
 
 stdf_rec_ftr* stdf_read_rec_ftr(stdf_file *file)
 {
-	stdf_rec_ftr *ftr = __malloc_rec(stdf_rec_ftr);
+	stdf_rec_ftr *ftr = malloc(sizeof(*ftr));
 	_stdf_read_dtc_U4(file, &(ftr->TEST_NUM));
 	_stdf_read_dtc_U1(file, &(ftr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(ftr->SITE_NUM));
@@ -988,14 +987,14 @@ stdf_rec_ftr* stdf_read_rec_ftr(stdf_file *file)
 
 stdf_rec_bps* stdf_read_rec_bps(stdf_file *file)
 {
-	stdf_rec_bps *bps = __malloc_rec(stdf_rec_bps);
+	stdf_rec_bps *bps = malloc(sizeof(*bps));
 	_stdf_read_dtc_Cn(file, &(bps->SEQ_NAME));
 	return bps;
 }
 
 stdf_rec_eps* stdf_read_rec_eps(stdf_attribute_unused stdf_file *file)
 {
-	stdf_rec_eps *eps = __malloc_rec(stdf_rec_eps);
+	stdf_rec_eps *eps = malloc(sizeof(*eps));
 	return eps;
 }
 
@@ -1003,7 +1002,7 @@ stdf_rec_eps* stdf_read_rec_eps(stdf_attribute_unused stdf_file *file)
 
 stdf_rec_shb* stdf_read_rec_shb(stdf_file *file)
 {
-	stdf_rec_shb *shb = __malloc_rec(stdf_rec_shb);
+	stdf_rec_shb *shb = malloc(sizeof(*shb));
 	_stdf_read_dtc_U1(file, &(shb->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(shb->SITE_NUM));
 	_stdf_read_dtc_U2(file, &(shb->HBIN_NUM));
@@ -1014,7 +1013,7 @@ stdf_rec_shb* stdf_read_rec_shb(stdf_file *file)
 
 stdf_rec_ssb* stdf_read_rec_ssb(stdf_file *file)
 {
-	stdf_rec_ssb *ssb = __malloc_rec(stdf_rec_ssb);
+	stdf_rec_ssb *ssb = malloc(sizeof(*ssb));
 	_stdf_read_dtc_U1(file, &(ssb->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(ssb->SITE_NUM));
 	_stdf_read_dtc_U2(file, &(ssb->SBIN_NUM));
@@ -1025,7 +1024,7 @@ stdf_rec_ssb* stdf_read_rec_ssb(stdf_file *file)
 
 stdf_rec_sts* stdf_read_rec_sts(stdf_file *file)
 {
-	stdf_rec_sts *sts = __malloc_rec(stdf_rec_sts);
+	stdf_rec_sts *sts = malloc(sizeof(*sts));
 	_stdf_read_dtc_U1(file, &(sts->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(sts->SITE_NUM));
 	_stdf_read_dtc_U4(file, &(sts->TEST_NUM));
@@ -1048,7 +1047,7 @@ stdf_rec_sts* stdf_read_rec_sts(stdf_file *file)
 
 stdf_rec_scr* stdf_read_rec_scr(stdf_file *file)
 {
-	stdf_rec_scr *scr = __malloc_rec(stdf_rec_scr);
+	stdf_rec_scr *scr = malloc(sizeof(*scr));
 	_stdf_read_dtc_U1(file, &(scr->HEAD_NUM));
 	_stdf_read_dtc_U1(file, &(scr->SITE_NUM));
 	_stdf_read_dtc_U4(file, &(scr->FINISH_T));
@@ -1064,7 +1063,7 @@ stdf_rec_scr* stdf_read_rec_scr(stdf_file *file)
 
 stdf_rec_gdr* stdf_read_rec_gdr(stdf_file *file)
 {
-	stdf_rec_gdr *gdr = __malloc_rec(stdf_rec_gdr);
+	stdf_rec_gdr *gdr = malloc(sizeof(*gdr));
 	_stdf_read_dtc_U2(file, &(gdr->FLD_CNT));
 	_stdf_read_dtc_Vn(file, &(gdr->GEN_DATA), gdr->FLD_CNT);
 	return gdr;
@@ -1072,7 +1071,7 @@ stdf_rec_gdr* stdf_read_rec_gdr(stdf_file *file)
 
 stdf_rec_dtr* stdf_read_rec_dtr(stdf_file *file)
 {
-	stdf_rec_dtr *dtr = __malloc_rec(stdf_rec_dtr);
+	stdf_rec_dtr *dtr = malloc(sizeof(*dtr));
 	_stdf_read_dtc_Cn(file, &(dtr->TEXT_DAT));
 	return dtr;
 }
