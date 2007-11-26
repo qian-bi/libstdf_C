@@ -481,8 +481,19 @@ typedef struct {
 	stdf_dtc_Cn		ALARM_ID;	/* V4 */
 	stdf_dtc_B1		OPT_FLAG;
 	stdf_dtc_I1		RES_SCAL;
+#ifdef STDF_VER3
+	stdf_dtc_U1		RES_LDIG;	/* V3 */
+	stdf_dtc_U1		RES_RDIG;	/* V3 */
+	stdf_dtc_B1		DESC_FLG;	/* V3 */
+#endif
 	stdf_dtc_I1		LLM_SCAL;
 	stdf_dtc_I1		HLM_SCAL;
+#ifdef STDF_VER3
+	stdf_dtc_U1		HLM_LDIG;	/* V3 */
+	stdf_dtc_U1		HLM_RDIG;	/* V3 */
+	stdf_dtc_U1		LLM_LDIG;	/* V3 */
+	stdf_dtc_U1		LLM_RDIG;	/* V3 */
+#endif
 	stdf_dtc_R4		LO_LIMIT;
 	stdf_dtc_R4		HI_LIMIT;
 	stdf_dtc_Cn		UNITS;		/* V3:C7 V4:Cn */
@@ -491,6 +502,10 @@ typedef struct {
 	stdf_dtc_Cn		C_HLMFMT;
 	stdf_dtc_R4		LO_SPEC;	/* V4 */
 	stdf_dtc_R4		HI_SPEC;	/* V4 */
+#ifdef STDF_VER3
+	stdf_dtc_Cn		TEST_NAM;
+	stdf_dtc_Cn		SEQ_NAME;
+#endif
 } stdf_rec_ptr;
 /* MPR: Multiple-Result Parametric Record [page 53] */
 typedef struct {	/* V4 */
@@ -530,30 +545,42 @@ typedef struct {
 	stdf_dtc_U1		HEAD_NUM;
 	stdf_dtc_U1		SITE_NUM;
 	stdf_dtc_B1		TEST_FLG;
+#ifdef STDF_VER3
+	stdf_dtc_B1		DESC_FLG;	/* V3 */
+#endif
 	stdf_dtc_B1		OPT_FLAG;
 	stdf_dtc_U4		CYCL_CNT;
-	stdf_dtc_U4		REL_VADR;
-	stdf_dtc_U4		REPT_CNT;
+	stdf_dtc_U4		REL_VADR;	/* V4 */
+	stdf_dtc_U4		REPT_CNT;	/* V3:U2 V4:U4 */
 	stdf_dtc_U4		NUM_FAIL;
-	stdf_dtc_I4		XFAIL_AD;
-	stdf_dtc_I4		YFAIL_AD;
-	stdf_dtc_I2		VECT_OFF;
-	stdf_dtc_U2		RTN_ICNT;
-	stdf_dtc_U2		PGM_ICNT;
-	stdf_dtc_xU2		RTN_INDX;
-	stdf_dtc_xN1		RTN_STAT;
-	stdf_dtc_xU2		PGM_INDX;
-	stdf_dtc_xN1		PGM_STAT;
-	stdf_dtc_Dn		FAIL_PIN;
-	stdf_dtc_Cn		VECT_NAM;
-	stdf_dtc_Cn		TIME_SET;
-	stdf_dtc_Cn		OP_CODE;
+	stdf_dtc_I4		XFAIL_AD;	/* V4 */
+	stdf_dtc_I4		YFAIL_AD;	/* V4 */
+	stdf_dtc_I2		VECT_OFF;	/* V4 */
+	stdf_dtc_U2		RTN_ICNT;	/* V4 */
+	stdf_dtc_U2		PGM_ICNT;	/* V4 */
+	stdf_dtc_xU2		RTN_INDX;	/* V4 */
+	stdf_dtc_xN1		RTN_STAT;	/* V4 */
+	stdf_dtc_xU2		PGM_INDX;	/* V4 */
+	stdf_dtc_xN1		PGM_STAT;	/* V4 */
+	stdf_dtc_Dn		FAIL_PIN;	/* V3:Bn V4:Dn */
+	stdf_dtc_Cn		VECT_NAM;	/* V4 */
+	stdf_dtc_Cn		TIME_SET;	/* V3:U1 V4:Cn */
+#ifdef STDF_VER3
+	stdf_dtc_U4		VECT_ADR;	/* V3 */
+	stdf_dtc_U2		PCP_ADDR;	/* V3 */
+	stdf_dtc_Bn		VECT_DAT;	/* V3 */
+	stdf_dtc_Bn		DEV_DAT;	/* V3 */
+	stdf_dtc_Bn		RPIN_MAP;	/* V3 */
+	stdf_dtc_Cn		TEST_NAM;	/* V3 */
+	stdf_dtc_Cn		SEQ_NAME;	/* V3 */
+#endif
+	stdf_dtc_Cn		OP_CODE;	/* V4 */
 	stdf_dtc_Cn		TEST_TXT;
-	stdf_dtc_Cn		ALARM_ID;
-	stdf_dtc_Cn		PROG_TXT;
-	stdf_dtc_Cn		RSLT_TXT;
-	stdf_dtc_U1		PATG_NUM;
-	stdf_dtc_Dn		SPIN_MAP;
+	stdf_dtc_Cn		ALARM_ID;	/* V4 */
+	stdf_dtc_Cn		PROG_TXT;	/* V4 */
+	stdf_dtc_Cn		RSLT_TXT;	/* V4 */
+	stdf_dtc_U1		PATG_NUM;	/* V4 */
+	stdf_dtc_Dn		SPIN_MAP;	/* V4 */
 } stdf_rec_ftr;
 /* BPS: Begin Program Section [page 62] */
 typedef struct {
