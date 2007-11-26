@@ -88,6 +88,7 @@ void print_stat(void *value, void *user_data)
 	g_hash_table_destroy(hash_table);
 void print_stat(gpointer key, gpointer value, gpointer user_data)
 {
+	(void)user_data;
 	printf("\t%s : %li\n", (char*)key, *((long*)value));
 }
 
