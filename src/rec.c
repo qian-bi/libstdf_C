@@ -860,9 +860,19 @@ stdf_rec_tsr* stdf_read_rec_tsr(stdf_file *file)
 #endif
 	_stdf_read_dtc_C1(file, &(tsr->TEST_TYP));
 	_stdf_read_dtc_U4(file, &(tsr->TEST_NUM));
+#ifdef STDF_VER3
+	if (file->ver == 4) {
+#endif
 	_stdf_read_dtc_U4(file, &(tsr->EXEC_CNT));
 	_stdf_read_dtc_U4(file, &(tsr->FAIL_CNT));
 	_stdf_read_dtc_U4(file, &(tsr->ALRM_CNT));
+#ifdef STDF_VER3
+	} else {
+	_stdf_read_dtc_I4(file, &(tsr->EXEC_CNT));
+	_stdf_read_dtc_I4(file, &(tsr->FAIL_CNT));
+	_stdf_read_dtc_I4(file, &(tsr->ALRM_CNT));
+	}
+#endif
 #ifdef STDF_VER3
 	if (file->ver == 4) {
 #endif
