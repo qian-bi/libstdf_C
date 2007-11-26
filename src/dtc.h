@@ -114,7 +114,30 @@ extern void free_Vn(stdf_dtc_Vn, stdf_dtc_U2) stdf_attribute_hidden;
 		} \
 	} while (0)
 
-#define _stdf_write_dtc_Vn(file, Vn, cnt) warnf("writing stdf_dtc_Vn is not implemented")
+static inline void _stdf_write_dtc_Vn(stdf_file *file, stdf_dtc_Vn Vn, stdf_dtc_U2 cnt)
+{
+#define DO_VN(DTC) _stdf_write_dtc_##DTC(file, *(stdf_dtc_##DTC*)Vn->data)
+	while (cnt-- > 0) {
+		switch (Vn->type) {
+			case STDF_GDR_B0: DO_VN(B1); break;
+			case STDF_GDR_U1: DO_VN(U1); break;
+			case STDF_GDR_U2: DO_VN(U2); break;
+			case STDF_GDR_U4: DO_VN(U4); break;
+			case STDF_GDR_I1: DO_VN(I1); break;
+			case STDF_GDR_I2: DO_VN(I2); break;
+			case STDF_GDR_I4: DO_VN(I4); break;
+			case STDF_GDR_R4: DO_VN(R4); break;
+			case STDF_GDR_R8: DO_VN(R8); break;
+			case STDF_GDR_Cn: DO_VN(Cn); break;
+			case STDF_GDR_Bn: DO_VN(Bn); break;
+			case STDF_GDR_Dn: DO_VN(Dn); break;
+			case STDF_GDR_N1: DO_VN(N1); break;
+			default:          warnf("unknown type '%i'", Vn->type); break;
+		}
+		++Vn;
+	}
+#undef DO_VN
+}
 
 #define _stdf_write_dtc_x(file, x, cnt, func) \
 	do { \
@@ -129,9 +152,6 @@ extern void free_Vn(stdf_dtc_Vn, stdf_dtc_U2) stdf_attribute_hidden;
 #define _stdf_write_dtc_xR4(file, xR4, cnt) _stdf_write_dtc_x(file, xR4, cnt, _stdf_write_dtc_R4)
 #define _stdf_write_dtc_xCn(file, xCn, cnt) _stdf_write_dtc_x(file, xCn, cnt, _stdf_write_dtc_Cn)
 #define _stdf_write_dtc_xBn(file, xBn, cnt) _stdf_write_dtc_xCn(file, xBn, cnt)
-
-#ifdef STDF_VER3
-#define _stdf_write_dtc_Cx(file, Cx, cnt) warnf("writing stdf_dtc_Cx is not implemented");
-#endif
+#define _stdf_write_dtc_Cx(file, Cx, cnt)   _stdf_write_nbytes(file, Cx, cnt)
 
 #endif /* _LIBSTDF_DTC_H */
