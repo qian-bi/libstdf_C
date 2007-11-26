@@ -1,1 +1,38 @@
-see http://freestdf.sourceforge.net/#status
+0.5
+	* Cleanup build system all over the place
+	* Use explicit casts for enum conversions
+	* Add an "stdf" prefix to all exported API pieces to play nice with other libraries
+	* Set initial state of records to parsed so people can do more direct manipulation
+	* Initial support for PTR/FTR in STDFv3
+
+0.4
+	* Initial partial support for writing STDF files
+	* Add support for reading LZW compressed files (.Z)
+	* Verify and fix MPR/FTR record reading (just PLR left to test)
+	* Support for random memory debug packages
+	* New example for translating files into a jpeg
+	* Hide implementation details to improve ABI compat
+	* Hide internal symbols on ELF systems to improve speed/size
+
+0.3.1
+	* Plug some memory leaks
+	* Check for more headers (to cover platforms like Solaris)
+	* Detect endian type by checking more define's
+
+0.3
+	* Add support for reading compressed files (zip/gzip/bzip2)
+	* Add a makefile for building in win32
+	* More documentation
+
+0.2
+	* Proper usage of autotools for portability
+	* Shared + static library building
+	* Microsoft Win32 workspace for generating a DLL
+	* Record buffering so that the filesystem doesn't get thrashed and everything runs a lot faster
+	* STDFv3 support
+	* Tested the crazy data types xU1, xU2, and xR4 and the crazy GDR record
+	* More example applications to help you debug your own code
+	* Lots and lots of bugfixes!
+
+0.1
+	* Proof of concept (I'm not just all talk! :D)
