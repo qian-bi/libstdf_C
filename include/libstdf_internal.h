@@ -99,6 +99,8 @@ typedef struct {
 		_warn("\n"); \
 	} while (0)
 
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
 
 /**
  * @brief Misc cruft for debugging fun.

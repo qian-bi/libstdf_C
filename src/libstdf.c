@@ -355,11 +355,10 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mod
 				{ ".Z",   STDF_FORMAT_LZW   },
 				{ ".bz",  STDF_FORMAT_BZIP2 },
 				{ ".bz2", STDF_FORMAT_BZIP2 },
-				{ NULL,   STDF_FORMAT_REG   }
 			};
-			int i;
+			size_t i;
 			ret->file_format = STDF_FORMAT_REG;
-			for (i = 0; guesses[i].filetype; ++i)
+			for (i = 0; i < ARRAY_SIZE(guesses); ++i)
 				if (strstr(ret->filename, guesses[i].filetype) != NULL) {
 					ret->file_format = guesses[i].fmt;
 					break;
