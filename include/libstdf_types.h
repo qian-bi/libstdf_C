@@ -169,7 +169,7 @@ typedef struct {
 	stdf_dtc_U1          STDF_VER;
 } stdf_rec_far;
 /* ATR: Audit Trail Record [page 19] */
-typedef struct {
+typedef struct {	/* V4 */
 	stdf_rec_header	header;
 	stdf_dtc_U4		MOD_TIM;
 	stdf_dtc_Cn		CMD_LINE;
@@ -178,8 +178,8 @@ typedef struct {
 typedef struct {
 	stdf_rec_header	header;
 #ifdef STDF_VER3
-	stdf_dtc_U1		CPU_TYPE;
-	stdf_dtc_U1		STDF_VER;
+	stdf_dtc_U1		CPU_TYPE;	/* V3 */
+	stdf_dtc_U1		STDF_VER;	/* V3 */
 #endif
 	stdf_dtc_U4		SETUP_T;
 	stdf_dtc_U4		START_T;
@@ -187,41 +187,41 @@ typedef struct {
 	stdf_dtc_C1		MODE_COD;
 	stdf_dtc_C1		RTST_COD;
 	stdf_dtc_C1		PROT_COD;
-	stdf_dtc_U2		BURN_TIM;
+	stdf_dtc_U2		BURN_TIM;	/* V4 */
 	stdf_dtc_C1		CMOD_COD;
 	stdf_dtc_Cn		LOT_ID;
 	stdf_dtc_Cn		PART_TYP;
 	stdf_dtc_Cn		NODE_NAM;
 	stdf_dtc_Cn		TSTR_TYP;
 #ifdef STDF_VER3
-	stdf_dtc_Cn		HAND_ID;
-	stdf_dtc_Cn		PRB_CARD;
+	stdf_dtc_Cn		HAND_ID;	/* V3 */
+	stdf_dtc_Cn		PRB_CARD;	/* V3 */
 #endif
 	stdf_dtc_Cn		JOB_NAM;
 	stdf_dtc_Cn		JOB_REV;
 	stdf_dtc_Cn		SBLOT_ID;
 	stdf_dtc_Cn		OPER_NAM;
 	stdf_dtc_Cn		EXEC_TYP;
-	stdf_dtc_Cn		EXEC_VER;
-	stdf_dtc_Cn		TEST_COD;
-	stdf_dtc_Cn		TST_TEMP;
-	stdf_dtc_Cn		USER_TXT;
-	stdf_dtc_Cn		AUX_FILE;
-	stdf_dtc_Cn		PKG_TYP;
-	stdf_dtc_Cn		FAMILY_ID;
-	stdf_dtc_Cn		DATE_COD;
-	stdf_dtc_Cn		FACIL_ID;
-	stdf_dtc_Cn		FLOOR_ID;
+	stdf_dtc_Cn		EXEC_VER;	/* V4 */
+	stdf_dtc_Cn		TEST_COD;	/* V3:C3 V4:Cn */
+	stdf_dtc_Cn		TST_TEMP;	/* V4 */
+	stdf_dtc_Cn		USER_TXT;	/* V4 */
+	stdf_dtc_Cn		AUX_FILE;	/* V4 */
+	stdf_dtc_Cn		PKG_TYP;	/* V4 */
+	stdf_dtc_Cn		FAMILY_ID;	/* V4 */
+	stdf_dtc_Cn		DATE_COD;	/* V4 */
+	stdf_dtc_Cn		FACIL_ID;	/* V4 */
+	stdf_dtc_Cn		FLOOR_ID;	/* V4 */
 	stdf_dtc_Cn		PROC_ID;
-	stdf_dtc_Cn		OPER_FRQ;
-	stdf_dtc_Cn		SPEC_NAM;
-	stdf_dtc_Cn		SPEC_VER;
-	stdf_dtc_Cn		FLOW_ID;
-	stdf_dtc_Cn		SETUP_ID;
-	stdf_dtc_Cn		DSGN_REV;
-	stdf_dtc_Cn		ENG_ID;
-	stdf_dtc_Cn		ROM_COD;
-	stdf_dtc_Cn		SERL_NUM;
+	stdf_dtc_Cn		OPER_FRQ;	/* V4 */
+	stdf_dtc_Cn		SPEC_NAM;	/* V4 */
+	stdf_dtc_Cn		SPEC_VER;	/* V4 */
+	stdf_dtc_Cn		FLOW_ID;	/* V4 */
+	stdf_dtc_Cn		SETUP_ID;	/* V4 */
+	stdf_dtc_Cn		DSGN_REV;	/* V4 */
+	stdf_dtc_Cn		ENG_ID;		/* V4 */
+	stdf_dtc_Cn		ROM_COD;	/* V4 */
+	stdf_dtc_Cn		SERL_NUM;	/* V4 */
 	stdf_dtc_Cn		SUPR_NAM;
 } stdf_rec_mir;
 /* MRR: Master Results Record [page 23] */
@@ -229,18 +229,18 @@ typedef struct {
 	stdf_rec_header	header;
 	stdf_dtc_U4		FINISH_T;
 #ifdef STDF_VER3
-	stdf_dtc_U4		PART_CNT;
-	stdf_dtc_U4		RTST_CNT;
-	stdf_dtc_U4		ABRT_CNT;
-	stdf_dtc_U4		GOOD_CNT;
-	stdf_dtc_U4		FUNC_CNT;
+	stdf_dtc_U4		PART_CNT;	/* V3 */
+	stdf_dtc_U4		RTST_CNT;	/* V3 */
+	stdf_dtc_U4		ABRT_CNT;	/* V3 */
+	stdf_dtc_U4		GOOD_CNT;	/* V3 */
+	stdf_dtc_U4		FUNC_CNT;	/* V3 */
 #endif
 	stdf_dtc_C1		DISP_COD;
 	stdf_dtc_Cn		USR_DESC;
 	stdf_dtc_Cn		EXC_DESC;
 } stdf_rec_mrr;
 /* PCR: Part Count Record [page 24] */
-typedef struct {
+typedef struct {	/* V4 */
 	stdf_rec_header	header;
 	stdf_dtc_U1		HEAD_NUM;
 	stdf_dtc_U1		SITE_NUM;
@@ -282,7 +282,7 @@ typedef struct {
 	stdf_dtc_U1		SITE_NUM;
 } stdf_rec_pmr;
 /* PGR: Pin Group Record [page 31] */
-typedef struct {
+typedef struct {	/* V4 */
 	stdf_rec_header	header;
 	stdf_dtc_U2		GRP_INDX;
 	stdf_dtc_Cn		GRP_NAM;
@@ -290,7 +290,7 @@ typedef struct {
 	stdf_dtc_xU2		PMR_INDX;
 } stdf_rec_pgr;
 /* PLR: Pin List Record [page 32] */
-typedef struct {
+typedef struct {	/* V4 */
 	stdf_rec_header	header;
 	stdf_dtc_U2		GRP_CNT;
 	stdf_dtc_xU2		GRP_INDX;
@@ -302,13 +302,13 @@ typedef struct {
 	stdf_dtc_xCn		RTN_CHAL;
 } stdf_rec_plr;
 /* RDR: Retest Data Record [page 34] */
-typedef struct {
+typedef struct {	/* V4 */
 	stdf_rec_header	header;
 	stdf_dtc_U2		NUM_BINS;
 	stdf_dtc_xU2		RTST_BIN;
 } stdf_rec_rdr;
 /* SDR: Site Description Record [page 35] */
-typedef struct {
+typedef struct {	/* V4 */
 	stdf_rec_header	header;
 	stdf_dtc_U1		HEAD_NUM;
 	stdf_dtc_U1		SITE_GRP;
@@ -335,9 +335,9 @@ typedef struct {
 typedef struct {
 	stdf_rec_header	header;
 	stdf_dtc_U1		HEAD_NUM;
-	stdf_dtc_U1		SITE_GRP;
+	stdf_dtc_U1		SITE_GRP;	/* V4 */
 #ifdef STDF_VER3
-	stdf_dtc_B1		PAD_BYTE;
+	stdf_dtc_B1		PAD_BYTE;	/* V3 */
 #endif
 	stdf_dtc_U4		START_T;
 	stdf_dtc_Cn		WAFER_ID;
@@ -346,9 +346,9 @@ typedef struct {
 typedef struct {
 	stdf_rec_header	header;
 	stdf_dtc_U1		HEAD_NUM;
-	stdf_dtc_U1		SITE_GRP;
+	stdf_dtc_U1		SITE_GRP;	/* V4 */
 #ifdef STDF_VER3
-	stdf_dtc_B1		PAD_BYTE;
+	stdf_dtc_B1		PAD_BYTE;	/* V3 */
 #endif
 	stdf_dtc_U4		FINISH_T;
 	stdf_dtc_U4		PART_CNT;
@@ -357,13 +357,13 @@ typedef struct {
 	stdf_dtc_U4		GOOD_CNT;
 	stdf_dtc_U4		FUNC_CNT;
 #ifdef STDF_VER3
-	stdf_dtc_Cn		HAND_ID;
-	stdf_dtc_Cn		PRB_CARD;
+	stdf_dtc_Cn		HAND_ID;	/* V3 */
+	stdf_dtc_Cn		PRB_CARD;	/* V3 */
 #endif
 	stdf_dtc_Cn		WAFER_ID;
-	stdf_dtc_Cn		FABWF_ID;
-	stdf_dtc_Cn		FRAME_ID;
-	stdf_dtc_Cn		MASK_ID;
+	stdf_dtc_Cn		FABWF_ID;	/* V4 */
+	stdf_dtc_Cn		FRAME_ID;	/* V4 */
+	stdf_dtc_Cn		MASK_ID;	/* V4 */
 	stdf_dtc_Cn		USR_DESC;
 	stdf_dtc_Cn		EXC_DESC;
 } stdf_rec_wrr;
@@ -386,9 +386,9 @@ typedef struct {
 	stdf_dtc_U1		HEAD_NUM;
 	stdf_dtc_U1		SITE_NUM;
 #ifdef STDF_VER3
-	stdf_dtc_I2		X_COORD;
-	stdf_dtc_I2		Y_COORD;
-	stdf_dtc_Cn		PART_ID;
+	stdf_dtc_I2		X_COORD;	/* V3 */
+	stdf_dtc_I2		Y_COORD;	/* V3 */
+	stdf_dtc_Cn		PART_ID;	/* V3 */
 #endif
 } stdf_rec_pir;
 /* PRR: Part Results Record [page 43] */
@@ -397,7 +397,7 @@ typedef struct {
 	stdf_dtc_U1		HEAD_NUM;
 	stdf_dtc_U1		SITE_NUM;
 #ifdef STDF_VER3
-	stdf_dtc_B1		PAD_BYTE;
+	stdf_dtc_B1		PAD_BYTE;	/* V3 */
 #endif
 	stdf_dtc_B1		PART_FLG;
 	stdf_dtc_U2		NUM_TEST;
@@ -405,14 +405,14 @@ typedef struct {
 	stdf_dtc_U2		SOFT_BIN;
 	stdf_dtc_I2		X_COORD;
 	stdf_dtc_I2		Y_COORD;
-	stdf_dtc_U4		TEST_T;
+	stdf_dtc_U4		TEST_T;		/* V4 */
 	stdf_dtc_Cn		PART_ID;
 	stdf_dtc_Cn		PART_TXT;
 	stdf_dtc_Bn		PART_FIX;
 } stdf_rec_prr;
 #ifdef	STDF_VER3
 /* PDR: Parametric Test Description */
-typedef struct {
+typedef struct {	/* V3 */
 	stdf_rec_header	header;
 	stdf_dtc_U4		TEST_NUM;
 	stdf_dtc_B1		DESC_FLG;
@@ -432,8 +432,10 @@ typedef struct {
 	stdf_dtc_Cn		TEST_NAM;
 	stdf_dtc_Cn		SEQ_NAME;
 } stdf_rec_pdr;
+#endif
+#ifdef	STDF_VER3
 /* FDR: Functional Test Description */
-typedef struct {
+typedef struct {	/* V3 */
 	stdf_rec_header	header;
 	stdf_dtc_U4		TEST_NUM;
 	stdf_dtc_B1		DESC_FLG;
@@ -444,23 +446,23 @@ typedef struct {
 /* TSR: Test Synopsis Record [page 45] */
 typedef struct {
 	stdf_rec_header	header;
-	stdf_dtc_U1		HEAD_NUM;
-	stdf_dtc_U1		SITE_NUM;
+	stdf_dtc_U1		HEAD_NUM;	/* V4 */
+	stdf_dtc_U1		SITE_NUM;	/* V4 */
 #ifdef STDF_VER3
-	stdf_dtc_B1		PAD_BYTE;
-	stdf_dtc_R4		TST_MEAN;
-	stdf_dtc_R4		TST_SDEV;
+	stdf_dtc_B1		PAD_BYTE;	/* V3 */
+	stdf_dtc_R4		TST_MEAN;	/* V3 */
+	stdf_dtc_R4		TST_SDEV;	/* V3 */
 #endif
-	stdf_dtc_C1		TEST_TYP;
+	stdf_dtc_C1		TEST_TYP;	/* V4 */
 	stdf_dtc_U4		TEST_NUM;
-	stdf_dtc_U4		EXEC_CNT;
-	stdf_dtc_U4		FAIL_CNT;
-	stdf_dtc_U4		ALRM_CNT;
+	stdf_dtc_U4		EXEC_CNT;	/* V3:I4 V4:U4 */
+	stdf_dtc_U4		FAIL_CNT;	/* V3:I4 V4:U4 */
+	stdf_dtc_U4		ALRM_CNT;	/* V3:I4 V4:U4 */
 	stdf_dtc_Cn		TEST_NAM;
 	stdf_dtc_Cn		SEQ_NAME;
-	stdf_dtc_Cn		TEST_LBL;
+	stdf_dtc_Cn		TEST_LBL;	/* V4 */
 	stdf_dtc_B1		OPT_FLAG;
-	stdf_dtc_R4		TEST_TIM;
+	stdf_dtc_R4		TEST_TIM;	/* V4 */
 	stdf_dtc_R4		TEST_MIN;
 	stdf_dtc_R4		TEST_MAX;
 	stdf_dtc_R4		TST_SUMS;
@@ -476,22 +478,22 @@ typedef struct {
 	stdf_dtc_B1		PARM_FLG;
 	stdf_dtc_R4		RESULT;
 	stdf_dtc_Cn		TEST_TXT;
-	stdf_dtc_Cn		ALARM_ID;
+	stdf_dtc_Cn		ALARM_ID;	/* V4 */
 	stdf_dtc_B1		OPT_FLAG;
 	stdf_dtc_I1		RES_SCAL;
 	stdf_dtc_I1		LLM_SCAL;
 	stdf_dtc_I1		HLM_SCAL;
 	stdf_dtc_R4		LO_LIMIT;
 	stdf_dtc_R4		HI_LIMIT;
-	stdf_dtc_Cn		UNITS;
+	stdf_dtc_Cn		UNITS;		/* V3:C7 V4:Cn */
 	stdf_dtc_Cn		C_RESFMT;
 	stdf_dtc_Cn		C_LLMFMT;
 	stdf_dtc_Cn		C_HLMFMT;
-	stdf_dtc_R4		LO_SPEC;
-	stdf_dtc_R4		HI_SPEC;
+	stdf_dtc_R4		LO_SPEC;	/* V4 */
+	stdf_dtc_R4		HI_SPEC;	/* V4 */
 } stdf_rec_ptr;
 /* MPR: Multiple-Result Parametric Record [page 53] */
-typedef struct {
+typedef struct {	/* V4 */
 	stdf_rec_header	header;
 	stdf_dtc_U4		TEST_NUM;
 	stdf_dtc_U1		HEAD_NUM;
@@ -564,7 +566,7 @@ typedef struct {
 } stdf_rec_eps;
 #ifdef	STDF_VER3
 /* SHB: Site-Specific Hardware Bin Record */
-typedef struct {
+typedef struct {	/* V3 */
 	stdf_rec_header	header;
 	stdf_dtc_U1		HEAD_NUM;
 	stdf_dtc_U1		SITE_NUM;
@@ -573,7 +575,7 @@ typedef struct {
 	stdf_dtc_Cn		HBIN_NAM;
 } stdf_rec_shb;
 /* SSB: Site-Specific Software Bin Record */
-typedef struct {
+typedef struct {	/* V3 */
 	stdf_rec_header	header;
 	stdf_dtc_U1		HEAD_NUM;
 	stdf_dtc_U1		SITE_NUM;
@@ -582,7 +584,7 @@ typedef struct {
 	stdf_dtc_Cn		SBIN_NAM;
 } stdf_rec_ssb;
 /* STS: Site-Specific Test Synopsis Record */
-typedef struct {
+typedef struct {	/* V3 */
 	stdf_rec_header	header;
 	stdf_dtc_U1		HEAD_NUM;
 	stdf_dtc_U1		SITE_NUM;
@@ -603,7 +605,7 @@ typedef struct {
 	stdf_dtc_Cn		TEST_LBL;
 } stdf_rec_sts;
 /* SCR: Site-Specific Part Count Record */
-typedef struct {
+typedef struct {	/* V3 */
 	stdf_rec_header	header;
 	stdf_dtc_U1		HEAD_NUM;
 	stdf_dtc_U1		SITE_NUM;
