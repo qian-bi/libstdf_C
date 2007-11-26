@@ -94,21 +94,6 @@ char* stdf_get_rec_name(stdf_rec_typ type, stdf_rec_sub sub)
 	return stdf_rec_names[_stdf_header_to_idx(type, sub)];
 }
 
-#ifdef WARN_UNTESTED
-#define	warn_untested(type) \
-	do { \
-		warnf("*********************************************"); \
-		warnf("This record type (" type ") has not been tested!"); \
-		warnf("Please consider sending this file to"); \
-		warnf("vapier@gmail.com to help out the"); \
-		warnf("FreeSTDF project and make sure this code"); \
-		warnf("works exactly the way it should!"); \
-		warnf("*********************************************"); \
-	} while (0)
-#else
-#define warn_untested(type)
-#endif
-
 
 /*
  * Memory handling functions
@@ -670,7 +655,6 @@ stdf_rec_pgr* stdf_read_rec_pgr(stdf_file *file)
 stdf_rec_plr* stdf_read_rec_plr(stdf_file *file)
 {
 	stdf_rec_plr *plr = __malloc_rec(stdf_rec_plr);
-	warn_untested("PLR");
 	_stdf_read_dtc_U2(file, &(plr->GRP_CNT));
 	_stdf_read_dtc_xU2(file, &(plr->GRP_INDX), plr->GRP_CNT);
 	_stdf_read_dtc_xU2(file, &(plr->GRP_MODE), plr->GRP_CNT);
@@ -1766,7 +1750,6 @@ ssize_t stdf_write_rec_pgr(stdf_file *file, stdf_rec_pgr *pgr)
 
 ssize_t stdf_write_rec_plr(stdf_file *file, stdf_rec_plr *plr)
 {
-	warn_untested("PLR");
 	if (!plr->header.REC_LEN)
 		SET_HEADER(plr->header, STDF_REC_PLR, _calc_rec_len_plr(file, plr));
 	_stdf_check_write_buffer(file, plr->header.REC_LEN);
