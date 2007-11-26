@@ -34,8 +34,6 @@
 #endif
 
 /* STDF File structure */
-#define	__STDF_HOST_BYTE_ORDER		BYTE_ORDER
-
 typedef struct {
 	int (*open)(void*, int, uint32_t);
 	int (*read)(void*, void*, long);

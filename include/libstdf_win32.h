@@ -37,10 +37,6 @@ typedef signed __int64     int64_t;
 #include <io.h>
 #define open _open
 
-#if !defined(BYTE_ORDER)
-# define LITTLE_ENDIAN     1234
-# define BIG_ENDIAN        4321
-# define BYTE_ORDER        LITTLE_ENDIAN
-#endif
+#define STDF_ENDIAN_FORCE STDF_ENDIAN_LITTLE
 
 #endif /* _LIBSTDF_WIN32_H */

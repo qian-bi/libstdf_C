@@ -146,9 +146,9 @@ int main(int argc, char *argv[])
 	}
 	stdf_get_setting(f, STDF_SETTING_VERSION, &stdf_ver);
 	stdf_get_setting(f, STDF_SETTING_BYTE_ORDER, &byte_order);
-	if (byte_order == LITTLE_ENDIAN)
+	if (byte_order == STDF_ENDIAN_LITTLE)
 		sprintf(cpu_name, "Little Endian [intel/x86]");
-	else if (byte_order == BIG_ENDIAN)
+	else if (byte_order == STDF_ENDIAN_BIG)
 		sprintf(cpu_name, "Big Endian [sun/sparc]");
 	else
 		sprintf(cpu_name, "Unknown Endian [???]");

@@ -17,7 +17,7 @@ void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int 
 {
 	if (in_byte_order == out_byte_order || len == 1)
 		return;
-	if (in_byte_order != LITTLE_ENDIAN && in_byte_order != BIG_ENDIAN) {
+	if (in_byte_order != STDF_ENDIAN_LITTLE && in_byte_order != STDF_ENDIAN_BIG) {
 		warnf("byte order %i is not implemented", in_byte_order);
 		return;
 	}

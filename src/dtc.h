@@ -15,8 +15,8 @@
 #include <libstdf.h>
 
 extern void __byte_order_change(int, int, byte_t*, int) stdf_attribute_hidden;
-#define	__byte_order_to_host(b,p,l) __byte_order_change(b, __STDF_HOST_BYTE_ORDER, p, l)
-#define	__byte_order_to_src(b,p,l) __byte_order_change(__STDF_HOST_BYTE_ORDER, b, p, l)
+#define	__byte_order_to_host(b,p,l) __byte_order_change(b, STDF_ENDIAN_HOST, p, l)
+#define	__byte_order_to_src(b,p,l) __byte_order_change(STDF_ENDIAN_HOST, b, p, l)
 #define	_stdf_byte_order_to_host(f,v,l) __byte_order_to_host(f->byte_order, (byte_t*)(v), l)
 #define	_stdf_byte_order_to_src(f,v,l) __byte_order_to_src(f->byte_order, (byte_t*)(v), l)
 

@@ -25,12 +25,12 @@ static int __stdf_init(stdf_file *f, stdf_dtc_U1 cpu_type, stdf_dtc_U1 stdf_ver,
 
 		/*case STDF_CPU_TYPE_SUN_680XX:*/
 		case STDF_CPU_TYPE_SPARC:
-			f->byte_order = BIG_ENDIAN;
+			f->byte_order = STDF_ENDIAN_BIG;
 			break;
 
 		/*case STDF_CPU_TYPE_SUN_80386:*/
 		case STDF_CPU_TYPE_X86:
-			f->byte_order = LITTLE_ENDIAN;
+			f->byte_order = STDF_ENDIAN_LITTLE;
 			break;
 
 #ifdef STDF_VER3
@@ -46,7 +46,7 @@ static int __stdf_init(stdf_file *f, stdf_dtc_U1 cpu_type, stdf_dtc_U1 stdf_ver,
 			}
 #endif
 		default:
-			f->byte_order = __STDF_HOST_BYTE_ORDER;
+			f->byte_order = STDF_ENDIAN_HOST;
 			if (!(opts & STDF_OPTS_CREATE))
 				warnf("Unknown STDF_CPU type 0x%X; you may have incorrect output", cpu_type);
 			break;

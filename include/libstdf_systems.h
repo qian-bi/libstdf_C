@@ -115,38 +115,21 @@ typedef int32 int32_t;
 typedef int64 int64_t;
 #endif
 
-#if !defined(STDF_FORCE_ENDIAN) && !defined(BYTE_ORDER)
-
-/* Workaround for random systems */
-# if defined(WORDS_LITTLENDIAN)
-#  define STDF_FORCE_ENDIAN 1234
-# elif defined(WORDS_BIGENDIAN)
-#  define STDF_FORCE_ENDIAN 4321
-
-/* Workaround for crappy Solaris */
-# elif defined(_LITTLE_ENDIAN)
-#  define STDF_FORCE_ENDIAN 1234
-# elif defined(_BIG_ENDIAN)
-#  define STDF_FORCE_ENDIAN 4321
-
-# endif
-
-#endif
-
-#if defined(STDF_FORCE_ENDIAN)
-# undef LITTLE_ENDIAN
-# undef BIG_ENDIAN
-# undef BYTE_ORDER
-# define LITTLE_ENDIAN 1234
-# define BIG_ENDIAN    4321
-# if STDF_FORCE_ENDIAN == LITTLE_ENDIAN
-#  define BYTE_ORDER LITTLE_ENDIAN
+/* Setup endian type. */
+#define STDF_ENDIAN_BIG    4321
+#define STDF_ENDIAN_LITTLE 1234
+#if !defined(STDF_ENDIAN_FORCE)
+# ifdef WORDS_BIGENDIAN
+#  define STDF_ENDIAN_FORCE STDF_ENDIAN_BIG
 # else
-#  define BYTE_ORDER BIG_ENDIAN
+#  define STDF_ENDIAN_FORCE STDF_ENDIAN_LITTLE
 # endif
 #endif
-
-#if !defined(BYTE_ORDER) || !defined(LITTLE_ENDIAN) || !defined(BIG_ENDIAN)
+#if (STDF_ENDIAN_FORCE == STDF_ENDIAN_BIG)
+# define STDF_ENDIAN_HOST STDF_ENDIAN_BIG
+#elif (STDF_ENDIAN_FORCE == STDF_ENDIAN_LITTLE)
+# define STDF_ENDIAN_HOST STDF_ENDIAN_LITTLE
+#else
 # error Unable to detect appropriate endian settings for your system.
 # error Please send a bug report to the freestdf-devel@lists.sourceforge.net
 # error mailing list.  You can work around the problem by re-running

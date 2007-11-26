@@ -3,10 +3,11 @@ AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER(include/libstdf_sys_config.h)
 
 AC_PROG_CC
+AC_C_CONST
+
 AC_STDF_LIBTOOL
 
 AC_HEADER_STDC
-AC_C_CONST
 AC_CHECK_HEADERS([ \
 stdint.h inttypes.h sys/types.h sys/stat.h ctype.h \
 errno.h unistd.h fcntl.h stdio.h stdlib.h time.h \
@@ -44,19 +45,20 @@ AC_MSG_RESULT($enable_stdf_ver3_support)
 dnl ********************************************************
 dnl *                 Force endian types                   *
 dnl ********************************************************
-stdf_force_endian="auto"
+stdf_endian_force="auto"
 AC_MSG_CHECKING(for endian type)
 AC_ARG_ENABLE(endian,
 	AC_HELP_STRING([--enable-endian],[force endian type @<:@default=detect@:>@]),
-	[stdf_force_endian=$enableval])
-if test "x$stdf_force_endian" = "xlittle" ; then
-	AC_DEFINE(STDF_FORCE_ENDIAN, 1234, [Force endian type to little])
-elif test "x$stdf_force_endian" = "xbig" ; then
-	AC_DEFINE(STDF_FORCE_ENDIAN, 4321, [Force endian type to big])
-elif test "x$stdf_force_endian" != "xauto" ; then
+	[stdf_endian_force=$enableval])
+if test "x$stdf_endian_force" = "xlittle" ; then
+	AC_DEFINE(STDF_ENDIAN_FORCE, STDF_ENDIAN_LITTLE, [Force endian type to little])
+elif test "x$stdf_endian_force" = "xbig" ; then
+	AC_DEFINE(STDF_ENDIAN_FORCE, STDF_ENDIAN_BIG, [Force endian type to big])
+elif test "x$stdf_endian_force" != "xauto" ; then
 	AC_MSG_ERROR(Valid values for endian are "little", "big", or "auto")
 fi
-AC_MSG_RESULT($stdf_force_endian)
+AC_MSG_RESULT($stdf_endian_force)
+AC_C_BIGENDIAN
 
 AM_STDF_ZZIPLIB
 AM_STDF_LIBLZW
@@ -110,7 +112,6 @@ PKG_CHECK_MODULES(ECORE, ecore,
 	AM_CONDITIONAL(HAVE_ECORE, false)
 	ECORE_CFLAGS=""
 	ECORE_LIBS=""
-	AC_MSG_RESULT(no)
 ])
 if test "x$HASH_LIBS" != "x" ; then
 	ECORE_CFLAGS=""
