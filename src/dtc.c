@@ -69,12 +69,11 @@ void _stdf_read_dtc_Cx(stdf_file *f, stdf_dtc_Cn *Cn, int len)
 {
 	/* does this even work ?
 	   need a file with a PLR record in it to test ... */
-	(*Cn) = (stdf_dtc_Cn)calloc(len + 1, sizeof(stdf_dtc_C1));
+	(*Cn) = calloc(len + 1, sizeof(stdf_dtc_C1));
 	(*Cn)[0] = len;
 	memset((*Cn)+1, 0x00, 1 + len + 1);
-	if (f->rec_pos == f->rec_end) {
+	if (f->rec_pos == f->rec_end)
 		return;
-	}
 	memcpy((*Cn)+1, f->rec_pos, len);
 	f->rec_pos += len;
 }
@@ -90,7 +89,7 @@ void _stdf_read_dtc_Cn(stdf_file *f, stdf_dtc_Cn *Cn)
 	}
 	len = f->rec_pos[0];
 	f->rec_pos++;
-	(*Cn) = (stdf_dtc_Cn)calloc(len + 2, sizeof(stdf_dtc_C1));
+	(*Cn) = calloc(len + 2, sizeof(stdf_dtc_C1));
 	(*Cn)[0] = len;
 	memcpy((*Cn)+1, f->rec_pos, len);
 	f->rec_pos += len;
@@ -142,8 +141,8 @@ void _stdf_read_dtc_x ## DTC(stdf_file *f, stdf_dtc_x ## DTC *x, stdf_dtc_U2 cnt
 		(*x) = NULL; \
 		return; \
 	} \
-	(*x) = (stdf_dtc_x ## DTC)calloc(cnt, sizeof(stdf_dtc_ ## DTC)); \
-	for (i=0; i<cnt; ++i) \
+	(*x) = calloc(cnt, sizeof(stdf_dtc_ ## DTC)); \
+	for (i = 0; i < cnt; ++i) \
 		_stdf_read_dtc_ ## DTC(f, &((*x)[i])); \
 }
 MAKE_X_FUNC(U1)
@@ -155,7 +154,7 @@ void _stdf_read_dtc_xCn(stdf_file *f, stdf_dtc_xCn *xCn, stdf_dtc_U2 cnt)
 {
 	stdf_dtc_U2 i = 0;
 	stdf_dtc_Cn Cn;
-	(*xCn) = (stdf_dtc_xCn)calloc(cnt, sizeof(Cn));
+	(*xCn) = calloc(cnt, sizeof(Cn));
 	while (i < cnt) {
 		_stdf_read_dtc_Cn(f, &Cn);
 		(*xCn)[i++] = Cn;
@@ -208,7 +207,7 @@ void _stdf_read_dtc_Vn(stdf_file *f, stdf_dtc_Vn *pVn, stdf_dtc_U2 cnt)
 		Vn->data = malloc(sizeof(stdf_##DTC)); \
 		_stdf_read_ ## DTC(f, ((stdf_##DTC*)Vn->data));
 
-	(*pVn) = (stdf_dtc_Vn)calloc(cnt, sizeof(stdf_dtc_Vn_ele));
+	(*pVn) = calloc(cnt, sizeof(stdf_dtc_Vn_ele));
 	Vn = *pVn;
 	while (cnt-- > 0) {
 		Vn->type = *(f->rec_pos);
