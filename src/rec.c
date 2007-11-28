@@ -1147,9 +1147,32 @@ static inline size_t _len_dtcXCN(stdf_dtc_xCn xCn, stdf_dtc_U2 cnt)
 	return ret;
 }
 #define _lenBn(Bn) (_lenCn((char*)Bn))
+#define _lenCx(Cx, x) (x)
 #define _len_dtcX(x, cnt) (sizeof(*(x)) * cnt)
 #define _len_dtcXN(xn, cnt) (sizeof(*(xn)) * (cnt / 2 + cnt % 2))
-#define booga(a,b) 0
+static inline size_t _lenVn(stdf_dtc_Vn Vn, stdf_dtc_U2 cnt)
+{
+	size_t ret = 0;
+	while (cnt--) {
+		switch (Vn->type) {
+			case STDF_GDR_B0: ret += sizeof(stdf_dtc_B1); break;
+			case STDF_GDR_U1: ret += sizeof(stdf_dtc_U1); break;
+			case STDF_GDR_U2: ret += sizeof(stdf_dtc_U2); break;
+			case STDF_GDR_U4: ret += sizeof(stdf_dtc_U4); break;
+			case STDF_GDR_I1: ret += sizeof(stdf_dtc_I1); break;
+			case STDF_GDR_I2: ret += sizeof(stdf_dtc_I2); break;
+			case STDF_GDR_I4: ret += sizeof(stdf_dtc_I4); break;
+			case STDF_GDR_R4: ret += sizeof(stdf_dtc_R4); break;
+			case STDF_GDR_R8: ret += sizeof(stdf_dtc_R8); break;
+			case STDF_GDR_Cn: ret += _lenCn(Vn->data); break;
+			case STDF_GDR_Bn: ret += _lenBn(Vn->data); break;
+			case STDF_GDR_Dn: ret += _lenDn(Vn->data); break;
+			case STDF_GDR_N1: ret += sizeof(stdf_dtc_B1); break;
+		}
+		++Vn;
+	}
+	return ret;
+}
 
 static inline size_t _calc_rec_len_far(stdf_attribute_unused stdf_file *f, stdf_rec_far *r)
 {
@@ -1166,7 +1189,7 @@ static inline size_t _calc_rec_len_mir(stdf_file *f, stdf_rec_mir *r)
 #define _CALC_REC_LEN_MIR_v3(r) \
 	( \
 	sizeof(r->CPU_TYPE) + sizeof(r->STDF_VER) + sizeof(r->MODE_COD) + \
-	sizeof(r->STAT_NUM) + booga(r->TEST_COD, 3) + sizeof(r->RTST_COD) + \
+	sizeof(r->STAT_NUM) + _lenCx(r->TEST_COD, 3) + sizeof(r->RTST_COD) + \
 	sizeof(r->PROT_COD) + sizeof(r->CMOD_COD) + sizeof(r->SETUP_T) + \
 	sizeof(r->START_T) + _lenCn(r->LOT_ID) + _lenCn(r->PART_TYP) + \
 	_lenCn(r->JOB_NAM) + _lenCn(r->OPER_NAM) + _lenCn(r->NODE_NAM) + \
@@ -1220,7 +1243,7 @@ static inline size_t _calc_rec_len_mrr(stdf_file *f, stdf_rec_mrr *r)
 
 static inline size_t _calc_rec_len_pcr(stdf_attribute_unused stdf_file *f, stdf_rec_pcr *r)
 {
-	return 
+	return
 		sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + sizeof(r->PART_CNT) +
 		sizeof(r->RTST_CNT) + sizeof(r->ABRT_CNT) + sizeof(r->GOOD_CNT) +
 		sizeof(r->FUNC_CNT);
@@ -1385,7 +1408,7 @@ static inline size_t _calc_rec_len_pdr(stdf_attribute_unused stdf_file *f, stdf_
 {
 	return
 		sizeof(r->TEST_NUM) + sizeof(r->DESC_FLG) + sizeof(r->OPT_FLAG) +
-		sizeof(r->RES_SCAL) + booga(r->UNITS, 7) +
+		sizeof(r->RES_SCAL) + _lenCx(r->UNITS, 7) +
 		sizeof(r->RES_LDIG) + sizeof(r->RES_RDIG) + sizeof(r->LLM_SCAL) +
 		sizeof(r->HLM_SCAL) + sizeof(r->LLM_LDIG) + sizeof(r->LLM_RDIG) +
 		sizeof(r->HLM_LDIG) + sizeof(r->HLM_RDIG) + sizeof(r->LO_LIMIT) +
@@ -1432,14 +1455,32 @@ static inline size_t _calc_rec_len_tsr(stdf_file *f, stdf_rec_tsr *r)
 
 static inline size_t _calc_rec_len_ptr(stdf_attribute_unused stdf_file *f, stdf_rec_ptr *r)
 {
-	return
-		sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
-		sizeof(r->TEST_FLG) + sizeof(r->PARM_FLG) + sizeof(r->RESULT) +
-		_lenCn(r->TEST_TXT) + _lenCn(r->ALARM_ID) +
-		sizeof(r->OPT_FLAG) + sizeof(r->RES_SCAL) + sizeof(r->LLM_SCAL) +
-		sizeof(r->HLM_SCAL) + sizeof(r->LO_LIMIT) + sizeof(r->HI_LIMIT) +
-		_lenCn(r->UNITS) + _lenCn(r->C_RESFMT) + _lenCn(r->C_LLMFMT) +
-		_lenCn(r->C_HLMFMT) + sizeof(r->LO_SPEC) + sizeof(r->HI_SPEC);
+#define _CALC_REC_LEN_PTR_v3(r) \
+	( \
+	sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + \
+	sizeof(r->TEST_FLG) + sizeof(r->PARM_FLG) + sizeof(r->RESULT) + \
+	sizeof(r->OPT_FLAG) + sizeof(r->RES_SCAL) + sizeof(r->RES_LDIG) + \
+	sizeof(r->RES_RDIG) + sizeof(r->DESC_FLG) + _lenCx(r->UNITS, 7) + \
+	sizeof(r->LLM_SCAL) + sizeof(r->HLM_SCAL) + sizeof(r->LLM_LDIG) + \
+	sizeof(r->LLM_RDIG) + sizeof(r->HLM_LDIG) + sizeof(r->HLM_RDIG) + \
+	sizeof(r->LO_LIMIT) + sizeof(r->HI_LIMIT) + \
+	_lenCn(r->TEST_NAM) + _lenCn(r->SEQ_NAME) + _lenCn(r->TEST_TXT) \
+	)
+#define _CALC_REC_LEN_PTR_v4(r) \
+	( \
+	sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + \
+	sizeof(r->TEST_FLG) + sizeof(r->PARM_FLG) + sizeof(r->RESULT) + \
+	_lenCn(r->TEST_TXT) + _lenCn(r->ALARM_ID) + \
+	sizeof(r->OPT_FLAG) + sizeof(r->RES_SCAL) + sizeof(r->LLM_SCAL) + \
+	sizeof(r->HLM_SCAL) + sizeof(r->LO_LIMIT) + sizeof(r->HI_LIMIT) + \
+	_lenCn(r->UNITS) + _lenCn(r->C_RESFMT) + _lenCn(r->C_LLMFMT) + \
+	_lenCn(r->C_HLMFMT) + sizeof(r->LO_SPEC) + sizeof(r->HI_SPEC) \
+	)
+#ifndef STDF_VER3
+# undef _CALC_REC_LEN_PTR_v3
+# define _CALC_REC_LEN_PTR_v3(r) 0
+#endif
+	return (f->ver == 3 ? _CALC_REC_LEN_PTR_v3(r) : _CALC_REC_LEN_PTR_v4(r));
 }
 
 static inline size_t _calc_rec_len_mpr(stdf_attribute_unused stdf_file *f, stdf_rec_mpr *r)
@@ -1460,18 +1501,35 @@ static inline size_t _calc_rec_len_mpr(stdf_attribute_unused stdf_file *f, stdf_
 
 static inline size_t _calc_rec_len_ftr(stdf_attribute_unused stdf_file *f, stdf_rec_ftr *r)
 {
-	return
-		sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
-		sizeof(r->TEST_FLG) + sizeof(r->OPT_FLAG) + sizeof(r->CYCL_CNT) +
-		sizeof(r->REL_VADR) + sizeof(r->REPT_CNT) + sizeof(r->NUM_FAIL) +
-		sizeof(r->XFAIL_AD) + sizeof(r->YFAIL_AD) + sizeof(r->VECT_OFF) +
-		sizeof(r->RTN_ICNT) + sizeof(r->PGM_ICNT) +
-		_len_dtcX(r->RTN_INDX, r->RTN_ICNT) + _len_dtcXN(r->RTN_STAT, r->RTN_ICNT) +
-		_len_dtcX(r->PGM_INDX, r->PGM_ICNT) + _len_dtcXN(r->PGM_STAT, r->PGM_ICNT) +
-		_lenDn(r->FAIL_PIN) + _lenCn(r->VECT_NAM) + _lenCn(r->TIME_SET) +
-		_lenCn(r->OP_CODE) + _lenCn(r->TEST_TXT) + _lenCn(r->ALARM_ID) +
-		_lenCn(r->PROG_TXT) + _lenCn(r->RSLT_TXT) + sizeof(r->PATG_NUM) +
-		_lenDn(r->SPIN_MAP);
+#define _CALC_REC_LEN_FTR_v3(r) \
+	( \
+	sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + \
+	sizeof(r->TEST_FLG) + sizeof(r->DESC_FLG) + sizeof(r->OPT_FLAG) + \
+	sizeof(r->TIME_SET) + sizeof(r->VECT_ADR) + sizeof(r->CYCL_CNT) + \
+	sizeof(r->REPT_CNT) + sizeof(r->PCP_ADDR) + sizeof(r->NUM_FAIL) + \
+	_lenBn(r->FAIL_PIN) + _lenBn(r->VECT_DAT) + _lenBn(r->DEV_DAT) + \
+	_lenBn(r->RPIN_MAP) + _lenCn(r->TEST_NAM) + _lenCn(r->SEQ_NAME) + \
+	_lenCn(r->TEST_TXT) \
+	)
+#define _CALC_REC_LEN_FTR_v4(r) \
+	( \
+	sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) + \
+	sizeof(r->TEST_FLG) + sizeof(r->OPT_FLAG) + sizeof(r->CYCL_CNT) + \
+	sizeof(r->REL_VADR) + sizeof(r->REPT_CNT) + sizeof(r->NUM_FAIL) + \
+	sizeof(r->XFAIL_AD) + sizeof(r->YFAIL_AD) + sizeof(r->VECT_OFF) + \
+	sizeof(r->RTN_ICNT) + sizeof(r->PGM_ICNT) + \
+	_len_dtcX(r->RTN_INDX, r->RTN_ICNT) + _len_dtcXN(r->RTN_STAT, r->RTN_ICNT) + \
+	_len_dtcX(r->PGM_INDX, r->PGM_ICNT) + _len_dtcXN(r->PGM_STAT, r->PGM_ICNT) + \
+	_lenDn(r->FAIL_PIN) + _lenCn(r->VECT_NAM) + _lenCn(r->TIME_SET) + \
+	_lenCn(r->OP_CODE) + _lenCn(r->TEST_TXT) + _lenCn(r->ALARM_ID) + \
+	_lenCn(r->PROG_TXT) + _lenCn(r->RSLT_TXT) + sizeof(r->PATG_NUM) + \
+	_lenDn(r->SPIN_MAP) \
+	)
+#ifndef STDF_VER3
+# undef _CALC_REC_LEN_FTR_v3
+# define _CALC_REC_LEN_FTR_v3(r) 0
+#endif
+	return (f->ver == 3 ? _CALC_REC_LEN_FTR_v3(r) : _CALC_REC_LEN_FTR_v4(r));
 }
 
 static inline size_t _calc_rec_len_bps(stdf_attribute_unused stdf_file *f, stdf_attribute_unused stdf_rec_bps *r)
@@ -1523,8 +1581,7 @@ static inline size_t _calc_rec_len_scr(stdf_attribute_unused stdf_file *f, stdf_
 
 static inline size_t _calc_rec_len_gdr(stdf_attribute_unused stdf_file *f, stdf_attribute_unused stdf_rec_gdr *r)
 {
-	warnf("Not implemented");
-	return 0;
+	return sizeof(r->FLD_CNT) + _lenVn(r->GEN_DATA, r->FLD_CNT);
 }
 
 static inline size_t _calc_rec_len_dtr(stdf_attribute_unused stdf_file *f, stdf_rec_dtr *r)
@@ -1578,7 +1635,7 @@ ssize_t _stdf_write_flush(stdf_file *file, size_t count)
 		return count;
 	}
 
-	/* did we have a partial write ?  if so, report how many bytes we 
+	/* did we have a partial write ?  if so, report how many bytes we
 	 * managed to write, but keep the rest in the buffer for next time */
 	if (file->_write_pos != file->__output) {
 		memmove(file->__output, file->_write_pos, count);
