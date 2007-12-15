@@ -8,9 +8,16 @@ AC_DEFUN([AC_STDF_GCC_ATTR_CHECK],
 	CFLAGS="$CFLAGS -Wattributes -Werror"
 	AC_TRY_COMPILE([$3], [$4], [stdf_gcc_attr="yes"], [stdf_gcc_attr="no"])
 	if test x"$stdf_gcc_attr" = xyes ; then
-		AC_DEFINE(STDF_HAVE_GCC_ATTRIBUTE_$1, 1, [compiler supports __attribute__ (($1))])
+		AC_DEFINE(STDF_HAVE_GCC_ATTRIBUTE_$1, 1, [compiler supports __attribute__ (($2))])
+		STDF_HAVE_GCC_ATTRIBUTE_$1="1"
+		STDF_GCC_ATTRIBUTE_$1="__attribute__ (($2))"
+	else
+		STDF_HAVE_GCC_ATTRIBUTE_$1="0"
+		STDF_GCC_ATTRIBUTE_$1=""
 	fi
 	CFLAGS="$save_CFLAGS"
+	AC_SUBST(STDF_HAVE_GCC_ATTRIBUTE_$1)
+	AC_SUBST(STDF_GCC_ATTRIBUTE_$1)
 	AC_MSG_RESULT($stdf_gcc_attr)
 ])
 AC_DEFUN([AC_STDF_GCC_ATTRIBUTES],
