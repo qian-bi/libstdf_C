@@ -10,6 +10,9 @@
 #include <libstdf.h>
 #include <gd.h>
 
+#include <config.h>
+#include <internal/headers.h>
+
 int main(int argc, char *argv[])
 {
 	stdf_file *f;

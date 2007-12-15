@@ -57,7 +57,7 @@ typedef enum {
 
 
 #ifdef __IN_LIBSTDF
-# include <libstdf_internal.h>
+# include <internal/libstdf.h>
 #else
 typedef void stdf_file;
 #endif

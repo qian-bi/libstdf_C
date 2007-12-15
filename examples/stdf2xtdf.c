@@ -9,6 +9,9 @@
 
 #include <libstdf.h>
 
+#include <config.h>
+#include <internal/headers.h>
+
 #define print_fmt(n,f,v) printf("\t<" n " value=" f "/>\n", v)
 #define print_int(n,i) print_fmt(n, "%i", i)
 #define print_str(n,s) \

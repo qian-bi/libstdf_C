@@ -1,6 +1,6 @@
 AC_INIT(libstdf, 0.5, [vapier@gmail.com])
 AM_INIT_AUTOMAKE
-AC_CONFIG_HEADER(include/libstdf_sys_config.h)
+AC_CONFIG_HEADER([config.h])
 
 AC_PROG_CC
 AC_C_CONST
@@ -15,6 +15,17 @@ string.h endian.h sys/endian.h machine/endian.h \
 cmplrs/host.h sys/isa_defs.h byteswap.h sys/param.h \
 features.h stdarg.h sys/cdefs.h assert.h \
 ])
+
+dnl a few vars for exported libstdf headers
+dnl xxx: should make this into a macro with as_tr_sh/as_tr_cpp ...
+test "x$ac_cv_header_stdint_h" = "xyes" && HAVE_STDINT_H=1 || HAVE_STDINT_H=0
+AC_SUBST(HAVE_STDINT_H)
+test "x$ac_cv_header_inttypes_h" = "xyes" && HAVE_INTTYPES_H=1 || HAVE_INTTYPES_H=0
+AC_SUBST(HAVE_INTTYPES_H)
+test "x$ac_cv_header_sys_types_h" = "xyes" && HAVE_SYS_TYPES_H=1 || HAVE_SYS_TYPES_H=0
+AC_SUBST(HAVE_SYS_TYPES_H)
+test "x$ac_cv_header_cmplrs_host_h" = "xyes" && HAVE_CMPLRS_HOST_H=1 || HAVE_CMPLRS_HOST_H=0
+AC_SUBST(HAVE_CMPLRS_HOST_H)
 
 AC_STDF_TYPE_CHECKS
 AC_STDF_GCC_ATTRIBUTES
@@ -192,10 +203,11 @@ fi
 
 
 
-
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
+include/libstdf_systems.h
 include/Makefile
+include/internal/Makefile
 src/Makefile
 tests/Makefile
 doc/Makefile
@@ -205,6 +217,6 @@ examples/Makefile
 libstdf-config
 libstdf.pc
 libstdf-doc.c
-],[
-chmod +x libstdf-config
 ])
+AC_CONFIG_COMMANDS([config-perms], [chmod +x libstdf-config])
+AC_OUTPUT

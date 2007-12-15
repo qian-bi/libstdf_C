@@ -9,6 +9,9 @@
 
 #include <libstdf.h>
 
+#include <config.h>
+#include <internal/headers.h>
+
 #define print_fmt(n,f,v) printf("\t" n ": " f, v)
 #define print_int(n,i) print_fmt(n, "%i\n", i)
 #define print_str(n,s) print_fmt(n, "%s\n", (*(s) ? (s)+1 : "(null)"))

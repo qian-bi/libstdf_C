@@ -11,8 +11,6 @@
 #ifndef _LIBSTDF_WIN32_H
 #define _LIBSTDF_WIN32_H
 
-#include <libstdf_win32_options.h>
-
 #include <sys/types.h>
 
 typedef unsigned __int8    uint8_t;
@@ -24,19 +22,11 @@ typedef signed __int16     int16_t;
 typedef signed __int32     int32_t;
 typedef signed __int64     int64_t;
 
-#ifndef PACKAGE_STRING
-# ifndef __DATE__
-#  define __DATE__
-# endif
-# define PACKAGE_STRING "libstdf win32 " __DATE__
-#endif
-
 /* pos windows compiler doesnt like 'far' as a variable name */
 #define far _windows_is_a_pos_far
 
-#include <io.h>
-#define open _open
-
-#define STDF_ENDIAN_FORCE STDF_ENDIAN_LITTLE
+#ifdef __IN_LIBSTDF
+# include <internal/win32.h>
+#endif
 
 #endif /* _LIBSTDF_WIN32_H */

@@ -8,14 +8,8 @@
  * please see: http://opensource.org/licenses/bsd-license.php
  */
 
-#ifndef _LIBSTDF_SYSTEMS_H
-#define _LIBSTDF_SYSTEMS_H
-
-#if defined(WIN32) && !defined(__MINGW32__)
-# include <libstdf_win32.h>
-#else
-# include <libstdf_sys_config.h>
-#endif
+#ifndef _LIBSTDF_INTERNAL_HEADERS_H
+#define _LIBSTDF_INTERNAL_HEADERS_H
 
 #if defined(HAVE_STDINT_H)
 # include <stdint.h>
@@ -102,17 +96,8 @@ extern int errno;
 # include <lzw.h>
 #endif
 
-/* Support for Tru64 */
 #if defined(HAVE_CMPLRS_HOST_H)
 # include <cmplrs/host.h>
-typedef uint8 uint8_t;
-typedef uint16 uint16_t;
-typedef uint32 uint32_t;
-typedef uint64 uint64_t;
-typedef int8 int8_t;
-typedef int16 int16_t;
-typedef int32 int32_t;
-typedef int64 int64_t;
 #endif
 
 /* Setup endian type. */
@@ -149,11 +134,6 @@ typedef int64 int64_t;
 #else
 # define stdf_attribute_unused
 #endif
-#ifdef STDF_HAVE_GCC_ATTRIBUTE_CONST
-# define stdf_attribute_const __attribute__ ((__const__))
-#else
-# define stdf_attribute_const
-#endif
 #ifdef STDF_HAVE_GCC_ATTRIBUTE_VISIBILITY
 # define stdf_attribute_hidden __attribute__ ((__visibility__("hidden")))
 #else
@@ -172,4 +152,4 @@ typedef int64 int64_t;
 # define stdf_attribute_weak_alias(name, aliasname)
 #endif
 
-#endif /* _LIBSTDF_SYSTEMS_H */
+#endif /* _LIBSTDF_INTERNAL_HEADERS_H */

@@ -1,0 +1,52 @@
+/**
+ * @file libstdf_systems.h
+ * @brief Pull in system specific include files / features in order for
+ *        public libstdf.h to work properly.
+ */
+/*
+ * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
+ * Released under the BSD license.  For more information,
+ * please see: http://opensource.org/licenses/bsd-license.php
+ */
+
+#ifndef _LIBSTDF_SYSTEMS_H
+#define _LIBSTDF_SYSTEMS_H
+
+#if defined(WIN32) && !defined(__MINGW32__)
+# include <libstdf_win32.h>
+#elif defined(__IN_LIBSTDF)
+# include <config.h>
+#endif
+#if defined(__IN_LIBSTDF)
+# include <internal/headers.h>
+#endif
+
+#if @HAVE_STDINT_H@
+# include <stdint.h>
+#endif
+#if @HAVE_INTTYPES_H@
+# include <inttypes.h>
+#endif
+#if @HAVE_SYS_TYPES_H@
+# include <sys/types.h>
+#endif
+
+#if @HAVE_CMPLRS_HOST_H@
+# include <cmplrs/host.h>
+typedef uint8 uint8_t;
+typedef uint16 uint16_t;
+typedef uint32 uint32_t;
+typedef uint64 uint64_t;
+typedef int8 int8_t;
+typedef int16 int16_t;
+typedef int32 int32_t;
+typedef int64 int64_t;
+#endif
+
+#if @STDF_HAVE_GCC_ATTRIBUTE_CONST@
+# define stdf_attribute_const __attribute__ ((__const__))
+#else
+# define stdf_attribute_const
+#endif
+
+#endif /* _LIBSTDF_SYSTEMS_H */

@@ -9,6 +9,9 @@
 
 #include <libstdf.h>
 
+#include <config.h>
+#include <internal/headers.h>
+
 #define	print_msg(m) printf("\t" m "\n");
 #define	print_err(m) printf("\tERROR: " m "\n");
 

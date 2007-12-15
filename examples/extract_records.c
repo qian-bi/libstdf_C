@@ -9,6 +9,9 @@
 
 #include <libstdf.h>
 
+#include <config.h>
+#include <internal/headers.h>
+
 void usage(char *prog)
 {
 	printf("Usage: %s <stdf input file> <stdf output file>\n", prog);

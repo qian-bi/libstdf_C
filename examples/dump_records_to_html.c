@@ -9,6 +9,9 @@
 
 #include <libstdf.h>
 
+#include <config.h>
+#include <internal/headers.h>
+
 #if defined(HAVE_GETOPT_H)
 # include <getopt.h>
 #endif

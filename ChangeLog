@@ -2,8 +2,10 @@
 	* Cleanup build system all over the place
 	* Use explicit casts for enum conversions
 	* Add an "stdf" prefix to all exported API pieces to play nice with other libraries
+	* Remove all header pollution from autotools by internalizing them
 	* Set initial state of records to parsed so people can do more direct manipulation
 	* Initial support for PTR/FTR in STDFv3
+	* STDF writing functions should be (in theory) complete
 
 0.4
 	* Initial partial support for writing STDF files
