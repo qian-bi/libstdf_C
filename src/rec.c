@@ -94,6 +94,21 @@ char* stdf_get_rec_name(stdf_rec_typ type, stdf_rec_sub sub)
 	return stdf_rec_names[_stdf_header_to_idx(type, sub)];
 }
 
+#ifdef STDF_VER3
+/* The V4 spec changed types of some fields from V3.  Use an
+ * union to get warning free access to the pointer conversion.
+ */
+# define _stdf_read_dtc_as(file, ptr, type1, type2) \
+	do { \
+		union { \
+			stdf_dtc_##type1 *t1; \
+			stdf_dtc_##type2 *t2; \
+		} u; \
+		u.t1 = ptr; \
+		_stdf_read_dtc_##type2(file, u.t2); \
+	} while (0)
+#endif
+
 
 /*
  * Memory handling functions
@@ -102,10 +117,16 @@ char* stdf_get_rec_name(stdf_rec_typ type, stdf_rec_sub sub)
 
 void stdf_free_record(stdf_rec_unknown *rec)
 {
+#ifdef STDF_VER3
 	stdf_file *file;
+#endif
+
 	if (!rec)
 		return;
+
+#ifdef STDF_VER3
 	file = (stdf_file*)(rec->header.stdf_file);
+#endif
 
 	if (rec->header.state == STDF_REC_STATE_RAW) {
 		free(rec->data);
@@ -877,9 +898,9 @@ stdf_rec_tsr* stdf_read_rec_tsr(stdf_file *file)
 	_stdf_read_dtc_R4(file, &(tsr->TST_SQRS));
 #ifdef STDF_VER3
 	} else {
-	_stdf_read_dtc_I4(file, &(tsr->EXEC_CNT));
-	_stdf_read_dtc_I4(file, &(tsr->FAIL_CNT));
-	_stdf_read_dtc_I4(file, &(tsr->ALRM_CNT));
+	_stdf_read_dtc_as(file, &(tsr->EXEC_CNT), U4, I4);
+	_stdf_read_dtc_as(file, &(tsr->FAIL_CNT), U4, I4);
+	_stdf_read_dtc_as(file, &(tsr->ALRM_CNT), U4, I4);
 	_stdf_read_dtc_B1(file, &(tsr->OPT_FLAG));
 	_stdf_read_dtc_B1(file, &(tsr->PAD_BYTE));
 	_stdf_read_dtc_R4(file, &(tsr->TEST_MIN));
@@ -1016,10 +1037,10 @@ stdf_rec_ftr* stdf_read_rec_ftr(stdf_file *file)
 	} else {
 	_stdf_read_dtc_B1(file, &(ftr->DESC_FLG));
 	_stdf_read_dtc_B1(file, &(ftr->OPT_FLAG));
-	_stdf_read_dtc_U1(file, &(ftr->TIME_SET));
+	_stdf_read_dtc_as(file, &(ftr->TIME_SET), Cn, U1);
 	_stdf_read_dtc_U4(file, &(ftr->VECT_ADR));
 	_stdf_read_dtc_U4(file, &(ftr->CYCL_CNT));
-	_stdf_read_dtc_U2(file, &(ftr->REPT_CNT));
+	_stdf_read_dtc_as(file, &(ftr->REPT_CNT), U4, U2);
 	_stdf_read_dtc_U2(file, &(ftr->PCP_ADDR));
 	_stdf_read_dtc_U4(file, &(ftr->NUM_FAIL));
 	_stdf_read_dtc_Bn(file, &(ftr->FAIL_PIN));
@@ -2260,7 +2281,7 @@ ssize_t stdf_write_rec_ftr(stdf_file *file, stdf_rec_ftr *ftr)
 	} else {
 	_stdf_write_dtc_B1(file, ftr->DESC_FLG);
 	_stdf_write_dtc_B1(file, ftr->OPT_FLAG);
-	_stdf_write_dtc_U1(file, ftr->TIME_SET);
+	/* _stdf_write_dtc_U1(file, ftr->TIME_SET); */
 	_stdf_write_dtc_U4(file, ftr->VECT_ADR);
 	_stdf_write_dtc_U4(file, ftr->CYCL_CNT);
 	_stdf_write_dtc_U2(file, ftr->REPT_CNT);
