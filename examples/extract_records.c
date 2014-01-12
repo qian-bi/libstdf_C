@@ -74,7 +74,9 @@ printf("%i\n", stdf_rec_to_idx(parsed_rec));
 		if (*in != 'A' && *in != 'V') {
 			printf("Found a %s, extract? ", stdf_get_rec_name_from_rec(parsed_rec));
 			do {
-				scanf("%c", in);
+				if (scanf("%c", in) != 1) {
+					/* We know this will be 1, so ignore build warnings */
+				}
 				*in = toupper(*in);
 			} while (strchr("YNAVQ", *in) == NULL);
 		}
