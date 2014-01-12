@@ -7,10 +7,10 @@
  * please see: http://opensource.org/licenses/bsd-license.php
  */
 
+#include <config.h>
 #include <libstdf.h>
 #include <gd.h>
 
-#include <config.h>
 #include <internal/headers.h>
 
 int main(int argc, char *argv[])

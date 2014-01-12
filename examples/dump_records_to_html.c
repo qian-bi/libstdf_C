@@ -7,9 +7,9 @@
  * please see: http://opensource.org/licenses/bsd-license.php
  */
 
+#include <config.h>
 #include <libstdf.h>
 
-#include <config.h>
 #include <internal/headers.h>
 
 #if defined(HAVE_GETOPT_H)

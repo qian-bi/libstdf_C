@@ -1,20 +1,42 @@
-AC_INIT(libstdf, 0.5, [vapier@gmail.com])
-AM_INIT_AUTOMAKE
+AC_INIT([libstdf], [0.5], [vapier@gmail.com])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADER([config.h])
+
+AM_INIT_AUTOMAKE([-Wall 1.12 dist-xz no-dist-gzip silent-rules])
+AM_SILENT_RULES([yes])
+
+AC_STDF_LIBTOOL
 
 AC_PROG_CC
 AC_C_CONST
 
-AC_STDF_LIBTOOL
-
 AC_HEADER_STDC
-AC_CHECK_HEADERS([ \
-stdint.h inttypes.h sys/types.h sys/stat.h ctype.h \
-errno.h unistd.h fcntl.h stdio.h stdlib.h time.h \
-string.h endian.h sys/endian.h machine/endian.h \
-cmplrs/host.h sys/isa_defs.h byteswap.h sys/param.h \
-features.h stdarg.h sys/cdefs.h assert.h \
-])
+AC_CHECK_HEADERS(m4_flatten([
+	assert.h
+	byteswap.h
+	ctype.h
+	endian.h
+	errno.h
+	fcntl.h
+	features.h
+	inttypes.h
+	stdarg.h
+	stdint.h
+	stdio.h
+	stdlib.h
+	string.h
+	time.h
+	unistd.h
+	cmplrs/host.h
+	machine/endian.h
+	sys/cdefs.h
+	sys/endian.h
+	sys/isa_defs.h
+	sys/param.h
+	sys/stat.h
+	sys/types.h
+]))
 
 dnl a few vars for exported libstdf headers
 dnl xxx: should make this into a macro with as_tr_sh/as_tr_cpp ...

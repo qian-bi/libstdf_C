@@ -18,4 +18,3 @@ if BUILD_DOCS
 endif
 
 ACLOCAL_AMFLAGS = -I m4
-AUTOMAKE_OPTIONS = dist-bzip2 no-dist-gzip

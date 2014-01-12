@@ -17,13 +17,13 @@ else
 noinst_PROGRAMS =
 endif
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)/include -I$(top_builddir)/include \
-	@HASH_CFLAGS@ @ECORE_CFLAGS@ @GLIB_CFLAGS@ \
-	@GDLIB_CFLAGS@
+	$(HASH_CFLAGS) $(ECORE_CFLAGS) $(GLIB_CFLAGS) \
+	$(GDLIB_CFLAGS)
 
 LDADD = $(top_builddir)/src/libstdf.la
-record_stats_LDADD = @HASH_LIBS@ @ECORE_LIBS@ @GLIB_LIBS@ $(LDADD)
+record_stats_LDADD = $(HASH_LIBS) $(ECORE_LIBS) $(GLIB_LIBS) $(LDADD)
 if HAVE_GDLIB
-stdf2img_LDADD = @GDLIB_LIBS@ $(LDADD)
+stdf2img_LDADD = $(GDLIB_LIBS) $(LDADD)
 endif
