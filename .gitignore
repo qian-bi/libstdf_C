@@ -3,6 +3,7 @@
 *.rej
 *.orig
 
+*.exe
 *.la
 *.lo
 *.o

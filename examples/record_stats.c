@@ -25,7 +25,7 @@
 	hash_initialise(&hash_table, 61, \
 	                hash_hash_string, hash_compare_string, hash_copy_string, \
 	                free, free);
-#define HASH_UPDATE \
+#define HASH_UPDATE(recname) \
 	key = (void*)recname; \
 	if (!hash_retrieve(&hash_table, key, (void**)&val)) { \
 		val = malloc(sizeof(long)); \
@@ -51,7 +51,7 @@
 	long *stat;
 #define HASH_INIT \
 	hash_table = ecore_hash_new(ecore_str_hash, ecore_str_compare);
-#define HASH_UPDATE \
+#define HASH_UPDATE(recname) \
 	stat = ecore_hash_get(hash_table, recname); \
 	if (!stat) { \
 		stat = malloc(sizeof(long)); \
@@ -78,7 +78,7 @@ void print_stat(void *value, void *user_data)
 	long *stat;
 #define HASH_INIT \
 	hash_table = g_hash_table_new(g_str_hash, g_str_equal);
-#define HASH_UPDATE \
+#define HASH_UPDATE(recname) \
 	stat = g_hash_table_lookup(hash_table, recname); \
 	if (!stat) { \
 		stat = malloc(sizeof(long)); \
@@ -98,7 +98,7 @@ void print_stat(gpointer key, gpointer value, gpointer user_data)
 #else
 #define HASH_VARS
 #define HASH_INIT
-#define HASH_UPDATE
+#define HASH_UPDATE(recname) if (recname) {}
 #define HASH_PRINT
 #endif
 
@@ -128,7 +128,7 @@ for (i=1; i<argc; ++i) {
 	cnt = 0;
 	while ((rec=stdf_read_record(f)) != NULL) {
 		recname = stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB);
-		HASH_UPDATE
+		HASH_UPDATE(recname)
 		cnt++;
 		stdf_free_record(rec);
 	}
