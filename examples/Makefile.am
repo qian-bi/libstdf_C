@@ -12,6 +12,7 @@ noinst_PROGRAMS = \
 	stdf2xtdf \
 	makestdf \
 	extract_records \
+        read_write \
 	$(extra_examples)
 else
 noinst_PROGRAMS =

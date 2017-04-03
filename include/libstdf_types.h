@@ -4,6 +4,7 @@
  */
 /*
  * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2017 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -30,6 +31,7 @@ typedef enum {
 typedef enum {
 	STDF_REC_SUB_FAR          = 10,
 	STDF_REC_SUB_ATR          = 20,
+        STDF_REC_SUB_VUR          = 30,
 	STDF_REC_SUB_MIR          = 10,
 	STDF_REC_SUB_MRR          = 20,
 	STDF_REC_SUB_PCR          = 30,
@@ -40,6 +42,11 @@ typedef enum {
 	STDF_REC_SUB_PLR          = 63,
 	STDF_REC_SUB_RDR          = 70,
 	STDF_REC_SUB_SDR          = 80,
+        STDF_REC_SUB_PSR          = 90,
+        STDF_REC_SUB_NMR          = 91,
+        STDF_REC_SUB_CNR          = 92,
+        STDF_REC_SUB_SSR          = 93,
+        STDF_REC_SUB_CDR          = 94,
 	STDF_REC_SUB_WIR          = 10,
 	STDF_REC_SUB_WRR          = 20,
 	STDF_REC_SUB_WCR          = 30,
@@ -53,6 +60,7 @@ typedef enum {
 	STDF_REC_SUB_PTR          = 10,
 	STDF_REC_SUB_MPR          = 15,
 	STDF_REC_SUB_FTR          = 20,
+	STDF_REC_SUB_STR          = 30,
 	STDF_REC_SUB_BPS          = 10,
 	STDF_REC_SUB_EPS          = 20,
 #ifdef STDF_VER3
@@ -73,6 +81,7 @@ typedef enum {
 #define	HEAD_TO_REC(h)		MAKE_REC(h.REC_TYP,h.REC_SUB)
 #define	STDF_REC_FAR		MAKE_REC(STDF_REC_TYP_INFO, STDF_REC_SUB_FAR)
 #define	STDF_REC_ATR		MAKE_REC(STDF_REC_TYP_INFO, STDF_REC_SUB_ATR)
+#define	STDF_REC_VUR		MAKE_REC(STDF_REC_TYP_INFO, STDF_REC_SUB_VUR)
 #define	STDF_REC_MIR		MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_MIR)
 #define	STDF_REC_MRR		MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_MRR)
 #define	STDF_REC_PCR		MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_PCR)
@@ -83,6 +92,11 @@ typedef enum {
 #define	STDF_REC_PLR		MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_PLR)
 #define	STDF_REC_RDR		MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_RDR)
 #define	STDF_REC_SDR		MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_SDR)
+#define	STDF_REC_PSR		MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_PSR)
+#define	STDF_REC_NMR		MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_NMR)
+#define	STDF_REC_CNR		MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_CNR)
+#define	STDF_REC_SSR		MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_SSR)
+#define	STDF_REC_CDR		MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_CDR)
 #define	STDF_REC_WIR		MAKE_REC(STDF_REC_TYP_PER_WAFER, STDF_REC_SUB_WIR)
 #define	STDF_REC_WRR		MAKE_REC(STDF_REC_TYP_PER_WAFER, STDF_REC_SUB_WRR)
 #define	STDF_REC_WCR		MAKE_REC(STDF_REC_TYP_PER_WAFER, STDF_REC_SUB_WCR)
@@ -96,6 +110,7 @@ typedef enum {
 #define	STDF_REC_PTR		MAKE_REC(STDF_REC_TYP_PER_EXEC, STDF_REC_SUB_PTR)
 #define	STDF_REC_MPR		MAKE_REC(STDF_REC_TYP_PER_EXEC, STDF_REC_SUB_MPR)
 #define	STDF_REC_FTR		MAKE_REC(STDF_REC_TYP_PER_EXEC, STDF_REC_SUB_FTR)
+#define	STDF_REC_STR		MAKE_REC(STDF_REC_TYP_PER_EXEC, STDF_REC_SUB_STR)
 #define	STDF_REC_BPS		MAKE_REC(STDF_REC_TYP_PER_PROG, STDF_REC_SUB_BPS)
 #define	STDF_REC_EPS		MAKE_REC(STDF_REC_TYP_PER_PROG, STDF_REC_SUB_EPS)
 #ifdef	STDF_VER3
@@ -106,38 +121,44 @@ typedef enum {
 #endif
 #define	STDF_REC_GDR		MAKE_REC(STDF_REC_TYP_GENERIC, STDF_REC_SUB_GDR)
 #define	STDF_REC_DTR		MAKE_REC(STDF_REC_TYP_GENERIC, STDF_REC_SUB_DTR)
-#define	STDF_REC_UNKNOWN			MAKE_REC(STDF_REC_TYP_UNKNOWN, STDF_REC_SUB_UNKNOWN)
+#define	STDF_REC_UNKNOWN	MAKE_REC(STDF_REC_TYP_UNKNOWN, STDF_REC_SUB_UNKNOWN)
 
 /* Definitions for Data Type Codes and Representation [page 8] */
+typedef unsigned char*          stdf_dtc_Sn;
 typedef	char*			stdf_dtc_Cn;
 typedef	char			stdf_dtc_C1;
 typedef	uint8_t			stdf_dtc_U1;
 typedef	uint16_t		stdf_dtc_U2;
 typedef	uint32_t		stdf_dtc_U4;
+typedef	uint64_t		stdf_dtc_U8;
 typedef	int8_t			stdf_dtc_I1;
 typedef	int16_t			stdf_dtc_I2;
 typedef	int32_t			stdf_dtc_I4;
 typedef	float			stdf_dtc_R4;
 typedef	double			stdf_dtc_R8;
-typedef	unsigned char*	stdf_dtc_Bn;
-typedef	unsigned char	stdf_dtc_B1;
-typedef	unsigned char*	stdf_dtc_Dn;
-typedef	unsigned char	stdf_dtc_N1;
-typedef	stdf_dtc_Cn*	stdf_dtc_xCn;
-typedef	stdf_dtc_U1*	stdf_dtc_xU1;
-typedef	stdf_dtc_U2*	stdf_dtc_xU2;
-typedef	stdf_dtc_R4*	stdf_dtc_xR4;
-typedef	stdf_dtc_N1*	stdf_dtc_xN1;
+typedef	unsigned char*		stdf_dtc_Bn;
+typedef	unsigned char		stdf_dtc_B1;
+typedef	unsigned char*		stdf_dtc_Dn;
+typedef	unsigned char		stdf_dtc_N1;
+typedef	stdf_dtc_Cn*		stdf_dtc_xCn;
+typedef	stdf_dtc_Sn*		stdf_dtc_xSn;
+typedef	stdf_dtc_U1*		stdf_dtc_xU1;
+typedef	stdf_dtc_U2*		stdf_dtc_xU2;
+typedef	stdf_dtc_U4*		stdf_dtc_xU4;
+typedef	stdf_dtc_U8*		stdf_dtc_xU8;
+typedef	void*			stdf_dtc_xUf;
+typedef	stdf_dtc_R4*		stdf_dtc_xR4;
+typedef	stdf_dtc_N1*		stdf_dtc_xN1;
 typedef struct {
 	stdf_dtc_Vn_type     type;
 	void                *data;
-} stdf_dtc_Vn_ele;
-typedef	stdf_dtc_Vn_ele* stdf_dtc_Vn;
+} 				stdf_dtc_Vn_ele;
+typedef	stdf_dtc_Vn_ele* 	stdf_dtc_Vn;
 
 typedef enum {
 	STDF_REC_STATE_RAW,
 	STDF_REC_STATE_PARSED
-} stdf_rec_state;
+} 				stdf_rec_state;
 /**
  * @brief The header found with every record in a STDF file.
  *
@@ -174,6 +195,12 @@ typedef struct {	/* V4 */
 	stdf_dtc_U4		MOD_TIM;
 	stdf_dtc_Cn		CMD_LINE;
 } stdf_rec_atr;
+/* VUR: Version update record */
+typedef struct {	/* V4-2007 */
+	stdf_rec_header	header;
+	stdf_dtc_Cn		UPD_NAM;
+} stdf_rec_vur;
+
 /* MIR: Master Information Record [page 20] */
 typedef struct {
 	stdf_rec_header	header;
@@ -331,6 +358,64 @@ typedef struct {	/* V4 */
 	stdf_dtc_Cn		EXTR_TYP;
 	stdf_dtc_Cn		EXTR_ID;
 } stdf_rec_sdr;
+/* PSR: Pattern sequence record */
+typedef struct {	/* V4-2007 */
+	stdf_rec_header	header;
+	stdf_dtc_B1		CONT_FLG;
+	stdf_dtc_U2		PSR_INDX;
+	stdf_dtc_Cn		PSR_NAM;
+	stdf_dtc_B1 		OPT_FLG;
+	stdf_dtc_U2		TOTP_CNT;
+	stdf_dtc_U2		LOCP_CNT;
+	stdf_dtc_xU8		PAT_BGN;
+	stdf_dtc_xU8		PAT_END;
+	stdf_dtc_xCn		PAT_FILE;
+	stdf_dtc_xCn		PAT_LBL;
+	stdf_dtc_xCn		FILE_UID;
+	stdf_dtc_xCn		ATPG_DSC;
+	stdf_dtc_xCn		SRC_ID;
+} stdf_rec_psr;
+/* NMR: Name map record */
+typedef struct {	/* V4-2007 */
+	stdf_rec_header	header;
+	stdf_dtc_B1		CONT_FLG;
+	stdf_dtc_U2		TOTM_CNT;
+	stdf_dtc_U2		LOCM_CNT;
+	stdf_dtc_xU2		PMR_INDX;
+	stdf_dtc_xCn		ATPG_NAM;
+} stdf_rec_nmr;
+/* CNR: Cell name record */
+typedef struct {	/* V4-2007 */
+	stdf_rec_header	header;
+	stdf_dtc_U2		CHN_NUM;
+	stdf_dtc_U4		BIT_POS;
+	stdf_dtc_Sn		CELL_NAM;
+} stdf_rec_cnr;
+/* SSR: Scan structure record */
+typedef struct {	/* V4-2007 */
+	stdf_rec_header	header;
+	stdf_dtc_Cn		SSR_NAM;
+	stdf_dtc_U2		CHN_CNT;
+	stdf_dtc_xU2		CHN_LIST;
+} stdf_rec_ssr;
+/* CDR: Chain Description Record */
+typedef struct {	/* V4-2007 */
+	stdf_rec_header	header;
+	stdf_dtc_B1		CONT_FLG;
+	stdf_dtc_U2		CDR_INDX;
+	stdf_dtc_Cn		CHN_NAM;
+	stdf_dtc_U4		CHN_LEN;
+	stdf_dtc_U2		SIN_PIN;
+	stdf_dtc_U2		SOUT_PIN;
+	stdf_dtc_U1		MSTR_CNT;
+	stdf_dtc_xU2		M_CLKS;
+	stdf_dtc_U1		SLAV_CNT;
+	stdf_dtc_xU2		S_CLKS;
+	stdf_dtc_U1		INV_VAL;
+	stdf_dtc_U2		LST_CNT;
+	stdf_dtc_xSn		CELL_LST;
+} stdf_rec_cdr;
+/* SCR: Scan chain record */
 /* WIR: Wafer Information Record [page 37] */
 typedef struct {
 	stdf_rec_header	header;
@@ -582,6 +667,69 @@ typedef struct {
 	stdf_dtc_U1		PATG_NUM;	/* V4 */
 	stdf_dtc_Dn		SPIN_MAP;	/* V4 */
 } stdf_rec_ftr;
+/* STR: Scan test record */
+typedef struct {	/* V4-2007 */
+	stdf_rec_header	header;
+	stdf_dtc_B1		CONT_FLG;
+	stdf_dtc_U4		TEST_NUM;
+	stdf_dtc_U1		HEAD_NUM;
+	stdf_dtc_U1		SITE_NUM;
+	stdf_dtc_U2		PSR_REF;
+	stdf_dtc_B1		TEST_FLG;
+	stdf_dtc_Cn		LOG_TYP;
+	stdf_dtc_Cn		TEST_TXT;
+	stdf_dtc_Cn		ALARM_ID;
+	stdf_dtc_Cn		PROG_TXT;
+	stdf_dtc_Cn		RSLT_TXT;
+	stdf_dtc_U1		Z_VAL;
+	stdf_dtc_B1		FMU_FLG;
+	stdf_dtc_Dn		MASK_MAP;
+	stdf_dtc_Dn		FAL_MAP;
+	stdf_dtc_U8		CYCL_CNT;
+	stdf_dtc_U4		TOTF_CNT;
+	stdf_dtc_U4		TOTL_CNT;
+	stdf_dtc_U8		CYC_BASE;
+	stdf_dtc_U4		BIT_BASE;
+	stdf_dtc_U2		COND_CNT;
+	stdf_dtc_U2		LIM_CNT;
+	stdf_dtc_U1		CYCL_SIZE;
+	stdf_dtc_U1		PMR_SIZE;
+	stdf_dtc_U1		CHN_SIZE;
+	stdf_dtc_U1		PAT_SIZE;
+	stdf_dtc_U1		BIT_SIZE;
+	stdf_dtc_U1		U1_SIZE;
+	stdf_dtc_U1		U2_SIZE;
+	stdf_dtc_U1		U3_SIZE;
+	stdf_dtc_U1		UTX_SIZE;
+	stdf_dtc_U2		CAP_BGN;
+	stdf_dtc_xU2		LIM_INDX;
+	stdf_dtc_xU4		LIM_SPEC;
+	stdf_dtc_xCn		COND_LST;
+	stdf_dtc_U2		CYC_CNT;
+	stdf_dtc_xUf		CYC_OFST;
+	stdf_dtc_U2		PMR_CNT;
+	stdf_dtc_xUf		PMR_INDX;
+	stdf_dtc_U2		CHN_CNT;
+	stdf_dtc_xUf		CHN_NUM;
+	stdf_dtc_U2		EXP_CNT;
+	stdf_dtc_xU1		EXP_DATA;
+	stdf_dtc_U2		CAP_CNT;
+	stdf_dtc_xU1		CAP_DATA;
+	stdf_dtc_U2		NEW_CNT;
+	stdf_dtc_xU1		NEW_DATA;
+	stdf_dtc_U2		PAT_CNT;
+	stdf_dtc_xUf		PAT_NUM;
+	stdf_dtc_U2		BPOS_CNT;
+	stdf_dtc_xUf		BIT_POS;
+	stdf_dtc_U2		USR1_CNT;
+	stdf_dtc_xUf		USR1;
+	stdf_dtc_U2		USR2_CNT;
+	stdf_dtc_xUf		USR2;
+	stdf_dtc_U2		USR3_CNT;
+	stdf_dtc_xUf		USR3;
+	stdf_dtc_U2		TXT_CNT;
+	stdf_dtc_xCn		USER_TXT;
+} stdf_rec_str;
 /* BPS: Begin Program Section [page 62] */
 typedef struct {
 	stdf_rec_header	header;

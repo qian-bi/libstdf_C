@@ -1,4 +1,4 @@
-.TH "libstdf_types.h" 3 "13 Jul 2004" "libstdf" \" -*- nroff -*-
+.TH "libstdf_types.h" 3 "24 Mar 2017" "libstdf" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -8,7 +8,6 @@ libstdf_types.h \-
 Public types. 
 
 
-.PP
 .SH SYNOPSIS
 .br
 .PP
@@ -16,90 +15,111 @@ Public types.
 
 .in +1c
 .ti -1c
-.RI "struct \fBdtc_Vn_ele\fP"
+.RI "struct \fBstdf_dtc_Vn_ele\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_header\fP"
+.RI "struct \fBstdf_rec_header\fP"
 .br
 .RI "\fIThe header found with every record in a STDF file. \fP"
 .ti -1c
-.RI "struct \fBrec_unknown\fP"
+.RI "struct \fBstdf_rec_unknown\fP"
 .br
 .RI "\fIThe basic record type. \fP"
 .ti -1c
-.RI "struct \fBrec_far\fP"
+.RI "struct \fBstdf_rec_far\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_atr\fP"
+.RI "struct \fBstdf_rec_atr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_mir\fP"
+.RI "struct \fBstdf_rec_vur\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_mrr\fP"
+.RI "struct \fBstdf_rec_mir\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_pcr\fP"
+.RI "struct \fBstdf_rec_mrr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_hbr\fP"
+.RI "struct \fBstdf_rec_pcr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_sbr\fP"
+.RI "struct \fBstdf_rec_hbr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_pmr\fP"
+.RI "struct \fBstdf_rec_sbr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_pgr\fP"
+.RI "struct \fBstdf_rec_pmr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_plr\fP"
+.RI "struct \fBstdf_rec_pgr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_rdr\fP"
+.RI "struct \fBstdf_rec_plr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_sdr\fP"
+.RI "struct \fBstdf_rec_rdr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_wir\fP"
+.RI "struct \fBstdf_rec_sdr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_wrr\fP"
+.RI "struct \fBstdf_rec_psr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_wcr\fP"
+.RI "struct \fBstdf_rec_nmr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_pir\fP"
+.RI "struct \fBstdf_rec_cnr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_prr\fP"
+.RI "struct \fBstdf_rec_ssr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_tsr\fP"
+.RI "struct \fBstdf_rec_cdr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_ptr\fP"
+.RI "struct \fBstdf_rec_wir\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_mpr\fP"
+.RI "struct \fBstdf_rec_wrr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_ftr\fP"
+.RI "struct \fBstdf_rec_wcr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_bps\fP"
+.RI "struct \fBstdf_rec_pir\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_eps\fP"
+.RI "struct \fBstdf_rec_prr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_gdr\fP"
+.RI "struct \fBstdf_rec_tsr\fP"
 .br
 .ti -1c
-.RI "struct \fBrec_dtr\fP"
+.RI "struct \fBstdf_rec_ptr\fP"
+.br
+.ti -1c
+.RI "struct \fBstdf_rec_mpr\fP"
+.br
+.ti -1c
+.RI "struct \fBstdf_rec_ftr\fP"
+.br
+.ti -1c
+.RI "struct \fBstdf_rec_str\fP"
+.br
+.ti -1c
+.RI "struct \fBstdf_rec_bps\fP"
+.br
+.ti -1c
+.RI "struct \fBstdf_rec_eps\fP"
+.br
+.ti -1c
+.RI "struct \fBstdf_rec_gdr\fP"
+.br
+.ti -1c
+.RI "struct \fBstdf_rec_dtr\fP"
 .br
 .in -1c
 .SS "Defines"
@@ -109,165 +129,210 @@ Public types.
 .RI "#define \fBMAKE_REC\fP(typ, sub)   ((typ << 8) + sub)"
 .br
 .ti -1c
+.RI "#define \fBBREAK_REC\fP(h, t)   do { h.REC_TYP = (stdf_rec_typ)(t >> 8); h.REC_SUB = (stdf_rec_sub)(t & 0xFF); } while (0)"
+.br
+.ti -1c
+.RI "#define \fBSET_HEADER\fP(h, t, l)   do { BREAK_REC(h, t); h.REC_LEN = l; } while (0)"
+.br
+.ti -1c
+.RI "#define \fBINIT_HEADER\fP(h, t)   do { SET_HEADER(h, t, 0); h.state = STDF_REC_STATE_PARSED; } while (0)"
+.br
+.ti -1c
 .RI "#define \fBHEAD_TO_REC\fP(h)   MAKE_REC(h.REC_TYP,h.REC_SUB)"
 .br
 .ti -1c
-.RI "#define \fBREC_FAR\fP   MAKE_REC(REC_TYP_INFO, REC_SUB_FAR)"
+.RI "#define \fBSTDF_REC_FAR\fP   MAKE_REC(STDF_REC_TYP_INFO, STDF_REC_SUB_FAR)"
 .br
 .ti -1c
-.RI "#define \fBREC_ATR\fP   MAKE_REC(REC_TYP_INFO, REC_SUB_ATR)"
+.RI "#define \fBSTDF_REC_ATR\fP   MAKE_REC(STDF_REC_TYP_INFO, STDF_REC_SUB_ATR)"
 .br
 .ti -1c
-.RI "#define \fBREC_MIR\fP   MAKE_REC(REC_TYP_PER_LOT, REC_SUB_MIR)"
+.RI "#define \fBSTDF_REC_VUR\fP   MAKE_REC(STDF_REC_TYP_INFO, STDF_REC_SUB_VUR)"
 .br
 .ti -1c
-.RI "#define \fBREC_MRR\fP   MAKE_REC(REC_TYP_PER_LOT, REC_SUB_MRR)"
+.RI "#define \fBSTDF_REC_MIR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_MIR)"
 .br
 .ti -1c
-.RI "#define \fBREC_PCR\fP   MAKE_REC(REC_TYP_PER_LOT, REC_SUB_PCR)"
+.RI "#define \fBSTDF_REC_MRR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_MRR)"
 .br
 .ti -1c
-.RI "#define \fBREC_HBR\fP   MAKE_REC(REC_TYP_PER_LOT, REC_SUB_HBR)"
+.RI "#define \fBSTDF_REC_PCR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_PCR)"
 .br
 .ti -1c
-.RI "#define \fBREC_SBR\fP   MAKE_REC(REC_TYP_PER_LOT, REC_SUB_SBR)"
+.RI "#define \fBSTDF_REC_HBR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_HBR)"
 .br
 .ti -1c
-.RI "#define \fBREC_PMR\fP   MAKE_REC(REC_TYP_PER_LOT, REC_SUB_PMR)"
+.RI "#define \fBSTDF_REC_SBR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_SBR)"
 .br
 .ti -1c
-.RI "#define \fBREC_PGR\fP   MAKE_REC(REC_TYP_PER_LOT, REC_SUB_PGR)"
+.RI "#define \fBSTDF_REC_PMR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_PMR)"
 .br
 .ti -1c
-.RI "#define \fBREC_PLR\fP   MAKE_REC(REC_TYP_PER_LOT, REC_SUB_PLR)"
+.RI "#define \fBSTDF_REC_PGR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_PGR)"
 .br
 .ti -1c
-.RI "#define \fBREC_RDR\fP   MAKE_REC(REC_TYP_PER_LOT, REC_SUB_RDR)"
+.RI "#define \fBSTDF_REC_PLR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_PLR)"
 .br
 .ti -1c
-.RI "#define \fBREC_SDR\fP   MAKE_REC(REC_TYP_PER_LOT, REC_SUB_SDR)"
+.RI "#define \fBSTDF_REC_RDR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_RDR)"
 .br
 .ti -1c
-.RI "#define \fBREC_WIR\fP   MAKE_REC(REC_TYP_PER_WAFER, REC_SUB_WIR)"
+.RI "#define \fBSTDF_REC_SDR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_SDR)"
 .br
 .ti -1c
-.RI "#define \fBREC_WRR\fP   MAKE_REC(REC_TYP_PER_WAFER, REC_SUB_WRR)"
+.RI "#define \fBSTDF_REC_PSR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_PSR)"
 .br
 .ti -1c
-.RI "#define \fBREC_WCR\fP   MAKE_REC(REC_TYP_PER_WAFER, REC_SUB_WCR)"
+.RI "#define \fBSTDF_REC_NMR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_NMR)"
 .br
 .ti -1c
-.RI "#define \fBREC_PIR\fP   MAKE_REC(REC_TYP_PER_PART, REC_SUB_PIR)"
+.RI "#define \fBSTDF_REC_CNR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_CNR)"
 .br
 .ti -1c
-.RI "#define \fBREC_PRR\fP   MAKE_REC(REC_TYP_PER_PART, REC_SUB_PRR)"
+.RI "#define \fBSTDF_REC_SSR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_SSR)"
 .br
 .ti -1c
-.RI "#define \fBREC_TSR\fP   MAKE_REC(REC_TYP_PER_TEST, REC_SUB_TSR)"
+.RI "#define \fBSTDF_REC_CDR\fP   MAKE_REC(STDF_REC_TYP_PER_LOT, STDF_REC_SUB_CDR)"
 .br
 .ti -1c
-.RI "#define \fBREC_PTR\fP   MAKE_REC(REC_TYP_PER_EXEC, REC_SUB_PTR)"
+.RI "#define \fBSTDF_REC_WIR\fP   MAKE_REC(STDF_REC_TYP_PER_WAFER, STDF_REC_SUB_WIR)"
 .br
 .ti -1c
-.RI "#define \fBREC_MPR\fP   MAKE_REC(REC_TYP_PER_EXEC, REC_SUB_MPR)"
+.RI "#define \fBSTDF_REC_WRR\fP   MAKE_REC(STDF_REC_TYP_PER_WAFER, STDF_REC_SUB_WRR)"
 .br
 .ti -1c
-.RI "#define \fBREC_FTR\fP   MAKE_REC(REC_TYP_PER_EXEC, REC_SUB_FTR)"
+.RI "#define \fBSTDF_REC_WCR\fP   MAKE_REC(STDF_REC_TYP_PER_WAFER, STDF_REC_SUB_WCR)"
 .br
 .ti -1c
-.RI "#define \fBREC_BPS\fP   MAKE_REC(REC_TYP_PER_PROG, REC_SUB_BPS)"
+.RI "#define \fBSTDF_REC_PIR\fP   MAKE_REC(STDF_REC_TYP_PER_PART, STDF_REC_SUB_PIR)"
 .br
 .ti -1c
-.RI "#define \fBREC_EPS\fP   MAKE_REC(REC_TYP_PER_PROG, REC_SUB_EPS)"
+.RI "#define \fBSTDF_REC_PRR\fP   MAKE_REC(STDF_REC_TYP_PER_PART, STDF_REC_SUB_PRR)"
 .br
 .ti -1c
-.RI "#define \fBREC_GDR\fP   MAKE_REC(REC_TYP_GENERIC, REC_SUB_GDR)"
+.RI "#define \fBSTDF_REC_TSR\fP   MAKE_REC(STDF_REC_TYP_PER_TEST, STDF_REC_SUB_TSR)"
 .br
 .ti -1c
-.RI "#define \fBREC_DTR\fP   MAKE_REC(REC_TYP_GENERIC, REC_SUB_DTR)"
+.RI "#define \fBSTDF_REC_PTR\fP   MAKE_REC(STDF_REC_TYP_PER_EXEC, STDF_REC_SUB_PTR)"
 .br
 .ti -1c
-.RI "#define \fBREC_UNKNOWN\fP   MAKE_REC(REC_TYP_UNKNOWN, REC_SUB_UNKNOWN)"
+.RI "#define \fBSTDF_REC_MPR\fP   MAKE_REC(STDF_REC_TYP_PER_EXEC, STDF_REC_SUB_MPR)"
+.br
+.ti -1c
+.RI "#define \fBSTDF_REC_FTR\fP   MAKE_REC(STDF_REC_TYP_PER_EXEC, STDF_REC_SUB_FTR)"
+.br
+.ti -1c
+.RI "#define \fBSTDF_REC_STR\fP   MAKE_REC(STDF_REC_TYP_PER_EXEC, STDF_REC_SUB_STR)"
+.br
+.ti -1c
+.RI "#define \fBSTDF_REC_BPS\fP   MAKE_REC(STDF_REC_TYP_PER_PROG, STDF_REC_SUB_BPS)"
+.br
+.ti -1c
+.RI "#define \fBSTDF_REC_EPS\fP   MAKE_REC(STDF_REC_TYP_PER_PROG, STDF_REC_SUB_EPS)"
+.br
+.ti -1c
+.RI "#define \fBSTDF_REC_GDR\fP   MAKE_REC(STDF_REC_TYP_GENERIC, STDF_REC_SUB_GDR)"
+.br
+.ti -1c
+.RI "#define \fBSTDF_REC_DTR\fP   MAKE_REC(STDF_REC_TYP_GENERIC, STDF_REC_SUB_DTR)"
+.br
+.ti -1c
+.RI "#define \fBSTDF_REC_UNKNOWN\fP   MAKE_REC(STDF_REC_TYP_UNKNOWN, STDF_REC_SUB_UNKNOWN)"
 .br
 .in -1c
 .SS "Typedefs"
 
 .in +1c
 .ti -1c
-.RI "typedef uint8_t \fBbyte_t\fP"
+.RI "typedef unsigned char * \fBstdf_dtc_Sn\fP"
 .br
 .ti -1c
-.RI "typedef char * \fBdtc_Cn\fP"
+.RI "typedef char * \fBstdf_dtc_Cn\fP"
 .br
 .ti -1c
-.RI "typedef char \fBdtc_C1\fP"
+.RI "typedef char \fBstdf_dtc_C1\fP"
 .br
 .ti -1c
-.RI "typedef uint8_t \fBdtc_U1\fP"
+.RI "typedef uint8_t \fBstdf_dtc_U1\fP"
 .br
 .ti -1c
-.RI "typedef uint16_t \fBdtc_U2\fP"
+.RI "typedef uint16_t \fBstdf_dtc_U2\fP"
 .br
 .ti -1c
-.RI "typedef uint32_t \fBdtc_U4\fP"
+.RI "typedef uint32_t \fBstdf_dtc_U4\fP"
 .br
 .ti -1c
-.RI "typedef int8_t \fBdtc_I1\fP"
+.RI "typedef uint64_t \fBstdf_dtc_U8\fP"
 .br
 .ti -1c
-.RI "typedef int16_t \fBdtc_I2\fP"
+.RI "typedef int8_t \fBstdf_dtc_I1\fP"
 .br
 .ti -1c
-.RI "typedef int32_t \fBdtc_I4\fP"
+.RI "typedef int16_t \fBstdf_dtc_I2\fP"
 .br
 .ti -1c
-.RI "typedef float \fBdtc_R4\fP"
+.RI "typedef int32_t \fBstdf_dtc_I4\fP"
 .br
 .ti -1c
-.RI "typedef double \fBdtc_R8\fP"
+.RI "typedef float \fBstdf_dtc_R4\fP"
 .br
 .ti -1c
-.RI "typedef char * \fBdtc_Bn\fP"
+.RI "typedef double \fBstdf_dtc_R8\fP"
 .br
 .ti -1c
-.RI "typedef char \fBdtc_B1\fP"
+.RI "typedef unsigned char * \fBstdf_dtc_Bn\fP"
 .br
 .ti -1c
-.RI "typedef char * \fBdtc_Dn\fP"
+.RI "typedef unsigned char \fBstdf_dtc_B1\fP"
 .br
 .ti -1c
-.RI "typedef char \fBdtc_N1\fP"
+.RI "typedef unsigned char * \fBstdf_dtc_Dn\fP"
 .br
 .ti -1c
-.RI "typedef dtc_Cn * \fBdtc_xCn\fP"
+.RI "typedef unsigned char \fBstdf_dtc_N1\fP"
 .br
 .ti -1c
-.RI "typedef dtc_U1 * \fBdtc_xU1\fP"
+.RI "typedef stdf_dtc_Cn * \fBstdf_dtc_xCn\fP"
 .br
 .ti -1c
-.RI "typedef dtc_U2 * \fBdtc_xU2\fP"
+.RI "typedef stdf_dtc_Sn * \fBstdf_dtc_xSn\fP"
 .br
 .ti -1c
-.RI "typedef dtc_R4 * \fBdtc_xR4\fP"
+.RI "typedef stdf_dtc_U1 * \fBstdf_dtc_xU1\fP"
 .br
 .ti -1c
-.RI "typedef dtc_N1 * \fBdtc_xN1\fP"
+.RI "typedef stdf_dtc_U2 * \fBstdf_dtc_xU2\fP"
 .br
 .ti -1c
-.RI "typedef dtc_Vn_ele * \fBdtc_Vn\fP"
+.RI "typedef stdf_dtc_U4 * \fBstdf_dtc_xU4\fP"
+.br
+.ti -1c
+.RI "typedef stdf_dtc_U8 * \fBstdf_dtc_xU8\fP"
+.br
+.ti -1c
+.RI "typedef void * \fBstdf_dtc_xUf\fP"
+.br
+.ti -1c
+.RI "typedef stdf_dtc_R4 * \fBstdf_dtc_xR4\fP"
+.br
+.ti -1c
+.RI "typedef stdf_dtc_N1 * \fBstdf_dtc_xN1\fP"
+.br
+.ti -1c
+.RI "typedef stdf_dtc_Vn_ele * \fBstdf_dtc_Vn\fP"
 .br
 .in -1c
 .SS "Enumerations"
 
 .in +1c
 .ti -1c
-.RI "enum \fBrec_typ\fP { \fBREC_TYP_INFO\fP =  0, \fBREC_TYP_PER_LOT\fP =  1, \fBREC_TYP_PER_WAFER\fP =  2, \fBREC_TYP_PER_PART\fP =  5, \fBREC_TYP_PER_TEST\fP =  10, \fBREC_TYP_PER_EXEC\fP =  15, \fBREC_TYP_PER_PROG\fP =  20, \fBREC_TYP_PER_SITE\fP =  25, \fBREC_TYP_GENERIC\fP =  50, \fBREC_TYP_RESV_IMAGE\fP =  180, \fBREC_TYP_RESV_IG900\fP =  181, \fBREC_TYP_UNKNOWN\fP =  0xFF }"
+.RI "enum \fBstdf_rec_typ\fP { \fBSTDF_REC_TYP_INFO\fP =  0, \fBSTDF_REC_TYP_PER_LOT\fP =  1, \fBSTDF_REC_TYP_PER_WAFER\fP =  2, \fBSTDF_REC_TYP_PER_PART\fP =  5, \fBSTDF_REC_TYP_PER_TEST\fP =  10, \fBSTDF_REC_TYP_PER_EXEC\fP =  15, \fBSTDF_REC_TYP_PER_PROG\fP =  20, \fBSTDF_REC_TYP_PER_SITE\fP =  25, \fBSTDF_REC_TYP_GENERIC\fP =  50, \fBSTDF_REC_TYP_RESV_IMAGE\fP =  180, \fBSTDF_REC_TYP_RESV_IG900\fP =  181, \fBSTDF_REC_TYP_UNKNOWN\fP =  0xFF }"
 .br
 .ti -1c
-.RI "enum \fBrec_sub\fP { \fBREC_SUB_FAR\fP =  10, \fBREC_SUB_ATR\fP =  20, \fBREC_SUB_MIR\fP =  10, \fBREC_SUB_MRR\fP =  20, \fBREC_SUB_PCR\fP =  30, \fBREC_SUB_HBR\fP =  40, \fBREC_SUB_SBR\fP =  50, \fBREC_SUB_PMR\fP =  60, \fBREC_SUB_PGR\fP =  62, \fBREC_SUB_PLR\fP =  63, \fBREC_SUB_RDR\fP =  70, \fBREC_SUB_SDR\fP =  80, \fBREC_SUB_WIR\fP =  10, \fBREC_SUB_WRR\fP =  20, \fBREC_SUB_WCR\fP =  30, \fBREC_SUB_PIR\fP =  10, \fBREC_SUB_PRR\fP =  20, \fBREC_SUB_TSR\fP =  30, \fBREC_SUB_PTR\fP =  10, \fBREC_SUB_MPR\fP =  15, \fBREC_SUB_FTR\fP =  20, \fBREC_SUB_BPS\fP =  10, \fBREC_SUB_EPS\fP =  20, \fBREC_SUB_GDR\fP =  10, \fBREC_SUB_DTR\fP =  30, \fBREC_SUB_UNKNOWN\fP =  0xFF }"
+.RI "enum \fBstdf_rec_sub\fP { \fBSTDF_REC_SUB_FAR\fP =  10, \fBSTDF_REC_SUB_ATR\fP =  20, \fBSTDF_REC_SUB_VUR\fP =  30, \fBSTDF_REC_SUB_MIR\fP =  10, \fBSTDF_REC_SUB_MRR\fP =  20, \fBSTDF_REC_SUB_PCR\fP =  30, \fBSTDF_REC_SUB_HBR\fP =  40, \fBSTDF_REC_SUB_SBR\fP =  50, \fBSTDF_REC_SUB_PMR\fP =  60, \fBSTDF_REC_SUB_PGR\fP =  62, \fBSTDF_REC_SUB_PLR\fP =  63, \fBSTDF_REC_SUB_RDR\fP =  70, \fBSTDF_REC_SUB_SDR\fP =  80, \fBSTDF_REC_SUB_PSR\fP =  90, \fBSTDF_REC_SUB_NMR\fP =  91, \fBSTDF_REC_SUB_CNR\fP =  92, \fBSTDF_REC_SUB_SSR\fP =  93, \fBSTDF_REC_SUB_CDR\fP =  94, \fBSTDF_REC_SUB_WIR\fP =  10, \fBSTDF_REC_SUB_WRR\fP =  20, \fBSTDF_REC_SUB_WCR\fP =  30, \fBSTDF_REC_SUB_PIR\fP =  10, \fBSTDF_REC_SUB_PRR\fP =  20, \fBSTDF_REC_SUB_TSR\fP =  30, \fBSTDF_REC_SUB_PTR\fP =  10, \fBSTDF_REC_SUB_MPR\fP =  15, \fBSTDF_REC_SUB_FTR\fP =  20, \fBSTDF_REC_SUB_STR\fP =  30, \fBSTDF_REC_SUB_BPS\fP =  10, \fBSTDF_REC_SUB_EPS\fP =  20, \fBSTDF_REC_SUB_GDR\fP =  10, \fBSTDF_REC_SUB_DTR\fP =  30, \fBSTDF_REC_SUB_UNKNOWN\fP =  0xFF }"
 .br
 .ti -1c
-.RI "enum \fBrec_state\fP { \fBREC_STATE_RAW\fP, \fBREC_STATE_PARSED\fP }"
+.RI "enum \fBstdf_rec_state\fP { \fBSTDF_REC_STATE_RAW\fP, \fBSTDF_REC_STATE_PARSED\fP }"
 .br
 .in -1c
 .SH "Author"

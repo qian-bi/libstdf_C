@@ -3,6 +3,7 @@
  */
 /*
  * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2017 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -46,6 +47,16 @@ for (i=1; i<argc; ++i) {
 	 FAR - ATRs - MIR -     - SDRs
 	 FAR -      - MIR - RDR - SDRs
 	 FAR - ATRs - MIR - RDR - SDRs
+
+	 * every STDF V4 2007 must contain one of these initial sequences
+ 	 FAR - VUR  - MIR
+	 FAR - ATRs - VUR  - MIR
+	 FAR - VUR  - MIR  - RDR
+	 FAR - ATRs - VUR  - MIR  - RDR
+	 FAR - VUR  - MIR  - SDRs
+	 FAR - ATRs - VUR  - MIR  - SDRs
+	 FAR - VUR  - MIR  - RDR  - SDRs
+	 FAR - ATRs - VUR  - MIR  - RDR  - SDRs
 	 */
 
 	/* Find the FAR record */
@@ -66,6 +77,11 @@ for (i=1; i<argc; ++i) {
 		print_err("Initial sequence not found!");
 		goto next_file;
 	}
+        if (HEAD_TO_REC(rec->header) == STDF_REC_VUR) {
+                printf("\nis stdf V4-2007!\n");
+		rec = stdf_read_record(f);
+        }
+        
 	/* We should now have the MIR record already read in */
 	if (HEAD_TO_REC(rec->header) != STDF_REC_MIR) {
 		print_err("Initial sequence wrong: MIR not located!");
@@ -127,10 +143,15 @@ for (i=1; i<argc; ++i) {
 			case STDF_REC_PMR: break;
 			case STDF_REC_PGR: break;
 			case STDF_REC_PLR: break;
+                        case STDF_REC_PSR: break;
+                        case STDF_REC_NMR: break;
+                        case STDF_REC_CNR: break;
+                        case STDF_REC_SSR: break;
+                        case STDF_REC_CDR: break;
+	
 
 			case STDF_REC_WIR: break; /* only 1 per wafer */
 			case STDF_REC_WRR: break; /* only 1 per wafer */
-
 			case STDF_REC_WCR:
 				if (++stdf_rec_wcr_cnt > 1) {
 					print_err("More than one STDF_REC_WCR was found!");
@@ -139,18 +160,20 @@ for (i=1; i<argc; ++i) {
 				break;
 
 			/* each PIR must have a PRR for same HEAD/SITE */
-			/* PTR/MPR/FTR records must appear between the right PIR/PRR pairs */
+			/* PTR/MPR/FTR/STR records must appear between the right PIR/PRR pairs */
 			/* each BPS/EPS pair must be inside the PIR/PRR pair */
 			case STDF_REC_PIR: break; /* only 1 per part tested */
-			case STDF_REC_PTR: break; /* only 1 per part tested */
-			case STDF_REC_MPR: break; /* only 1 per part tested */
-			case STDF_REC_FTR: break; /* only 1 per part tested */
+			case STDF_REC_TSR: break;
+			case STDF_REC_PTR: break; 
+			case STDF_REC_MPR: break; 
+			case STDF_REC_FTR: break; 
+			case STDF_REC_STR: break; 
 			case STDF_REC_BPS: break;
 			case STDF_REC_EPS: break;
 			case STDF_REC_PRR: break; /* only 1 per part tested */
 
-			case STDF_REC_TSR: break;
 			case STDF_REC_GDR: break;
+			case STDF_REC_DTR: break;
 	
 			default:
 				print_err("Uknown record found!");

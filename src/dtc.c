@@ -5,6 +5,7 @@
  */
 /*
  * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2017 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -17,10 +18,16 @@ void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int 
 {
 	if (in_byte_order == out_byte_order || len == 1)
 		return;
-	if (in_byte_order != STDF_ENDIAN_LITTLE && in_byte_order != STDF_ENDIAN_BIG) {
-		warnf("byte order %i is not implemented", in_byte_order);
-		return;
-	}
+	if (in_byte_order == STDF_ENDIAN_HOST)
+		if (out_byte_order != STDF_ENDIAN_LITTLE && out_byte_order != STDF_ENDIAN_BIG) {
+			warnf("byte order %i is not implemented", out_byte_order);
+            	return;
+		}
+		else
+		if (in_byte_order != STDF_ENDIAN_LITTLE && in_byte_order != STDF_ENDIAN_BIG) {
+			warnf("byte order %i is not implemented", in_byte_order);
+			return;
+		}
 
 	switch (len) {
 		case 2:	stdf_bswap_16(*((uint16_t*)in)); break;
@@ -58,6 +65,7 @@ void _stdf_read_ ## DTC(stdf_file *f, stdf_##DTC *dtc) \
 }
 MAKE_NUM_FUNC(dtc_U2)
 MAKE_NUM_FUNC(dtc_U4)
+MAKE_NUM_FUNC(dtc_U8)
 MAKE_NUM_FUNC(dtc_I2)
 MAKE_NUM_FUNC(dtc_I4)
 MAKE_NUM_FUNC(dtc_R4)
@@ -67,8 +75,6 @@ MAKE_NUM_FUNC(dtc_R8)
 #ifdef STDF_VER3
 void _stdf_read_dtc_Cx(stdf_file *f, stdf_dtc_Cn *Cn, int len)
 {
-	/* does this even work ?
-	   need a file with a PLR record in it to test ... */
 	(*Cn) = calloc(len + 1, sizeof(stdf_dtc_C1));
 	(*Cn)[0] = len;
 	memset((*Cn)+1, 0x00, 1 + len + 1);
@@ -96,6 +102,26 @@ void _stdf_read_dtc_Cn(stdf_file *f, stdf_dtc_Cn *Cn)
 	(*Cn)[len+1] = '\0';
 }
 
+void _stdf_read_dtc_Sn(stdf_file *f, stdf_dtc_Sn *Sn)
+{
+	unsigned int len;
+	if ((f->rec_pos)+1 == f->rec_end) {
+		(*Sn) = malloc(2);
+		((stdf_dtc_U2*)(*Sn))[0] = 0;
+		return;
+	}
+
+	memcpy(&len, f->rec_pos, 2);
+	f->rec_pos += 2;
+	_stdf_byte_order_to_host(f, &len, 2);
+
+	(*Sn) = calloc(len + 3, sizeof(stdf_dtc_C1));
+        ((stdf_dtc_U2*)(*Sn))[0] = len;
+	memcpy((*Sn)+2, f->rec_pos, len);
+	f->rec_pos += len;
+	(*Sn)[len+2] = '\0';
+}
+
 void _stdf_read_dtc_Bn(stdf_file *f, stdf_dtc_Bn *Bn)
 {
 	return _stdf_read_dtc_Cn(f, (stdf_dtc_Cn*)Bn);
@@ -118,11 +144,10 @@ void _stdf_read_dtc_Dn(stdf_file *f, stdf_dtc_Dn *Dn)
 
 	len = bit_cnt / (sizeof(stdf_dtc_B1) * 8);
 	if (bit_cnt % 8) ++len;
-	(*Dn) = malloc(len + 3);
+	(*Dn) = malloc(len + 2);
 	((stdf_dtc_U2*)(*Dn))[0] = bit_cnt;
 	memcpy(((byte_t*)(*Dn))+2, f->rec_pos, len);
 	f->rec_pos += len;
-	((byte_t*)(*Dn))[len+2] = 0x00;
 }
 
 void _stdf_read_dtc_xN1(stdf_file *f, stdf_dtc_xN1 *xN1, stdf_dtc_U2 cnt)
@@ -147,8 +172,48 @@ void _stdf_read_dtc_x ## DTC(stdf_file *f, stdf_dtc_x ## DTC *x, stdf_dtc_U2 cnt
 }
 MAKE_X_FUNC(U1)
 MAKE_X_FUNC(U2)
+MAKE_X_FUNC(U4)
+MAKE_X_FUNC(U8)
 MAKE_X_FUNC(R4)
 #undef MAKE_X_FUNC
+
+void _stdf_read_dtc_xUf(stdf_file *f, stdf_dtc_xUf *xUf, stdf_dtc_U2 cnt, stdf_dtc_U1 size)
+{
+        stdf_dtc_U2 i=0;
+
+        if (cnt == 0 || size == 0) {
+		(*xUf) = NULL;
+                return;
+        }
+        switch (size) {
+        	case 1: { 
+                        (*xUf) = (void*)calloc(cnt, sizeof(stdf_dtc_U1));
+                        for ( i = 0; i < cnt; i++)
+				_stdf_read_dtc_U1(f, &((stdf_dtc_U1*)(*xUf))[i]);
+			break;
+		} 
+        	case 2: { 
+                        (*xUf) = calloc(cnt, sizeof(stdf_dtc_U2));
+                        for ( i = 0; i < cnt; i++)
+				_stdf_read_dtc_U2(f, &((stdf_dtc_U2*)(*xUf))[i]);
+			break;
+		} 
+        	case 4: { 
+                        (*xUf) = calloc(cnt, sizeof(stdf_dtc_U4));
+                        for ( i = 0; i < cnt; i++)
+				_stdf_read_dtc_U4(f, &((stdf_dtc_U4*)(*xUf))[i]);
+			break;
+		} 
+        	case 8: { 
+                        (*xUf) = calloc(cnt, sizeof(stdf_dtc_U8));
+                        for ( i = 0; i < cnt; i++)
+				_stdf_read_dtc_U8(f, &((stdf_dtc_U8*)(*xUf))[i]);
+			break;
+		} 
+		default:
+			warnf("illegal Uf size '%u'", size);
+	}
+}
 
 void _stdf_read_dtc_xCn(stdf_file *f, stdf_dtc_xCn *xCn, stdf_dtc_U2 cnt)
 {
@@ -168,29 +233,44 @@ void free_xCn(stdf_dtc_xCn xCn, stdf_dtc_U2 cnt)
 	free(xCn);
 }
 
-void stdf_get_Vn_name_r(int type, char *buf)
+void _stdf_read_dtc_xSn(stdf_file *f, stdf_dtc_xSn *xSn, stdf_dtc_U2 cnt)
 {
-	switch (type) {
-		case STDF_GDR_B0: memcpy(buf, "B0", 2); break;
-		case STDF_GDR_U1: memcpy(buf, "U1", 2); break;
-		case STDF_GDR_U2: memcpy(buf, "U2", 2); break;
-		case STDF_GDR_U4: memcpy(buf, "U4", 2); break;
-		case STDF_GDR_I1: memcpy(buf, "I1", 2); break;
-		case STDF_GDR_I2: memcpy(buf, "I2", 2); break;
-		case STDF_GDR_I4: memcpy(buf, "I4", 2); break;
-		case STDF_GDR_R4: memcpy(buf, "R4", 2); break;
-		case STDF_GDR_R8: memcpy(buf, "R8", 2); break;
-		case STDF_GDR_Cn: memcpy(buf, "Cn", 2); break;
-		case STDF_GDR_Bn: memcpy(buf, "Bn", 2); break;
-		case STDF_GDR_Dn: memcpy(buf, "Dn", 2); break;
-		case STDF_GDR_N1: memcpy(buf, "N1", 2); break;
+	stdf_dtc_U2 i = 0;
+	stdf_dtc_Sn Sn;
+	(*xSn) = calloc(cnt, sizeof(Sn));
+	while (i < cnt) {
+		_stdf_read_dtc_Sn(f, &Sn);
+		(*xSn)[i++] = Sn;
 	}
-	buf[2] = '\0';
 }
+
+void free_xSn(stdf_dtc_xSn xSn, stdf_dtc_U2 cnt)
+{
+	while (cnt-- > 0)
+		free(xSn[cnt]);
+	free(xSn);
+}
+
 char* stdf_get_Vn_name(int type)
 {
 	static char name[3];
-	stdf_get_Vn_name_r(type, name);
+
+	switch (type) {
+		case STDF_GDR_B0: memcpy(name, "B0", 2); break;
+		case STDF_GDR_U1: memcpy(name, "U1", 2); break;
+		case STDF_GDR_U2: memcpy(name, "U2", 2); break;
+		case STDF_GDR_U4: memcpy(name, "U4", 2); break;
+		case STDF_GDR_I1: memcpy(name, "I1", 2); break;
+		case STDF_GDR_I2: memcpy(name, "I2", 2); break;
+		case STDF_GDR_I4: memcpy(name, "I4", 2); break;
+		case STDF_GDR_R4: memcpy(name, "R4", 2); break;
+		case STDF_GDR_R8: memcpy(name, "R8", 2); break;
+		case STDF_GDR_Cn: memcpy(name, "Cn", 2); break;
+		case STDF_GDR_Bn: memcpy(name, "Bn", 2); break;
+		case STDF_GDR_Dn: memcpy(name, "Dn", 2); break;
+		case STDF_GDR_N1: memcpy(name, "N1", 2); break;
+	}
+	name[2] = '\0';
 	return name;
 }
 
@@ -213,7 +293,7 @@ void _stdf_read_dtc_Vn(stdf_file *f, stdf_dtc_Vn *pVn, stdf_dtc_U2 cnt)
 		Vn->type = *(f->rec_pos);
 		f->rec_pos++;
 		switch (Vn->type) {
-			case STDF_GDR_B0: DO_VN(dtc_B1); break;
+			case STDF_GDR_B0: break;
 			case STDF_GDR_U1: DO_VN(dtc_U1); break;
 			case STDF_GDR_U2: DO_VN(dtc_U2); break;
 			case STDF_GDR_U4: DO_VN(dtc_U4); break;

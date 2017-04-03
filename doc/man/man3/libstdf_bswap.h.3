@@ -1,4 +1,4 @@
-.TH "libstdf_bswap.h" 3 "13 Jul 2004" "libstdf" \" -*- nroff -*-
+.TH "libstdf_bswap.h" 3 "24 Mar 2017" "libstdf" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -8,7 +8,6 @@ libstdf_bswap.h \-
 Byte swapping functions. 
 
 
-.PP
 .SH SYNOPSIS
 .br
 .PP
@@ -32,7 +31,9 @@ Byte swapping functions.
 .PP 
 .SS "#define stdf_bswap_16(x)"
 .PP
-\fBValue:\fP.nf
+\fBValue:\fP
+.PP
+.nf
 x = ((((x) & 0xff00) >> 8) | \
          (((x) & 0x00ff) << 8))
 .fi
@@ -40,7 +41,9 @@ Swap bytes in a 16 bit value.
 .PP
 .SS "#define stdf_bswap_32(x)"
 .PP
-\fBValue:\fP.nf
+\fBValue:\fP
+.PP
+.nf
 x = ((((x) & 0xff000000) >> 24) | \
          (((x) & 0x00ff0000) >>  8) | \
          (((x) & 0x0000ff00) <<  8) | \
@@ -50,7 +53,9 @@ Swap bytes in a 32 bit value.
 .PP
 .SS "#define stdf_bswap_64(x)"
 .PP
-\fBValue:\fP.nf
+\fBValue:\fP
+.PP
+.nf
 x = ((((x) & 0xff00000000000000) >> 56) | \
          (((x) & 0x00ff000000000000) >> 40) | \
          (((x) & 0x0000ff0000000000) >> 24) | \

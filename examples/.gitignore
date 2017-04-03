@@ -4,6 +4,7 @@
 /extract_records
 /is_valid_stdf
 /makestdf
+/read_write
 /record_stats
 /stdf2img
 /stdf2xtdf

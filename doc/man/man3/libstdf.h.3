@@ -1,4 +1,4 @@
-.TH "libstdf.h" 3 "13 Jul 2004" "libstdf" \" -*- nroff -*-
+.TH "libstdf.h" 3 "24 Mar 2017" "libstdf" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -8,36 +8,27 @@ libstdf.h \-
 Top level include and the main stdf structure definition. 
 
 
-.PP
 .SH SYNOPSIS
 .br
 .PP
-.SS "Data Structures"
+.SS "Typedefs"
 
 .in +1c
 .ti -1c
-.RI "struct \fB__stdf_fops\fP"
-.br
-.ti -1c
-.RI "struct \fBstdf_file\fP"
-.br
-.RI "\fIThe main STDF file structure. \fP"
-.in -1c
-.SS "Defines"
-
-.in +1c
-.ti -1c
-.RI "#define \fB__STDF_HOST_BYTE_ORDER\fP   BYTE_ORDER"
+.RI "typedef void \fBstdf_file\fP"
 .br
 .in -1c
 .SS "Enumerations"
 
 .in +1c
 .ti -1c
-.RI "enum \fBstdf_format\fP { \fBSTDF_FORMAT_REG\fP, \fBSTDF_FORMAT_ZIP\fP, \fBSTDF_FORMAT_GZIP\fP, \fBSTDF_FORMAT_BZIP2\fP }"
+.RI "enum \fBstdf_format\fP { \fBSTDF_FORMAT_REG\fP =  0x0, \fBSTDF_FORMAT_ZIP\fP =  0x1, \fBSTDF_FORMAT_GZIP\fP =  0x2, \fBSTDF_FORMAT_BZIP2\fP =  0x3, \fBSTDF_FORMAT_LZW\fP =  0x4 }"
 .br
 .ti -1c
-.RI "enum \fBstdf_options\fP { \fBSTDF_OPTS_DEFAULT\fP =  0x00, \fBSTDF_OPTS_FORCE\fP =  0x01, \fBSTDF_OPTS_FORCE_V4\fP =  0x04, \fBSTDF_OPTS_ZIP\fP =  0x08, \fBSTDF_OPTS_GZIP\fP =  0x10, \fBSTDF_OPTS_BZIP2\fP =  0x20 }"
+.RI "enum \fBstdf_initial_options\fP { \fBSTDF_OPTS_DEFAULT\fP =  0x000, \fBSTDF_OPTS_FORCE\fP =  0x001, \fBSTDF_OPTS_FORCE_V3\fP =  0x002, \fBSTDF_OPTS_FORCE_V4\fP =  0x004, \fBSTDF_OPTS_ZIP\fP =  0x008, \fBSTDF_OPTS_GZIP\fP =  0x010, \fBSTDF_OPTS_BZIP2\fP =  0x020, \fBSTDF_OPTS_LZW\fP =  0x040, \fBSTDF_OPTS_READ\fP =  0x080, \fBSTDF_OPTS_WRITE\fP =  0x100, \fBSTDF_OPTS_CREATE\fP =  0x200 }"
+.br
+.ti -1c
+.RI "enum \fBstdf_runtime_settings\fP { \fBSTDF_SETTING_WRITE_SIZE\fP =  0x001, \fBSTDF_SETTING_VERSION\fP =  0x002, \fBSTDF_SETTING_BYTE_ORDER\fP =  0x003 }"
 .br
 .in -1c
 .SH "Enumeration Type Documentation"
@@ -46,7 +37,7 @@ Top level include and the main stdf structure definition.
 .PP
 Compressed file format 
 .PP
-\fBEnumeration values: \fP
+\fBEnumerator: \fP
 .in +1c
 .TP
 \fB\fISTDF_FORMAT_REG \fP\fP
@@ -60,11 +51,14 @@ gzipped file
 .TP
 \fB\fISTDF_FORMAT_BZIP2 \fP\fP
 bzipped file 
-.SS "enum \fBstdf_options\fP"
+.TP
+\fB\fISTDF_FORMAT_LZW \fP\fP
+LZW compressed file 
+.SS "enum \fBstdf_initial_options\fP"
 .PP
 Misc options to control libstdf behavior 
 .PP
-\fBEnumeration values: \fP
+\fBEnumerator: \fP
 .in +1c
 .TP
 \fB\fISTDF_OPTS_DEFAULT \fP\fP
@@ -72,6 +66,9 @@ Default options
 .TP
 \fB\fISTDF_OPTS_FORCE \fP\fP
 Force reading even if some sanity checks fail 
+.TP
+\fB\fISTDF_OPTS_FORCE_V3 \fP\fP
+Force STDFv3 behavior 
 .TP
 \fB\fISTDF_OPTS_FORCE_V4 \fP\fP
 Force STDFv4 behavior 
@@ -84,6 +81,31 @@ File is compressed with gzip
 .TP
 \fB\fISTDF_OPTS_BZIP2 \fP\fP
 File is compressed with bzip2 
+.TP
+\fB\fISTDF_OPTS_LZW \fP\fP
+File is compressed with lzw 
+.TP
+\fB\fISTDF_OPTS_READ \fP\fP
+Allow reading from file 
+.TP
+\fB\fISTDF_OPTS_WRITE \fP\fP
+Allow writing to file 
+.TP
+\fB\fISTDF_OPTS_CREATE \fP\fP
+Create file from scratch 
+.SS "enum \fBstdf_runtime_settings\fP"
+.PP
+\fBEnumerator: \fP
+.in +1c
+.TP
+\fB\fISTDF_SETTING_WRITE_SIZE \fP\fP
+Set the output blocksize for writing 
+.TP
+\fB\fISTDF_SETTING_VERSION \fP\fP
+Query the STDF spec version 
+.TP
+\fB\fISTDF_SETTING_BYTE_ORDER \fP\fP
+Query the byte order 
 .SH "Author"
 .PP 
 Generated automatically by Doxygen for libstdf from the source code.
