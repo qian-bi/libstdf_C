@@ -1,3 +1,7 @@
+0.6	
+	* Added support for stdf v4-2007
+	* fixed GDR record
+
 0.5
 	* Cleanup build system all over the place
 	* Use explicit casts for enum conversions

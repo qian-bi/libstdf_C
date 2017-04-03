@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 		else if (argc == 2)
 			fprintf(stderr, "Missing destination file!\n");
 		else
-			fprintf(stderr, "Too many arguements!\n");
+			fprintf(stderr, "Too many arguments!\n");
 		usage(argv[0]);
 		return EXIT_FAILURE;
 	}
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 		parsed_rec = stdf_parse_raw_record(raw_rec);
 
 		in = &(input[stdf_rec_to_idx(parsed_rec)]);
-printf("%i\n", stdf_rec_to_idx(parsed_rec));
+		printf("%i\n", stdf_rec_to_idx(parsed_rec));
 		if (*in != 'A' && *in != 'V') {
 			printf("Found a %s, extract? ", stdf_get_rec_name_from_rec(parsed_rec));
 			do {

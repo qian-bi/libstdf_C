@@ -4,6 +4,7 @@
  */
 /*
  * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2017 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -25,7 +26,8 @@ extern stdf_rec_unknown* stdf_read_record_raw(stdf_file*);		/**< Read in the nex
 extern stdf_rec_unknown* stdf_parse_raw_record(stdf_rec_unknown*);	/**< Parse a previously read record */
 extern void stdf_free_record(stdf_rec_unknown*);					/**< Free a record */
 
-extern ssize_t stdf_write_record(stdf_file*, void*);		/**< Write out a record */
+extern ssize_t stdf_write_record(stdf_file*, void*);		        /**< Write out a record */
+extern ssize_t stdf_write_record_raw(stdf_file*, stdf_rec_unknown*);	/**< Write out a raw record */
 
 #define stdf_init_header(header, type) INIT_HEADER(header, type)
 

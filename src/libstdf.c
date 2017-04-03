@@ -5,6 +5,7 @@
  */
 /*
  * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2017 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -331,6 +332,7 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mod
 	} else
 		ret->filename = strdup(pathname);
 	ret->fops = NULL;
+	ret->__data = NULL;
 
 	if (opts == STDF_OPTS_DEFAULT)
 		opts = STDF_OPTS_READ;
@@ -366,6 +368,8 @@ static stdf_file* _stdf_open(char *pathname, int fd, uint32_t opts, uint32_t mod
 		} else
 			ret->file_format = STDF_FORMAT_REG;
 	}
+        else if (ret->fd) 
+                ret->file_format = STDF_FORMAT_REG;  
 
 	switch (ret->file_format) {
 #ifdef HAVE_ZIP
@@ -496,7 +500,7 @@ stdf_rec_unknown* stdf_read_record_raw(stdf_file *file)
 {
 	stdf_rec_unknown *raw_rec = NULL;
 	char header[6];
-	int cheated;
+	int cheated=-1;
 
 	_stdf_mtrace();
 
@@ -569,8 +573,9 @@ stdf_rec_unknown* stdf_parse_raw_record(stdf_rec_unknown *raw_rec)
 	switch (HEAD_TO_REC(file->header)) {
 		/* STDF_REC_TYP_PER_EXEC */
 		case STDF_REC_PTR: rec = (stdf_rec_unknown*)stdf_read_rec_ptr(file); break;
-		case STDF_REC_FTR: rec = (stdf_rec_unknown*)stdf_read_rec_ftr(file); break;
 		case STDF_REC_MPR: rec = (stdf_rec_unknown*)stdf_read_rec_mpr(file); break;
+		case STDF_REC_FTR: rec = (stdf_rec_unknown*)stdf_read_rec_ftr(file); break;
+		case STDF_REC_STR: rec = (stdf_rec_unknown*)stdf_read_rec_str(file); break;
 
 		/* STDF_REC_TYP_PER_PART */
 		case STDF_REC_PIR: rec = (stdf_rec_unknown*)stdf_read_rec_pir(file); break;
@@ -600,6 +605,9 @@ stdf_rec_unknown* stdf_parse_raw_record(stdf_rec_unknown *raw_rec)
 #endif
 
 		/* STDF_REC_TYP_PER_LOT */
+		case STDF_REC_MIR: rec = (stdf_rec_unknown*)stdf_read_rec_mir(file); break;
+		case STDF_REC_MRR: rec = (stdf_rec_unknown*)stdf_read_rec_mrr(file); break;
+		case STDF_REC_PCR: rec = (stdf_rec_unknown*)stdf_read_rec_pcr(file); break;
 		case STDF_REC_PMR: rec = (stdf_rec_unknown*)stdf_read_rec_pmr(file); break;
 		case STDF_REC_PGR: rec = (stdf_rec_unknown*)stdf_read_rec_pgr(file); break;
 		case STDF_REC_HBR: rec = (stdf_rec_unknown*)stdf_read_rec_hbr(file); break;
@@ -607,9 +615,11 @@ stdf_rec_unknown* stdf_parse_raw_record(stdf_rec_unknown *raw_rec)
 		case STDF_REC_PLR: rec = (stdf_rec_unknown*)stdf_read_rec_plr(file); break;
 		case STDF_REC_RDR: rec = (stdf_rec_unknown*)stdf_read_rec_rdr(file); break;
 		case STDF_REC_SDR: rec = (stdf_rec_unknown*)stdf_read_rec_sdr(file); break;
-		case STDF_REC_MIR: rec = (stdf_rec_unknown*)stdf_read_rec_mir(file); break;
-		case STDF_REC_MRR: rec = (stdf_rec_unknown*)stdf_read_rec_mrr(file); break;
-		case STDF_REC_PCR: rec = (stdf_rec_unknown*)stdf_read_rec_pcr(file); break;
+		case STDF_REC_PSR: rec = (stdf_rec_unknown*)stdf_read_rec_psr(file); break;
+		case STDF_REC_NMR: rec = (stdf_rec_unknown*)stdf_read_rec_nmr(file); break;
+		case STDF_REC_CNR: rec = (stdf_rec_unknown*)stdf_read_rec_cnr(file); break;
+		case STDF_REC_SSR: rec = (stdf_rec_unknown*)stdf_read_rec_ssr(file); break;
+		case STDF_REC_CDR: rec = (stdf_rec_unknown*)stdf_read_rec_cdr(file); break;
 
 		/* STDF_REC_TYP_PER_WAFER */
 		case STDF_REC_WIR: rec = (stdf_rec_unknown*)stdf_read_rec_wir(file); break;
@@ -619,6 +629,7 @@ stdf_rec_unknown* stdf_parse_raw_record(stdf_rec_unknown *raw_rec)
 		/* STDF_REC_TYP_INFO */
 		case STDF_REC_FAR: rec = (stdf_rec_unknown*)stdf_read_rec_far(file); break;
 		case STDF_REC_ATR: rec = (stdf_rec_unknown*)stdf_read_rec_atr(file); break;
+                case STDF_REC_VUR: rec = (stdf_rec_unknown*)stdf_read_rec_vur(file); break;
 
 		default:
 			rec = stdf_read_rec_unknown(file);
@@ -658,8 +669,9 @@ ssize_t stdf_write_record(stdf_file *file, void *stdf_rec_void)
 	switch (HEAD_TO_REC(rec->header)) {
 		/* STDF_REC_TYP_PER_EXEC */
 		case STDF_REC_PTR: return stdf_write_rec_ptr(file, (stdf_rec_ptr*)rec);
-		case STDF_REC_FTR: return stdf_write_rec_ftr(file, (stdf_rec_ftr*)rec);
 		case STDF_REC_MPR: return stdf_write_rec_mpr(file, (stdf_rec_mpr*)rec);
+		case STDF_REC_FTR: return stdf_write_rec_ftr(file, (stdf_rec_ftr*)rec);
+		case STDF_REC_STR: return stdf_write_rec_str(file, (stdf_rec_str*)rec);
 
 		/* STDF_REC_TYP_PER_PART */
 		case STDF_REC_PIR: return stdf_write_rec_pir(file, (stdf_rec_pir*)rec);
@@ -699,6 +711,11 @@ ssize_t stdf_write_record(stdf_file *file, void *stdf_rec_void)
 		case STDF_REC_MIR: return stdf_write_rec_mir(file, (stdf_rec_mir*)rec);
 		case STDF_REC_MRR: return stdf_write_rec_mrr(file, (stdf_rec_mrr*)rec);
 		case STDF_REC_PCR: return stdf_write_rec_pcr(file, (stdf_rec_pcr*)rec);
+		case STDF_REC_PSR: return stdf_write_rec_psr(file, (stdf_rec_psr*)rec);
+		case STDF_REC_NMR: return stdf_write_rec_nmr(file, (stdf_rec_nmr*)rec);
+		case STDF_REC_CNR: return stdf_write_rec_cnr(file, (stdf_rec_cnr*)rec);
+		case STDF_REC_SSR: return stdf_write_rec_ssr(file, (stdf_rec_ssr*)rec);
+		case STDF_REC_CDR: return stdf_write_rec_cdr(file, (stdf_rec_cdr*)rec);
 
 		/* STDF_REC_TYP_PER_WAFER */
 		case STDF_REC_WIR: return stdf_write_rec_wir(file, (stdf_rec_wir*)rec);
@@ -708,20 +725,13 @@ ssize_t stdf_write_record(stdf_file *file, void *stdf_rec_void)
 		/* STDF_REC_TYP_INFO */
 		case STDF_REC_FAR: return stdf_write_rec_far(file, (stdf_rec_far*)rec);
 		case STDF_REC_ATR: return stdf_write_rec_atr(file, (stdf_rec_atr*)rec);
+		case STDF_REC_VUR: return stdf_write_rec_vur(file, (stdf_rec_vur*)rec);
 
 		default:      return -1;
 	}
 }
 
-#if 0
-ssize_t stdf_write_record_r(stdf_file *file, void *stdf_rec_void)
+ssize_t stdf_write_record_raw(stdf_file *file, stdf_rec_unknown *rec)
 {
-	ssize_t ret;
-	stdf_rec_unknown *rec = (stdf_rec_unknown*)stdf_rec_void;
-	unsigned char *reentrant_buffer;
-	reentrant_buffer = malloc(rec->header.STDF_REC_LEN);
-	ret = _stdf_write_record(file, rec, reentrant_buffer);
-	free(reentrant_buffer);
-	return ret;
+	return stdf_write_rec_raw(file,rec);
 }
-#endif

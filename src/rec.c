@@ -5,6 +5,7 @@
  */
 /*
  * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2017 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -27,7 +28,9 @@ static char *stdf_rec_names[] = {
 	"PDR", "FDR",
 	"TSR", "PTR", "MPR", "FTR", "BPS", "EPS",
 	"SHB", "SSB", "STS", "SCR",
-	"GDR", "DTR"
+	"GDR", "DTR",
+	"VUR", "PSR", "STR", "NMR", "CNR", "SSR",
+	"CDR"
 };
 
 static int _stdf_header_to_idx(stdf_rec_typ type, stdf_rec_sub sub)
@@ -68,13 +71,20 @@ static int _stdf_header_to_idx(stdf_rec_typ type, stdf_rec_sub sub)
 #endif
 		case STDF_REC_GDR:	return 30;
 		case STDF_REC_DTR:	return 31;
+                case STDF_REC_VUR:      return 32;
+                case STDF_REC_PSR:      return 33;
+                case STDF_REC_STR:      return 34;
+                case STDF_REC_NMR:      return 35;
+                case STDF_REC_CNR:      return 36;
+                case STDF_REC_SSR:      return 37;
+                case STDF_REC_CDR:      return 38;
 		case STDF_REC_UNKNOWN:
 		default:		return 0;
 	}
 }
 int stdf_rec_to_idx_count(void)
 {
-	return 32;
+	return 39;
 }
 int stdf_rec_name_to_idx(char *stdf_rec_name)
 {
@@ -150,6 +160,21 @@ void stdf_free_record(stdf_rec_unknown *rec)
 			free(rec);
 			break;
 		}
+		case STDF_REC_MPR: {
+			stdf_rec_mpr *mpr = (stdf_rec_mpr*)rec;
+			free(mpr->RTN_STAT);
+			free_xR4(mpr->RTN_RSLT);
+			free(mpr->TEST_TXT);
+			free(mpr->ALARM_ID);
+			free_xU2(mpr->RTN_INDX);
+			free(mpr->UNITS);
+			free(mpr->UNITS_IN);
+			free(mpr->C_RESFMT);
+			free(mpr->C_LLMFMT);
+			free(mpr->C_HLMFMT);
+			free(rec);
+			break;
+		}
 		case STDF_REC_FTR: {
 			stdf_rec_ftr *ftr = (stdf_rec_ftr*)rec;
 			free_xU2(ftr->RTN_INDX);
@@ -168,18 +193,30 @@ void stdf_free_record(stdf_rec_unknown *rec)
 			free(rec);
 			break;
 		}
-		case STDF_REC_MPR: {
-			stdf_rec_mpr *mpr = (stdf_rec_mpr*)rec;
-			free(mpr->RTN_STAT);
-			free_xR4(mpr->RTN_RSLT);
-			free(mpr->TEST_TXT);
-			free(mpr->ALARM_ID);
-			free_xU2(mpr->RTN_INDX);
-			free(mpr->UNITS);
-			free(mpr->UNITS_IN);
-			free(mpr->C_RESFMT);
-			free(mpr->C_LLMFMT);
-			free(mpr->C_HLMFMT);
+                case STDF_REC_STR: {
+                        stdf_rec_str *str = (stdf_rec_str*)rec;
+			free(str->LOG_TYP);
+			free(str->TEST_TXT);
+			free(str->ALARM_ID);
+			free(str->PROG_TXT);
+			free(str->RSLT_TXT);
+			free(str->MASK_MAP);
+			free(str->FAL_MAP);
+			free_xU2(str->LIM_INDX);
+			free_xU4(str->LIM_SPEC);
+                        free_xCn(str->COND_LST, str->COND_CNT);
+                        free_xUf(str->CYC_OFST);
+                        free_xUf(str->PMR_INDX);
+                        free_xUf(str->CHN_NUM);
+                        free_xU1(str->EXP_DATA);
+                        free_xU1(str->CAP_DATA);
+                        free_xU1(str->NEW_DATA);
+                        free_xUf(str->PAT_NUM);
+                        free_xUf(str->BIT_POS);
+                        free_xUf(str->USR1);
+                        free_xUf(str->USR2);
+                        free_xUf(str->USR3);
+                        free_xCn(str->USER_TXT, str->TXT_CNT);
 			free(rec);
 			break;
 		}
@@ -422,6 +459,48 @@ void stdf_free_record(stdf_rec_unknown *rec)
 			free(rec);
 			break;
 		}
+		case STDF_REC_PSR: {
+                        stdf_rec_psr *psr = (stdf_rec_psr*)rec;
+                        free(psr->PSR_NAM);
+                        free_xU8(psr->PAT_BGN);
+                        free_xU8(psr->PAT_END);
+                        free_xCn(psr->PAT_FILE,psr->LOCP_CNT);
+                        free_xCn(psr->PAT_LBL,psr->LOCP_CNT);
+                        free_xCn(psr->FILE_UID,psr->LOCP_CNT);
+                        free_xCn(psr->ATPG_DSC,psr->LOCP_CNT);
+                        free_xCn(psr->SRC_ID,psr->LOCP_CNT);
+			free(rec);
+			break;
+		}
+		case STDF_REC_NMR: {
+                        stdf_rec_nmr *nmr = (stdf_rec_nmr*)rec;
+                        free_xU2(nmr->PMR_INDX);
+                        free_xCn(nmr->ATPG_NAM,nmr->LOCM_CNT);
+			free(rec);
+			break;
+		}
+		case STDF_REC_CNR: {
+                        stdf_rec_cnr *cnr = (stdf_rec_cnr*)rec;
+                        free(cnr->CELL_NAM);
+			free(rec);
+			break;
+		}
+		case STDF_REC_SSR: {
+                        stdf_rec_ssr *ssr = (stdf_rec_ssr*)rec;
+                        free(ssr->SSR_NAM);
+                        free_xU2(ssr->CHN_LIST);
+			free(rec);
+			break;
+		}
+		case STDF_REC_CDR: {
+                        stdf_rec_cdr *cdr = (stdf_rec_cdr*)rec;
+                        free(cdr->CHN_NAM);
+                        free_xU2(cdr->M_CLKS);
+                        free_xU2(cdr->S_CLKS);
+                        free_xSn(cdr->CELL_LST,cdr->LST_CNT);
+			free(rec);
+			break;
+		}
 
 		/* STDF_REC_TYP_PER_WAFER */
 		case STDF_REC_WIR: {
@@ -466,6 +545,12 @@ void stdf_free_record(stdf_rec_unknown *rec)
 			free(atr);
 			break;
 		}
+                case STDF_REC_VUR: {
+                        stdf_rec_vur *vur = (stdf_rec_vur*)rec;
+                        free(vur->UPD_NAM);
+                        free(vur);
+                        break;
+                }
 
 		/* all the rest */
 		case STDF_REC_UNKNOWN: {
@@ -517,6 +602,13 @@ stdf_rec_atr* stdf_read_rec_atr(stdf_file *file)
 	_stdf_read_dtc_U4(file, &(atr->MOD_TIM));
 	_stdf_read_dtc_Cn(file, &(atr->CMD_LINE));
 	return atr;
+}
+
+stdf_rec_vur* stdf_read_rec_vur(stdf_file *file)
+{
+	stdf_rec_vur *vur = malloc(sizeof(*vur));
+	_stdf_read_dtc_Cn(file, &(vur->UPD_NAM));
+	return vur;
 }
 
 stdf_rec_mir* stdf_read_rec_mir(stdf_file *file)
@@ -718,6 +810,73 @@ stdf_rec_sdr* stdf_read_rec_sdr(stdf_file *file)
 	_stdf_read_dtc_Cn(file, &(sdr->EXTR_TYP));
 	_stdf_read_dtc_Cn(file, &(sdr->EXTR_ID));
 	return sdr;
+}
+
+stdf_rec_psr* stdf_read_rec_psr(stdf_file *file)
+{
+	stdf_rec_psr *psr = malloc(sizeof(*psr));
+	_stdf_read_dtc_B1(file, &(psr->CONT_FLG));
+	_stdf_read_dtc_U2(file, &(psr->PSR_INDX));
+	_stdf_read_dtc_Cn(file, &(psr->PSR_NAM));
+	_stdf_read_dtc_B1(file, &(psr->OPT_FLG));
+	_stdf_read_dtc_U2(file, &(psr->TOTP_CNT));
+	_stdf_read_dtc_U2(file, &(psr->LOCP_CNT));
+	_stdf_read_dtc_xU8(file, &(psr->PAT_BGN), psr->LOCP_CNT);
+	_stdf_read_dtc_xU8(file, &(psr->PAT_END), psr->LOCP_CNT);
+	_stdf_read_dtc_xCn(file, &(psr->PAT_FILE), psr->LOCP_CNT);
+	_stdf_read_dtc_xCn(file, &(psr->PAT_LBL), psr->LOCP_CNT);
+	_stdf_read_dtc_xCn(file, &(psr->FILE_UID), psr->LOCP_CNT);
+	_stdf_read_dtc_xCn(file, &(psr->ATPG_DSC), psr->LOCP_CNT);
+	_stdf_read_dtc_xCn(file, &(psr->SRC_ID), psr->LOCP_CNT);
+	return psr;
+}
+
+stdf_rec_nmr* stdf_read_rec_nmr(stdf_file *file)
+{
+	stdf_rec_nmr *nmr = malloc(sizeof(*nmr));
+	_stdf_read_dtc_B1(file, &(nmr->CONT_FLG));
+	_stdf_read_dtc_U2(file, &(nmr->TOTM_CNT));
+	_stdf_read_dtc_U2(file, &(nmr->LOCM_CNT));
+	_stdf_read_dtc_xU2(file, &(nmr->PMR_INDX), nmr->LOCM_CNT);
+	_stdf_read_dtc_xCn(file, &(nmr->ATPG_NAM), nmr->LOCM_CNT);
+	return nmr;
+}
+
+stdf_rec_cnr* stdf_read_rec_cnr(stdf_file *file)
+{
+	stdf_rec_cnr *cnr = malloc(sizeof(*cnr));
+	_stdf_read_dtc_U2(file, &(cnr->CHN_NUM));
+	_stdf_read_dtc_U4(file, &(cnr->BIT_POS));
+	_stdf_read_dtc_Sn(file, &(cnr->CELL_NAM));
+	return cnr;
+}
+
+stdf_rec_ssr* stdf_read_rec_ssr(stdf_file *file)
+{
+	stdf_rec_ssr *ssr = malloc(sizeof(*ssr));
+	_stdf_read_dtc_Cn(file, &(ssr->SSR_NAM));
+	_stdf_read_dtc_U2(file, &(ssr->CHN_CNT));
+	_stdf_read_dtc_xU2(file, &(ssr->CHN_LIST), ssr->CHN_CNT);
+	return ssr;
+}
+
+stdf_rec_cdr* stdf_read_rec_cdr(stdf_file *file)
+{
+	stdf_rec_cdr *cdr = malloc(sizeof(*cdr));
+	_stdf_read_dtc_B1(file, &(cdr->CONT_FLG));
+	_stdf_read_dtc_U2(file, &(cdr->CDR_INDX));
+	_stdf_read_dtc_Cn(file, &(cdr->CHN_NAM));
+	_stdf_read_dtc_U4(file, &(cdr->CHN_LEN));
+	_stdf_read_dtc_U2(file, &(cdr->SIN_PIN));
+	_stdf_read_dtc_U2(file, &(cdr->SOUT_PIN));
+	_stdf_read_dtc_U1(file, &(cdr->MSTR_CNT));
+	_stdf_read_dtc_xU2(file, &(cdr->M_CLKS), cdr->MSTR_CNT);
+	_stdf_read_dtc_U1(file, &(cdr->SLAV_CNT));
+	_stdf_read_dtc_xU2(file, &(cdr->S_CLKS), cdr->SLAV_CNT);
+	_stdf_read_dtc_U1(file, &(cdr->INV_VAL));
+	_stdf_read_dtc_U2(file, &(cdr->LST_CNT));
+        _stdf_read_dtc_xSn(file, &(cdr->CELL_LST), cdr->LST_CNT);
+	return cdr;
 }
 
 stdf_rec_wir* stdf_read_rec_wir(stdf_file *file)
@@ -1055,6 +1214,83 @@ stdf_rec_ftr* stdf_read_rec_ftr(stdf_file *file)
 	return ftr;
 }
 
+stdf_rec_str* stdf_read_rec_str(stdf_file *file)
+{
+	stdf_rec_str *str = malloc(sizeof(*str));
+	_stdf_read_dtc_B1(file, &(str->CONT_FLG));
+	_stdf_read_dtc_U4(file, &(str->TEST_NUM));
+	_stdf_read_dtc_U1(file, &(str->HEAD_NUM));
+	_stdf_read_dtc_U1(file, &(str->SITE_NUM));
+	_stdf_read_dtc_U2(file, &(str->PSR_REF));
+	_stdf_read_dtc_B1(file, &(str->TEST_FLG));
+	_stdf_read_dtc_Cn(file, &(str->LOG_TYP));
+	_stdf_read_dtc_Cn(file, &(str->TEST_TXT));
+	_stdf_read_dtc_Cn(file, &(str->ALARM_ID));
+	_stdf_read_dtc_Cn(file, &(str->PROG_TXT));
+	_stdf_read_dtc_Cn(file, &(str->RSLT_TXT));
+	_stdf_read_dtc_U1(file, &(str->Z_VAL));
+	_stdf_read_dtc_B1(file, &(str->FMU_FLG));
+	if (str->FMU_FLG & 1) 
+		_stdf_read_dtc_Dn(file, &(str->MASK_MAP));
+	else
+	{
+		str->MASK_MAP = malloc(2);
+		str->MASK_MAP[0]=0;
+	}
+	if ((str->FMU_FLG & 4) == 4) 
+		_stdf_read_dtc_Dn(file, &(str->FAL_MAP));
+	else
+	{
+		str->FAL_MAP = malloc(2);
+		str->FAL_MAP[0]=0;
+	}
+	_stdf_read_dtc_U8(file, &(str->CYCL_CNT));
+	_stdf_read_dtc_U4(file, &(str->TOTF_CNT));
+	_stdf_read_dtc_U4(file, &(str->TOTL_CNT));
+	_stdf_read_dtc_U8(file, &(str->CYC_BASE));
+	_stdf_read_dtc_U4(file, &(str->BIT_BASE));
+	_stdf_read_dtc_U2(file, &(str->COND_CNT));
+	_stdf_read_dtc_U2(file, &(str->LIM_CNT));
+	_stdf_read_dtc_U1(file, &(str->CYCL_SIZE));
+	_stdf_read_dtc_U1(file, &(str->PMR_SIZE));
+	_stdf_read_dtc_U1(file, &(str->CHN_SIZE));
+	_stdf_read_dtc_U1(file, &(str->PAT_SIZE));
+	_stdf_read_dtc_U1(file, &(str->BIT_SIZE));
+	_stdf_read_dtc_U1(file, &(str->U1_SIZE));
+	_stdf_read_dtc_U1(file, &(str->U2_SIZE));
+	_stdf_read_dtc_U1(file, &(str->U3_SIZE));
+	_stdf_read_dtc_U1(file, &(str->UTX_SIZE));
+	_stdf_read_dtc_U2(file, &(str->CAP_BGN));
+	_stdf_read_dtc_xU2(file, &(str->LIM_INDX), str->LIM_CNT);
+	_stdf_read_dtc_xU4(file, &(str->LIM_SPEC), str->LIM_CNT);
+	_stdf_read_dtc_xCn(file, &(str->COND_LST), str->COND_CNT);
+	_stdf_read_dtc_U2(file, &(str->CYC_CNT));
+	_stdf_read_dtc_xUf(file, &(str->CYC_OFST), str->CYC_CNT, str->CYCL_SIZE);
+	_stdf_read_dtc_U2(file, &(str->PMR_CNT));
+	_stdf_read_dtc_xUf(file, &(str->PMR_INDX), str->PMR_CNT, str->PMR_SIZE);
+	_stdf_read_dtc_U2(file, &(str->CHN_CNT));
+	_stdf_read_dtc_xUf(file, &(str->CHN_NUM), str->CHN_CNT, str->CHN_SIZE);
+	_stdf_read_dtc_U2(file, &(str->EXP_CNT));
+	_stdf_read_dtc_xU1(file, &(str->EXP_DATA), str->EXP_CNT);
+	_stdf_read_dtc_U2(file, &(str->CAP_CNT));
+	_stdf_read_dtc_xU1(file, &(str->CAP_DATA), str->CAP_CNT);
+	_stdf_read_dtc_U2(file, &(str->NEW_CNT));
+	_stdf_read_dtc_xU1(file, &(str->NEW_DATA), str->NEW_CNT);
+	_stdf_read_dtc_U2(file, &(str->PAT_CNT));
+	_stdf_read_dtc_xUf(file, &(str->PAT_NUM), str->PAT_CNT, str->PAT_SIZE);
+	_stdf_read_dtc_U2(file, &(str->BPOS_CNT));
+	_stdf_read_dtc_xUf(file, &(str->BIT_POS), str->BPOS_CNT, str->BIT_SIZE);
+	_stdf_read_dtc_U2(file, &(str->USR1_CNT));
+	_stdf_read_dtc_xUf(file, &(str->USR1), str->USR1_CNT, str->U1_SIZE);
+	_stdf_read_dtc_U2(file, &(str->USR2_CNT));
+	_stdf_read_dtc_xUf(file, &(str->USR2), str->USR2_CNT, str->U2_SIZE);
+	_stdf_read_dtc_U2(file, &(str->USR3_CNT));
+	_stdf_read_dtc_xUf(file, &(str->USR3), str->USR3_CNT, str->U3_SIZE);
+	_stdf_read_dtc_U2(file, &(str->TXT_CNT));
+	_stdf_read_dtc_xCn(file, &(str->USER_TXT), str->TXT_CNT);
+	return str;
+}
+
 stdf_rec_bps* stdf_read_rec_bps(stdf_file *file)
 {
 	stdf_rec_bps *bps = malloc(sizeof(*bps));
@@ -1156,27 +1392,60 @@ static inline size_t _lenCn(stdf_dtc_Cn Cn)
 {
 	return (Cn && Cn[0] ? strlen(Cn) : 1);
 }
+static inline size_t _lenSn(stdf_dtc_Sn Sn)
+{
+        return (Sn && (*(stdf_dtc_U2*)Sn) ? (*(stdf_dtc_U2*)Sn)+2 : 2);
+}
 static inline size_t _lenDn(stdf_dtc_Dn Dn)
 {
-	return (Dn && (*(stdf_dtc_U2*)Dn) ? strlen((char*)Dn) : 2);
+        stdf_dtc_U2 len;
+        if (Dn && (*(stdf_dtc_U2*)Dn))
+        {
+                len=(*(stdf_dtc_U2*)Dn)/8;
+                if ((*(stdf_dtc_U2*)Dn) % 8) ++len;
+                len+=2;
+                return len;
+        }
+        else
+                return 2;
 }
-static inline size_t _len_dtcXCN(stdf_dtc_xCn xCn, stdf_dtc_U2 cnt)
+static inline size_t _len_dtcXCn(stdf_dtc_xCn xCn, stdf_dtc_U2 cnt)
 {
 	size_t ret = 0;
 	while (cnt--)
 		ret += _lenCn(xCn[cnt]);
 	return ret;
 }
-#define _lenBn(Bn) (_lenCn((char*)Bn))
+static inline size_t _len_dtcXSn(stdf_dtc_xSn xSn, stdf_dtc_U2 cnt)
+{
+	size_t ret = 0;
+	while (cnt--)
+		ret += _lenSn(xSn[cnt]);
+	return ret;
+}
+static inline size_t _lenBn(stdf_dtc_Bn Bn)
+{
+        unsigned short len;
+        // using _lenCn with strlen doesn't work here since 0x0 is legal value
+        if (Bn && Bn[0]) 
+        {    len=Bn[0];
+             len++;
+             return len;
+        }
+        else
+             return 1;
+}
 #define _lenCx(Cx, x) (x)
 #define _len_dtcX(x, cnt) (sizeof(*(x)) * cnt)
 #define _len_dtcXN(xn, cnt) (sizeof(*(xn)) * (cnt / 2 + cnt % 2))
+#define _len_dtcXf(cnt, size) (cnt * size)
 static inline size_t _lenVn(stdf_dtc_Vn Vn, stdf_dtc_U2 cnt)
 {
 	size_t ret = 0;
 	while (cnt--) {
+        	ret++;
 		switch (Vn->type) {
-			case STDF_GDR_B0: ret += sizeof(stdf_dtc_B1); break;
+			case STDF_GDR_B0: break;
 			case STDF_GDR_U1: ret += sizeof(stdf_dtc_U1); break;
 			case STDF_GDR_U2: ret += sizeof(stdf_dtc_U2); break;
 			case STDF_GDR_U4: ret += sizeof(stdf_dtc_U4); break;
@@ -1185,9 +1454,9 @@ static inline size_t _lenVn(stdf_dtc_Vn Vn, stdf_dtc_U2 cnt)
 			case STDF_GDR_I4: ret += sizeof(stdf_dtc_I4); break;
 			case STDF_GDR_R4: ret += sizeof(stdf_dtc_R4); break;
 			case STDF_GDR_R8: ret += sizeof(stdf_dtc_R8); break;
-			case STDF_GDR_Cn: ret += _lenCn(Vn->data); break;
-			case STDF_GDR_Bn: ret += _lenBn(Vn->data); break;
-			case STDF_GDR_Dn: ret += _lenDn(Vn->data); break;
+			case STDF_GDR_Cn: ret += _lenCn(*((stdf_dtc_Cn*)Vn->data)); break;
+			case STDF_GDR_Bn: ret += _lenBn(*((stdf_dtc_Bn*)Vn->data)); break;
+			case STDF_GDR_Dn: ret += _lenDn(*((stdf_dtc_Dn*)Vn->data)); break;
 			case STDF_GDR_N1: ret += sizeof(stdf_dtc_B1); break;
 		}
 		++Vn;
@@ -1203,6 +1472,11 @@ static inline size_t _calc_rec_len_far(stdf_attribute_unused stdf_file *f, stdf_
 static inline size_t _calc_rec_len_atr(stdf_attribute_unused stdf_file *f, stdf_rec_atr *r)
 {
 	return sizeof(r->MOD_TIM) + _lenCn(r->CMD_LINE);
+}
+
+static inline size_t _calc_rec_len_vur(stdf_attribute_unused stdf_file *f, stdf_rec_vur *r)
+{
+	return _lenCn(r->UPD_NAM);
 }
 
 static inline size_t _calc_rec_len_mir(stdf_file *f, stdf_rec_mir *r)
@@ -1305,8 +1579,8 @@ static inline size_t _calc_rec_len_plr(stdf_attribute_unused stdf_file *f, stdf_
 		sizeof(r->GRP_CNT) +
 		_len_dtcX(r->GRP_INDX, r->GRP_CNT) +
 		_len_dtcX(r->GRP_MODE, r->GRP_CNT) + _len_dtcX(r->GRP_RADX, r->GRP_CNT) +
-		_len_dtcXCN(r->PGM_CHAR, r->GRP_CNT) + _len_dtcXCN(r->RTN_CHAR, r->GRP_CNT) +
-		_len_dtcXCN(r->PGM_CHAL, r->GRP_CNT) + _len_dtcXCN(r->RTN_CHAL, r->GRP_CNT);
+		_len_dtcXCn(r->PGM_CHAR, r->GRP_CNT) + _len_dtcXCn(r->RTN_CHAR, r->GRP_CNT) +
+		_len_dtcXCn(r->PGM_CHAL, r->GRP_CNT) + _len_dtcXCn(r->RTN_CHAL, r->GRP_CNT);
 }
 
 static inline size_t _calc_rec_len_rdr(stdf_attribute_unused stdf_file *f, stdf_rec_rdr *r)
@@ -1325,6 +1599,52 @@ static inline size_t _calc_rec_len_sdr(stdf_attribute_unused stdf_file *f, stdf_
 		_lenCn(r->CABL_ID) + _lenCn(r->CONT_TYP) + _lenCn(r->CONT_ID) +
 		_lenCn(r->LASR_TYP) + _lenCn(r->LASR_ID) + _lenCn(r->EXTR_TYP) +
 		_lenCn(r->EXTR_ID);
+}
+
+static inline size_t _calc_rec_len_psr(stdf_attribute_unused stdf_file *f, stdf_rec_psr *r)
+{
+	return
+		sizeof(r->CONT_FLG) + sizeof(r->PSR_INDX) + _lenCn(r->PSR_NAM) +
+         	sizeof(r->OPT_FLG) + sizeof(r->TOTP_CNT) +  sizeof(r->LOCP_CNT) +
+                _len_dtcX(r->PAT_BGN, r->LOCP_CNT) +
+                _len_dtcX(r->PAT_END, r->LOCP_CNT) +
+                _len_dtcXCn(r->PAT_FILE, r->LOCP_CNT) +
+                _len_dtcXCn(r->PAT_LBL, r->LOCP_CNT) +
+                _len_dtcXCn(r->FILE_UID, r->LOCP_CNT) +
+                _len_dtcXCn(r->ATPG_DSC, r->LOCP_CNT) +
+                _len_dtcXCn(r->SRC_ID, r->LOCP_CNT);
+}
+
+static inline size_t _calc_rec_len_nmr(stdf_attribute_unused stdf_file *f, stdf_rec_nmr *r)
+{
+	return
+		sizeof(r->CONT_FLG) + sizeof(r->TOTM_CNT) + sizeof(r->LOCM_CNT) +
+                _len_dtcX(r->PMR_INDX, r->LOCM_CNT) +
+                _len_dtcXCn(r->ATPG_NAM, r->LOCM_CNT);
+}
+
+static inline size_t _calc_rec_len_cnr(stdf_attribute_unused stdf_file *f, stdf_rec_cnr *r)
+{
+	return
+		sizeof(r->CHN_NUM) + sizeof(r->BIT_POS) + _lenSn(r->CELL_NAM);
+}
+
+static inline size_t _calc_rec_len_ssr(stdf_attribute_unused stdf_file *f, stdf_rec_ssr *r)
+{
+	return
+		_lenCn(r->SSR_NAM) + sizeof(r->CHN_CNT) +
+                _len_dtcX(r->CHN_LIST, r->CHN_CNT);
+}
+
+static inline size_t _calc_rec_len_cdr(stdf_attribute_unused stdf_file *f, stdf_rec_cdr *r)
+{
+	return
+		sizeof(r->CONT_FLG) + sizeof(r->CDR_INDX) + _lenCn(r->CHN_NAM) +
+                sizeof(r->CHN_LEN) + sizeof(r->SIN_PIN) + sizeof(r->SOUT_PIN) +
+                sizeof(r->MSTR_CNT) + _len_dtcX(r->M_CLKS, r->MSTR_CNT) +
+                sizeof(r->SLAV_CNT) + _len_dtcX(r->S_CLKS, r->SLAV_CNT) +
+                sizeof(r->INV_VAL) + sizeof(r->LST_CNT) +
+                _len_dtcXSn(r->CELL_LST, r->LST_CNT);
 }
 
 static inline size_t _calc_rec_len_wir(stdf_file *f, stdf_rec_wir *r)
@@ -1553,6 +1873,34 @@ static inline size_t _calc_rec_len_ftr(stdf_attribute_unused stdf_file *f, stdf_
 	return (f->ver == 3 ? _CALC_REC_LEN_FTR_v3(r) : _CALC_REC_LEN_FTR_v4(r));
 }
 
+static inline size_t _calc_rec_len_str(stdf_attribute_unused stdf_file *f, stdf_rec_str *r)
+{
+        stdf_dtc_U2 len = sizeof(r->CONT_FLG) + sizeof(r->TEST_NUM) + sizeof(r->HEAD_NUM) + sizeof(r->SITE_NUM) +
+		sizeof(r->PSR_REF) + sizeof(r->TEST_FLG) + _lenCn(r->LOG_TYP) + _lenCn(r->TEST_TXT) + _lenCn(r->ALARM_ID) +
+		_lenCn(r->PROG_TXT) + _lenCn(r->RSLT_TXT) + sizeof(r->Z_VAL) + sizeof(r->FMU_FLG);
+
+    	if (r->FMU_FLG & 1)
+                len +=  _lenDn(r->MASK_MAP);
+	if ((r->FMU_FLG & 4) == 4)
+                len += _lenDn(r->FAL_MAP);
+
+        len +=  sizeof(r->CYCL_CNT) + sizeof(r->TOTF_CNT) +
+		sizeof(r->TOTL_CNT) + sizeof(r->CYC_BASE) + sizeof(r->BIT_BASE) + sizeof(r->COND_CNT) +
+		sizeof(r->LIM_CNT) + sizeof(r->CYCL_SIZE) + sizeof(r->PMR_SIZE) + sizeof(r->CHN_SIZE) +
+		sizeof(r->PAT_SIZE) + sizeof(r->BIT_SIZE) + sizeof(r->U1_SIZE) + sizeof(r->U2_SIZE) +
+                sizeof(r->U3_SIZE) + sizeof(r->UTX_SIZE) + sizeof(r->CAP_BGN) + _len_dtcX(r->LIM_INDX, r->LIM_CNT) +
+		_len_dtcX(r->LIM_SPEC, r->LIM_CNT) + _len_dtcXCn(r->COND_LST, r->COND_CNT) + sizeof(r->CYC_CNT) +
+		_len_dtcXf(r->CYC_CNT, r->CYCL_SIZE) + sizeof(r->PMR_CNT) +  _len_dtcXf(r->PMR_CNT, r->PMR_SIZE) +
+		sizeof(r->CHN_CNT) +_len_dtcXf(r->CHN_CNT, r->CHN_SIZE) + sizeof(r->EXP_CNT) +
+                _len_dtcX(r->EXP_DATA, r->EXP_CNT) + sizeof(r->CAP_CNT) +  _len_dtcXN(r->CAP_DATA, r->CAP_CNT) +
+                sizeof(r->NEW_CNT) +  _len_dtcXN(r->NEW_DATA, r->NEW_CNT) + sizeof(r->PAT_CNT) +
+                _len_dtcXf(r->PAT_CNT, r->PAT_SIZE) + sizeof(r->BPOS_CNT) +  _len_dtcXf(r->BPOS_CNT, r->BIT_SIZE) +
+                sizeof(r->USR1_CNT) +  _len_dtcXf(r->USR1_CNT, r->U1_SIZE) + sizeof(r->USR2_CNT) +
+                _len_dtcXf(r->USR2_CNT, r->U2_SIZE) + sizeof(r->USR3_CNT) +  _len_dtcXf(r->USR3_CNT, r->U3_SIZE) +
+                sizeof(r->TXT_CNT) +  _len_dtcXCn(r->USER_TXT, r->TXT_CNT);
+        return len;
+}
+
 static inline size_t _calc_rec_len_bps(stdf_attribute_unused stdf_file *f, stdf_attribute_unused stdf_rec_bps *r)
 {
 	return _lenCn(r->SEQ_NAME);
@@ -1678,6 +2026,14 @@ static inline ssize_t _stdf_check_write_buffer(stdf_file *file, size_t count)
 		return 0;
 }
 
+ssize_t stdf_write_rec_raw(stdf_file *file, stdf_rec_unknown *rec)
+{
+	_stdf_byte_order_to_src(file,&(rec->header.REC_LEN),sizeof(stdf_dtc_U2));
+	_stdf_check_write_buffer(file, rec->header.REC_LEN+4);
+	_stdf_write_nbytes(file, rec->data, rec->header.REC_LEN+4);
+	return _stdf_write_flush(file, rec->header.REC_LEN+4);
+}
+
 ssize_t stdf_write_rec_far(stdf_file *file, stdf_rec_far *far)
 {
 	if (!far->header.REC_LEN)
@@ -1698,6 +2054,16 @@ ssize_t stdf_write_rec_atr(stdf_file *file, stdf_rec_atr *atr)
 	_stdf_write_dtc_U4(file, atr->MOD_TIM);
 	_stdf_write_dtc_Cn(file, atr->CMD_LINE);
 	return _stdf_write_flush(file, atr->header.REC_LEN);
+}
+
+ssize_t stdf_write_rec_vur(stdf_file *file, stdf_rec_vur *vur)
+{
+	if (!vur->header.REC_LEN)
+		SET_HEADER(vur->header, STDF_REC_VUR, _calc_rec_len_vur(file, vur));
+	_stdf_check_write_buffer(file, vur->header.REC_LEN);
+	_stdf_write_dtc_header(file, &(vur->header));
+	_stdf_write_dtc_Cn(file, vur->UPD_NAM);
+	return _stdf_write_flush(file, vur->header.REC_LEN);
 }
 
 ssize_t stdf_write_rec_mir(stdf_file *file, stdf_rec_mir *mir)
@@ -1929,6 +2295,88 @@ ssize_t stdf_write_rec_sdr(stdf_file *file, stdf_rec_sdr *sdr)
 	_stdf_write_dtc_Cn(file, sdr->EXTR_TYP);
 	_stdf_write_dtc_Cn(file, sdr->EXTR_ID);
 	return _stdf_write_flush(file, sdr->header.REC_LEN);
+}
+
+ssize_t stdf_write_rec_psr(stdf_file *file, stdf_rec_psr *psr)
+{
+	if (!psr->header.REC_LEN)
+		SET_HEADER(psr->header, STDF_REC_PSR, _calc_rec_len_psr(file, psr));
+	_stdf_check_write_buffer(file, psr->header.REC_LEN);
+	_stdf_write_dtc_header(file, &(psr->header));
+	_stdf_write_dtc_B1(file, psr->CONT_FLG);
+	_stdf_write_dtc_U2(file, psr->PSR_INDX);
+	_stdf_write_dtc_Cn(file, psr->PSR_NAM);
+	_stdf_write_dtc_B1(file, psr->OPT_FLG);
+	_stdf_write_dtc_U2(file, psr->TOTP_CNT);
+	_stdf_write_dtc_U2(file, psr->LOCP_CNT);
+	_stdf_write_dtc_xU8(file, psr->PAT_BGN, psr->LOCP_CNT);
+	_stdf_write_dtc_xU8(file, psr->PAT_END, psr->LOCP_CNT);
+	_stdf_write_dtc_xCn(file, psr->PAT_FILE, psr->LOCP_CNT);
+	_stdf_write_dtc_xCn(file, psr->PAT_LBL, psr->LOCP_CNT);
+	_stdf_write_dtc_xCn(file, psr->FILE_UID, psr->LOCP_CNT);
+	_stdf_write_dtc_xCn(file, psr->ATPG_DSC, psr->LOCP_CNT);
+	_stdf_write_dtc_xCn(file, psr->SRC_ID, psr->LOCP_CNT);
+	return _stdf_write_flush(file, psr->header.REC_LEN);
+}
+
+ssize_t stdf_write_rec_nmr(stdf_file *file, stdf_rec_nmr *nmr)
+{
+	if (!nmr->header.REC_LEN)
+		SET_HEADER(nmr->header, STDF_REC_NMR, _calc_rec_len_nmr(file, nmr));
+	_stdf_check_write_buffer(file, nmr->header.REC_LEN);
+	_stdf_write_dtc_header(file, &(nmr->header));
+	_stdf_write_dtc_B1(file, nmr->CONT_FLG);
+	_stdf_write_dtc_U2(file, nmr->TOTM_CNT);
+	_stdf_write_dtc_U2(file, nmr->LOCM_CNT);
+	_stdf_write_dtc_xU2(file, nmr->PMR_INDX, nmr->LOCM_CNT);
+	_stdf_write_dtc_xCn(file, nmr->ATPG_NAM, nmr->LOCM_CNT);
+	return _stdf_write_flush(file, nmr->header.REC_LEN);
+}
+
+ssize_t stdf_write_rec_cnr(stdf_file *file, stdf_rec_cnr *cnr)
+{
+	if (!cnr->header.REC_LEN)
+		SET_HEADER(cnr->header, STDF_REC_CNR, _calc_rec_len_cnr(file, cnr));
+	_stdf_check_write_buffer(file, cnr->header.REC_LEN);
+	_stdf_write_dtc_header(file, &(cnr->header));
+	_stdf_write_dtc_U2(file, cnr->CHN_NUM);
+	_stdf_write_dtc_U4(file, cnr->BIT_POS);
+	_stdf_write_dtc_Sn(file, cnr->CELL_NAM);
+	return _stdf_write_flush(file, cnr->header.REC_LEN);
+}
+
+ssize_t stdf_write_rec_ssr(stdf_file *file, stdf_rec_ssr *ssr)
+{
+	if (!ssr->header.REC_LEN)
+		SET_HEADER(ssr->header, STDF_REC_SSR, _calc_rec_len_ssr(file, ssr));
+	_stdf_check_write_buffer(file, ssr->header.REC_LEN);
+	_stdf_write_dtc_header(file, &(ssr->header));
+	_stdf_write_dtc_Cn(file, ssr->SSR_NAM);
+	_stdf_write_dtc_U2(file, ssr->CHN_CNT);
+	_stdf_write_dtc_xU2(file, ssr->CHN_LIST, ssr->CHN_CNT);
+	return _stdf_write_flush(file, ssr->header.REC_LEN);
+}
+
+ssize_t stdf_write_rec_cdr(stdf_file *file, stdf_rec_cdr *cdr)
+{
+	if (!cdr->header.REC_LEN)
+		SET_HEADER(cdr->header, STDF_REC_CDR, _calc_rec_len_cdr(file, cdr));
+	_stdf_check_write_buffer(file, cdr->header.REC_LEN);
+	_stdf_write_dtc_header(file, &(cdr->header));
+        _stdf_write_dtc_B1(file, cdr->CONT_FLG);
+	_stdf_write_dtc_U2(file, cdr->CDR_INDX);
+	_stdf_write_dtc_Cn(file, cdr->CHN_NAM);
+	_stdf_write_dtc_U4(file, cdr->CHN_LEN);
+	_stdf_write_dtc_U2(file, cdr->SIN_PIN);
+	_stdf_write_dtc_U2(file, cdr->SOUT_PIN);
+	_stdf_write_dtc_U1(file, cdr->MSTR_CNT);
+	_stdf_write_dtc_xU2(file, cdr->M_CLKS, cdr->MSTR_CNT);
+	_stdf_write_dtc_U1(file, cdr->SLAV_CNT);
+	_stdf_write_dtc_xU2(file, cdr->S_CLKS, cdr->SLAV_CNT);
+	_stdf_write_dtc_U1(file, cdr->INV_VAL);
+	_stdf_write_dtc_U2(file, cdr->LST_CNT);
+        _stdf_write_dtc_xSn(file, cdr->CELL_LST, cdr->LST_CNT);
+	return _stdf_write_flush(file, cdr->header.REC_LEN);
 }
 
 ssize_t stdf_write_rec_wir(stdf_file *file, stdf_rec_wir *wir)
@@ -2297,6 +2745,76 @@ ssize_t stdf_write_rec_ftr(stdf_file *file, stdf_rec_ftr *ftr)
 	}
 #endif
 	return _stdf_write_flush(file, ftr->header.REC_LEN);
+}
+
+ssize_t stdf_write_rec_str(stdf_file *file, stdf_rec_str *str)
+{
+	if (!str->header.REC_LEN)
+		SET_HEADER(str->header, STDF_REC_STR, _calc_rec_len_str(file, str));
+	_stdf_check_write_buffer(file, str->header.REC_LEN);
+	_stdf_write_dtc_header(file, &(str->header));
+	_stdf_write_dtc_B1(file, str->CONT_FLG);
+	_stdf_write_dtc_U4(file, str->TEST_NUM);
+	_stdf_write_dtc_U1(file, str->HEAD_NUM);
+	_stdf_write_dtc_U1(file, str->SITE_NUM);
+	_stdf_write_dtc_U2(file, str->PSR_REF);
+	_stdf_write_dtc_B1(file, str->TEST_FLG);
+	_stdf_write_dtc_Cn(file, str->LOG_TYP);
+	_stdf_write_dtc_Cn(file, str->TEST_TXT);
+	_stdf_write_dtc_Cn(file, str->ALARM_ID);
+	_stdf_write_dtc_Cn(file, str->PROG_TXT);
+	_stdf_write_dtc_Cn(file, str->RSLT_TXT);
+	_stdf_write_dtc_U1(file, str->Z_VAL);
+	_stdf_write_dtc_B1(file, str->FMU_FLG);
+	if (str->FMU_FLG & 1) 
+		_stdf_write_dtc_Dn(file, str->MASK_MAP);
+	if ((str->FMU_FLG & 4) == 4) 
+		_stdf_write_dtc_Dn(file, str->FAL_MAP);
+	_stdf_write_dtc_U8(file, str->CYCL_CNT);
+	_stdf_write_dtc_U4(file, str->TOTF_CNT);
+	_stdf_write_dtc_U4(file, str->TOTL_CNT);
+	_stdf_write_dtc_U8(file, str->CYC_BASE);
+	_stdf_write_dtc_U4(file, str->BIT_BASE);
+	_stdf_write_dtc_U2(file, str->COND_CNT);
+	_stdf_write_dtc_U2(file, str->LIM_CNT);
+	_stdf_write_dtc_U1(file, str->CYCL_SIZE);
+	_stdf_write_dtc_U1(file, str->PMR_SIZE);
+	_stdf_write_dtc_U1(file, str->CHN_SIZE);
+	_stdf_write_dtc_U1(file, str->PAT_SIZE);
+	_stdf_write_dtc_U1(file, str->BIT_SIZE);
+	_stdf_write_dtc_U1(file, str->U1_SIZE);
+	_stdf_write_dtc_U1(file, str->U2_SIZE);
+	_stdf_write_dtc_U1(file, str->U3_SIZE);
+	_stdf_write_dtc_U1(file, str->UTX_SIZE);
+	_stdf_write_dtc_U2(file, str->CAP_BGN);
+	_stdf_write_dtc_xU2(file,str->LIM_INDX, str->LIM_CNT);
+	_stdf_write_dtc_xU4(file,str->LIM_SPEC, str->LIM_CNT);
+	_stdf_write_dtc_xCn(file,str->COND_LST, str->COND_CNT);
+	_stdf_write_dtc_U2(file, str->CYC_CNT);
+	_stdf_write_dtc_xUf(file,str->CYC_OFST, str->CYC_CNT, str->CYCL_SIZE);
+	_stdf_write_dtc_U2(file, str->PMR_CNT);
+	_stdf_write_dtc_xUf(file,str->PMR_INDX, str->PMR_CNT, str->PMR_SIZE);
+	_stdf_write_dtc_U2(file, str->CHN_CNT);
+	_stdf_write_dtc_xUf(file,str->CHN_NUM, str->CHN_CNT, str->CHN_SIZE);
+	_stdf_write_dtc_U2(file, str->EXP_CNT);
+	_stdf_write_dtc_xU1(file,str->EXP_DATA, str->EXP_CNT);
+	_stdf_write_dtc_U2(file, str->CAP_CNT);
+	_stdf_write_dtc_xU1(file,str->CAP_DATA, str->CAP_CNT);
+	_stdf_write_dtc_U2(file, str->NEW_CNT);
+	_stdf_write_dtc_xU1(file,str->NEW_DATA, str->NEW_CNT);
+	_stdf_write_dtc_U2(file, str->PAT_CNT);
+	_stdf_write_dtc_xUf(file,str->PAT_NUM, str->PAT_CNT, str->PAT_SIZE);
+	_stdf_write_dtc_U2(file, str->BPOS_CNT);
+	_stdf_write_dtc_xUf(file,str->BIT_POS, str->BPOS_CNT, str->BIT_SIZE);
+	_stdf_write_dtc_U2(file, str->USR1_CNT);
+	_stdf_write_dtc_xUf(file,str->USR1, str->USR1_CNT, str->U1_SIZE);
+	_stdf_write_dtc_U2(file, str->USR2_CNT);
+	_stdf_write_dtc_xUf(file,str->USR2, str->USR2_CNT, str->U2_SIZE);
+	_stdf_write_dtc_U2(file, str->USR3_CNT);
+	_stdf_write_dtc_xUf(file,str->USR3, str->USR3_CNT, str->U3_SIZE);
+	_stdf_write_dtc_U2(file, str->TXT_CNT);
+	_stdf_write_dtc_xCn(file,str->USER_TXT, str->TXT_CNT);
+	return _stdf_write_flush(file, str->header.REC_LEN);
 }
 
 ssize_t stdf_write_rec_bps(stdf_file *file, stdf_rec_bps *bps)

@@ -5,6 +5,7 @@
  */
 /*
  * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
+ * Copyright (C) 2017 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -50,7 +51,15 @@ extern stdf_rec_scr* stdf_read_rec_scr(stdf_file*) stdf_attribute_hidden;
 #endif
 extern stdf_rec_gdr* stdf_read_rec_gdr(stdf_file*) stdf_attribute_hidden;
 extern stdf_rec_dtr* stdf_read_rec_dtr(stdf_file*) stdf_attribute_hidden;
+extern stdf_rec_vur* stdf_read_rec_vur(stdf_file*) stdf_attribute_hidden;
+extern stdf_rec_psr* stdf_read_rec_psr(stdf_file*) stdf_attribute_hidden;
+extern stdf_rec_str* stdf_read_rec_str(stdf_file*) stdf_attribute_hidden;
+extern stdf_rec_nmr* stdf_read_rec_nmr(stdf_file*) stdf_attribute_hidden;
+extern stdf_rec_cnr* stdf_read_rec_cnr(stdf_file*) stdf_attribute_hidden;
+extern stdf_rec_ssr* stdf_read_rec_ssr(stdf_file*) stdf_attribute_hidden;
+extern stdf_rec_cdr* stdf_read_rec_cdr(stdf_file*) stdf_attribute_hidden;
 
+extern ssize_t stdf_write_rec_raw(stdf_file*, stdf_rec_unknown*) stdf_attribute_hidden;
 extern ssize_t stdf_write_rec_far(stdf_file*, stdf_rec_far*) stdf_attribute_hidden;
 extern ssize_t stdf_write_rec_atr(stdf_file*, stdf_rec_atr*) stdf_attribute_hidden;
 extern ssize_t stdf_write_rec_mir(stdf_file*, stdf_rec_mir*) stdf_attribute_hidden;
@@ -86,6 +95,13 @@ extern ssize_t stdf_write_rec_scr(stdf_file*, stdf_rec_scr*) stdf_attribute_hidd
 #endif
 extern ssize_t stdf_write_rec_gdr(stdf_file*, stdf_rec_gdr*) stdf_attribute_hidden;
 extern ssize_t stdf_write_rec_dtr(stdf_file*, stdf_rec_dtr*) stdf_attribute_hidden;
+extern ssize_t stdf_write_rec_vur(stdf_file*, stdf_rec_vur*) stdf_attribute_hidden;
+extern ssize_t stdf_write_rec_psr(stdf_file*, stdf_rec_psr*) stdf_attribute_hidden;
+extern ssize_t stdf_write_rec_str(stdf_file*, stdf_rec_str*) stdf_attribute_hidden;
+extern ssize_t stdf_write_rec_nmr(stdf_file*, stdf_rec_nmr*) stdf_attribute_hidden;
+extern ssize_t stdf_write_rec_cnr(stdf_file*, stdf_rec_cnr*) stdf_attribute_hidden;
+extern ssize_t stdf_write_rec_ssr(stdf_file*, stdf_rec_ssr*) stdf_attribute_hidden;
+extern ssize_t stdf_write_rec_cdr(stdf_file*, stdf_rec_cdr*) stdf_attribute_hidden;
 
 ssize_t _stdf_write_flush(stdf_file*, size_t) stdf_attribute_hidden;
 

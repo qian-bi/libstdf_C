@@ -1,4 +1,4 @@
-.TH "libstdf_const.h" 3 "13 Jul 2004" "libstdf" \" -*- nroff -*-
+.TH "libstdf_const.h" 3 "24 Mar 2017" "libstdf" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -8,7 +8,6 @@ libstdf_const.h \-
 Constants for specific records/members. 
 
 
-.PP
 .SH SYNOPSIS
 .br
 .PP
@@ -194,29 +193,29 @@ Constants for specific records/members.
 
 .in +1c
 .ti -1c
-.RI "enum \fBcpu_types\fP { \fBCPU_TYPE_DEC\fP =  0, \fBCPU_TYPE_SPARC\fP =  1, \fBCPU_TYPE_X86\fP =  2, \fBCPU_TYPE_UNKNOWN\fP =  123 }"
+.RI "enum \fBstdf_cpu_types\fP { \fBSTDF_CPU_TYPE_DEC\fP =  0, \fBSTDF_CPU_TYPE_SPARC\fP =  1, \fBSTDF_CPU_TYPE_X86\fP =  2, \fBSTDF_CPU_TYPE_UNKNOWN\fP =  123 }"
 .br
 .ti -1c
-.RI "enum \fBdtc_Vn_type\fP { \fBGDR_B0\fP =  0, \fBGDR_U1\fP =  1, \fBGDR_U2\fP =  2, \fBGDR_U4\fP =  3, \fBGDR_I1\fP =  4, \fBGDR_I2\fP =  5, \fBGDR_I4\fP =  6, \fBGDR_R4\fP =  7, \fBGDR_R8\fP =  8, \fBGDR_Cn\fP =  10, \fBGDR_Bn\fP =  11, \fBGDR_Dn\fP =  12, \fBGDR_N1\fP =  13 }"
+.RI "enum \fBstdf_dtc_Vn_type\fP { \fBSTDF_GDR_B0\fP =  0, \fBSTDF_GDR_U1\fP =  1, \fBSTDF_GDR_U2\fP =  2, \fBSTDF_GDR_U4\fP =  3, \fBSTDF_GDR_I1\fP =  4, \fBSTDF_GDR_I2\fP =  5, \fBSTDF_GDR_I4\fP =  6, \fBSTDF_GDR_R4\fP =  7, \fBSTDF_GDR_R8\fP =  8, \fBSTDF_GDR_Cn\fP =  10, \fBSTDF_GDR_Bn\fP =  11, \fBSTDF_GDR_Dn\fP =  12, \fBSTDF_GDR_N1\fP =  13 }"
 .br
 .in -1c
 .SH "Enumeration Type Documentation"
 .PP 
-.SS "enum \fBcpu_types\fP"
+.SS "enum \fBstdf_cpu_types\fP"
 .PP
-\fBEnumeration values: \fP
+\fBEnumerator: \fP
 .in +1c
 .TP
-\fB\fICPU_TYPE_DEC \fP\fP
+\fB\fISTDF_CPU_TYPE_DEC \fP\fP
 PDP-11 / VAX 
 .TP
-\fB\fICPU_TYPE_SPARC \fP\fP
+\fB\fISTDF_CPU_TYPE_SPARC \fP\fP
 sparc [Solaris] 
 .TP
-\fB\fICPU_TYPE_X86 \fP\fP
+\fB\fISTDF_CPU_TYPE_X86 \fP\fP
 x86 [Sun386i / Windows / DOS] 
 .TP
-\fB\fICPU_TYPE_UNKNOWN \fP\fP
+\fB\fISTDF_CPU_TYPE_UNKNOWN \fP\fP
 Unknown kind of CPU 
 .SH "Author"
 .PP 

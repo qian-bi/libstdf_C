@@ -69,5 +69,6 @@ $ gcc -o example example.c -lstdf
 /** @example dump_records_to_ascii.c Dump STDF files to human readable ASCII */
 /** @example dump_records_to_html.c Dump STDF files to a nice html page for comparing the raw binary with human readable ASCII */
 /** @example is_valid_stdf.c Checks to see whether the STDF files conform to their respective specs */
+/** @example read_write.c Reads and writes a stdf file with its raw data */
 /** @example record_stats.c Display summary information about the number of records found */
 /** @example stdf2xtdf.c Dump STDF files to the XTDF format */
