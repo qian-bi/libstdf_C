@@ -7,3 +7,6 @@ include_HEADERS = \
 	libstdf_funcs.h \
 	libstdf_systems.h \
 	libstdf_types.h
+
+noinst_HEADERS = \
+	lzw.h
