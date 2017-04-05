@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
 	stdf_rec_unknown *rec;
 	stdf_file *f;
 	stdf_file *write_f;
+	stdf_dtc_U2 stdf_byte_order;
 	char *filename_in, *filename_out;
 	long count=0;
 
@@ -55,8 +56,10 @@ int main(int argc, char *argv[])
 	       "Output: '%s'\n",
 	       filename_in, filename_out);
 
-	count = 0;
+        stdf_get_setting(f, STDF_SETTING_BYTE_ORDER, &stdf_byte_order);
+        stdf_set_setting(write_f, STDF_SETTING_BYTE_ORDER, stdf_byte_order);
 
+	count = 0;
 	while ((rec=stdf_read_record_raw(f)) != NULL) {
 		stdf_write_record_raw(write_f, rec);
 		stdf_free_record(rec);
