@@ -64,7 +64,6 @@ int main(int argc, char *argv[])
 		stdf_write_record_raw(write_f, rec);
 		stdf_free_record(rec);
 		count++;
-
 	}
 	printf("\n\nTransfered %li records\n", count);
 

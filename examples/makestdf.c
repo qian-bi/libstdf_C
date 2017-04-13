@@ -29,13 +29,14 @@ int main(int argc, char *argv[])
 	}
 
 	{
-		stdf_rec_far far = {
+		// use Far instead of far which is used in Windef.h when compiling for windows
+		stdf_rec_far Far = {
 			.CPU_TYPE = STDF_CPU_TYPE_X86,
 			.STDF_VER = 4
 		};
         	stdf_set_setting(f, STDF_SETTING_BYTE_ORDER, STDF_ENDIAN_LITTLE);
-		stdf_init_header(far.header, STDF_REC_FAR);
-		stdf_write_record(f, &far);
+		stdf_init_header(Far.header, STDF_REC_FAR);
+		stdf_write_record(f, &Far);
 	}
 
 	{
@@ -273,7 +274,7 @@ int main(int argc, char *argv[])
 		stdf_rec_cnr cnr = {
 			.CHN_NUM = 0,
 			.BIT_POS = 987654321,
-			.CELL_NAM = "\066\001ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+			.CELL_NAM = (unsigned char*)"\066\001ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
 		};
 		stdf_init_header(cnr.header, STDF_REC_CNR);
 		stdf_write_record(f, &cnr);
@@ -292,7 +293,7 @@ int main(int argc, char *argv[])
 	{
 		stdf_dtc_U2 master_clock[1] = {11};
 		stdf_dtc_U2 slave_clock[1] = {13};
-		stdf_dtc_Sn cell_list[6] = {"\006\000Block1", "\006\000Block2","\006\000Block3","\006\000Block4","\006\000Block5","\006\000Block6"};
+		stdf_dtc_Sn cell_list[6] = {(unsigned char*)"\006\000Block1",(unsigned char*)"\006\000Block2",(unsigned char*)"\006\000Block3",(unsigned char*)"\006\000Block4",(unsigned char*)"\006\000Block5",(unsigned char*)"\006\000Block6"};
 		stdf_rec_cdr cdr = {
 			.CONT_FLG = 0,
 			.CDR_INDX = 1,
@@ -464,8 +465,8 @@ int main(int argc, char *argv[])
 	}
 	{
 		// little endian
-   		stdf_dtc_Dn mask_map = "\000\000";
-   		stdf_dtc_Dn fal_map = "\110\000\004\000\001\000\004\000\000\001\000";
+   		stdf_dtc_Dn mask_map = (unsigned char*)"\000\000";
+   		stdf_dtc_Dn fal_map = (unsigned char*)"\110\000\004\000\001\000\004\000\000\001\000";
 		stdf_dtc_U2 condition_count = 3;
 		stdf_dtc_Cn condition_list[3] = {"\0041.1V","\0041.5v","\0043.3V"};
 		stdf_dtc_U2 cycle_count = 2;
@@ -574,10 +575,10 @@ int main(int argc, char *argv[])
    		stdf_dtc_Vn_ele Vn_ele11 = { STDF_GDR_B0, 0};           // 1byte  sum = 41bytes 
    		stdf_dtc_R8 R8=3.141593e5;
    		stdf_dtc_Vn_ele Vn_ele12 = { STDF_GDR_R8, (void*)&R8};
-   		stdf_dtc_Bn Bn = "\004\000\001\002\003";
+   		stdf_dtc_Bn Bn = (unsigned char*)"\004\000\001\002\003";
    		stdf_dtc_Vn_ele Vn_ele13 = { STDF_GDR_Bn, (void*)&Bn};
    		 // little endian
-   		stdf_dtc_Dn Dn = "\110\000\004\000\001\000\004\000\000\001\000";
+   		stdf_dtc_Dn Dn = (unsigned char*)"\110\000\004\000\001\000\004\000\000\001\000";
    		stdf_dtc_Vn_ele Vn_ele14 = { STDF_GDR_Dn, (void*)&Dn};
    		stdf_dtc_N1 N1 = 0xF;
    		stdf_dtc_Vn_ele Vn_ele15 = { STDF_GDR_N1, (void*)&N1};

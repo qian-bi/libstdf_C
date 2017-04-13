@@ -18,7 +18,7 @@ void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int 
 {
 	if (in_byte_order == out_byte_order || len == 1)
 		return;
-	if (in_byte_order == STDF_ENDIAN_HOST)
+	if (in_byte_order == STDF_ENDIAN_HOST) {
 		if (out_byte_order != STDF_ENDIAN_LITTLE && out_byte_order != STDF_ENDIAN_BIG) {
 			warnf("byte order %i is not implemented", out_byte_order);
             	return;
@@ -28,6 +28,7 @@ void __byte_order_change(int in_byte_order, int out_byte_order, byte_t *in, int 
 			warnf("byte order %i is not implemented", in_byte_order);
 			return;
 		}
+	}
 
 	switch (len) {
 		case 2:	stdf_bswap_16(*((uint16_t*)in)); break;
@@ -185,6 +186,7 @@ void _stdf_read_dtc_xUf(stdf_file *f, stdf_dtc_xUf *xUf, stdf_dtc_U2 cnt, stdf_d
 		(*xUf) = NULL;
                 return;
         }
+
         switch (size) {
         	case 1: { 
                         (*xUf) = (void*)calloc(cnt, sizeof(stdf_dtc_U1));

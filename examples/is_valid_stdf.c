@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 	}
 
 for (i=1; i<argc; ++i) {
-	printf("Validating %s", argv[i]);
+	printf("Validating %s\n", argv[i]);
 	f = stdf_open(argv[i]);
 	if (!f) {
 		perror("Could not open file");

@@ -99,6 +99,7 @@ int stdf_set_setting(stdf_file *f, uint32_t option, ...)
 
 	return 0;
 }
+
 void stdf_get_setting(stdf_file *f, uint32_t option, ...)
 {
 	va_list ap;

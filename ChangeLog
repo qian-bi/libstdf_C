@@ -1,6 +1,7 @@
 0.6	
 	* Added support for stdf v4-2007
 	* fixed GDR record
+	* fix that bzip2 works with mingw64
 
 0.5
 	* Cleanup build system all over the place

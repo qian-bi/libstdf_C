@@ -589,11 +589,11 @@ stdf_rec_unknown* stdf_read_rec_unknown(stdf_file *file)
 
 stdf_rec_far* stdf_read_rec_far(stdf_file *file)
 {
-	stdf_rec_far *far = malloc(sizeof(*far));
-
-	_stdf_read_dtc_U1(file, &(far->CPU_TYPE));
-	_stdf_read_dtc_U1(file, &(far->STDF_VER));
-	return far;
+	// use Far instead of far which is used in Windef.h when compiling for windows
+	stdf_rec_far *Far = malloc(sizeof(*Far));
+	_stdf_read_dtc_U1(file, &(Far->CPU_TYPE));
+	_stdf_read_dtc_U1(file, &(Far->STDF_VER));
+	return Far;
 }
 
 stdf_rec_atr* stdf_read_rec_atr(stdf_file *file)
@@ -2034,15 +2034,15 @@ ssize_t stdf_write_rec_raw(stdf_file *file, stdf_rec_unknown *rec)
 	return _stdf_write_flush(file, rec->header.REC_LEN+4);
 }
 
-ssize_t stdf_write_rec_far(stdf_file *file, stdf_rec_far *far)
+ssize_t stdf_write_rec_far(stdf_file *file, stdf_rec_far *Far)
 {
-	if (!far->header.REC_LEN)
-		SET_HEADER(far->header, STDF_REC_FAR, _calc_rec_len_far(file, far));
-	_stdf_check_write_buffer(file, far->header.REC_LEN);
-	_stdf_write_dtc_header(file, &(far->header));
-	_stdf_write_dtc_U1(file, far->CPU_TYPE);
-	_stdf_write_dtc_U1(file, far->STDF_VER);
-	return _stdf_write_flush(file, far->header.REC_LEN);
+	if (!Far->header.REC_LEN)
+		SET_HEADER(Far->header, STDF_REC_FAR, _calc_rec_len_far(file, Far));
+	_stdf_check_write_buffer(file, Far->header.REC_LEN);
+	_stdf_write_dtc_header(file, &(Far->header));
+	_stdf_write_dtc_U1(file, Far->CPU_TYPE);
+	_stdf_write_dtc_U1(file, Far->STDF_VER);
+	return _stdf_write_flush(file, Far->header.REC_LEN);
 }
 
 ssize_t stdf_write_rec_atr(stdf_file *file, stdf_rec_atr *atr)

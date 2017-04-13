@@ -13,8 +13,13 @@
 
 #include <internal/headers.h>
 
+#ifdef _WIN64
+#define printf __mingw_printf
+#endif /* _WIN64 */
+
 #define print_fmt(n,f,v) printf("\t" n ": " f, v)
-#define print_int(n,i) print_fmt(n, "%i\n", i)
+#define print_int(n,i) print_fmt(n, "%i\n",i)
+#define print_U8(n,i) print_fmt(n, "%ju\n",i)
 #define print_Cn(n,s) print_fmt(n, "%s\n", (*(s) ? (s)+1 : "(null)"))
 #define print_Sn(n,s) \
         do { \
@@ -44,7 +49,7 @@ void print_x ## DTC(char *n, stdf_dtc_x ## DTC u, stdf_dtc_U2 c) \
 MAKE_PRINT_X(U1, printf, "%u")
 MAKE_PRINT_X(U2, printf, "%u")
 MAKE_PRINT_X(U4, printf, "%u")
-MAKE_PRINT_X(U8, printf, "%u")
+MAKE_PRINT_X(U8, printf, "%ju")
 MAKE_PRINT_X(R4, printf, "%f")
 
 #define _printf_xCn(fmt,Cn) printf(fmt, (*Cn ? Cn+1 : "(null)"))
@@ -52,11 +57,11 @@ MAKE_PRINT_X(Cn, _printf_xCn, "%s")
 
 void print_xSn(char *member, stdf_dtc_xSn xSn, stdf_dtc_U2 cnt)
 {
-    stdf_dtc_U2 i,c;
+	stdf_dtc_U2 i;
 	printf("\t%s: ", member);
-    for ( i=0; i < cnt; i++) {
-        stdf_dtc_U2 c = ((stdf_dtc_U2*)xSn[i])[0];
-        if (*xSn[i] && c) 
+	for ( i=0; i < cnt; i++) {
+		stdf_dtc_U2 c = ((stdf_dtc_U2*)xSn[i])[0];
+		if (*xSn[i] && c) 
 			printf("%s", xSn[i]+2);
 		else
 			printf("(null)");		
@@ -67,7 +72,6 @@ void print_xSn(char *member, stdf_dtc_xSn xSn, stdf_dtc_U2 cnt)
 
 void print_xUf(char *member, stdf_dtc_xUf xUf, stdf_dtc_U2 cnt, stdf_dtc_U1 size)
 {
-    stdf_dtc_U2 i;
     switch (size) {
 	case 0: printf("\t%s: (null)\n", member); break;
         case 1: print_xU1(member,((stdf_dtc_U1*)xUf),cnt); break;
@@ -258,9 +262,10 @@ for (i=1; i<argc; ++i) {
 		       rec->header.REC_SUB, rec->header.REC_LEN);
 		switch (HEAD_TO_REC(rec->header)) {
 			case STDF_REC_FAR: {
-				stdf_rec_far *far = (stdf_rec_far*)rec;
-				print_int("CPU_TYPE", far->CPU_TYPE);
-				print_int("STDF_VER", far->STDF_VER);
+				// use Far instead of far which is used in Windef.h when compiling for windows
+				stdf_rec_far *Far = (stdf_rec_far*)rec;
+				print_int("CPU_TYPE", Far->CPU_TYPE);
+				print_int("STDF_VER", Far->STDF_VER);
 				break;
 			}
 			case STDF_REC_ATR: {
@@ -797,10 +802,10 @@ for (i=1; i<argc; ++i) {
 					print_Dn("FAL_MAP",   str->FAL_MAP);
 				else
 					printf("\tFAL_MAP: (null)\n");
-				print_int("CYCL_CNT", str->CYCL_CNT);
+				print_U8("CYCL_CNT", str->CYCL_CNT);
 				print_int("TOTF_CNT", str->TOTF_CNT);
 				print_int("TOTL_CNT", str->TOTL_CNT);
-				print_int("CYC_BASE", str->CYC_BASE);
+				print_U8("CYC_BASE", str->CYC_BASE);
 				print_int("BIT_BASE", str->BIT_BASE);
 				print_int("COND_CNT", str->COND_CNT);
 				print_int("LIM_CNT",  str->LIM_CNT);
