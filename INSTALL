@@ -12,9 +12,43 @@ If you're using subversion:
 (2) ./autogen.sh
 (3) sudo make install
 
---- Compiling [win32] ---
+--- Compiling [win32] native ---
 from the win32 directory, run:
 nmake -f libstdf.mak
 
 if you'd like to build the examples, just run:
 nmake -f libstdf.mak examples
+
+--- Create library for Windows 32bit/64bit with mingw ---
+
+Instruction example for Windows 64bit
+
+Install MSYS2:
+Download MSYS2 from https://msys2.github.io/ and install it to c:\msys64.
+
+For proxy add following line to the .bashrc
+export http_proxy=proxy.company.com:8080
+export https_proxy=$http_proxy
+export ftp_proxy=$http_proxy
+export rsync_proxy=$http_proxy
+export rsync_proxy=$http_proxy
+export no_proxy="localhost,127.0.0.1,localaddress,.company.com"
+
+Terminal colors can be set in file .minttyrc which can created at http://ciembor.github.io/4bit/#
+
+Start terminal and update msys2:
+find command documentation at https://wiki.archlinux.org/index.php/pacman
+pacman -Sy pacman
+pacman -Syu
+pacman -Su
+
+install software for mingw64:
+pacman -S base-devel git tar mingw-w64-x86_64-toolchain mingw-w64-x86_64-zziplib
+
+Install the libstdf library:
+
+./autogen.sh
+./configure --prefix=/mingw64/x86_64-w64-mingw32 --enable-lzw
+make CFLAGS="-Wall -Wextra -Wnonnull -Wundef -Werror"
+make install
+
