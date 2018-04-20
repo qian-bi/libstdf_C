@@ -110,18 +110,10 @@ void print_xN1(char *member, stdf_dtc_xN1 xN1, stdf_dtc_U2 c)
 	printf("'/>\n");
 }
 
-static unsigned char lookup[16] = {
-0x0, 0x8, 0x4, 0xc, 0x2, 0xa, 0x6, 0xe,
-0x1, 0x9, 0x5, 0xd, 0x3, 0xb, 0x7, 0xf };
-
-uint8_t reverse(uint8_t n) {
-   // Reverse the top and bottom nibble then swap them.
-   return (lookup[n&0xf] << 4) | lookup[n>>4];
-}
-
 void print_Vn(char *n, stdf_dtc_Vn v, int c)
 {
-	stdf_dtc_U2 i,j;
+        stdf_dtc_U1 flag,bit_set;
+	stdf_dtc_U2 i,j,iter,bit_number;
 	--c;
 	printf("\t<%s>\n", n);
 	for (i=0; i<=c; ++i) {
@@ -143,13 +135,16 @@ void print_Vn(char *n, stdf_dtc_Vn v, int c)
 			}
 			case STDF_GDR_Bn: {
                                 stdf_dtc_Bn Bn = *((stdf_dtc_Bn*)v[i].data);
+				printf("'");
 				if (*Bn) {
-					printf("0x");
-					for ( j=1; j<=*Bn; ++j)
-						printf("%02X", reverse(*(Bn+j)));
+                                	bit_set = 0;
+					for ( j=1; j<=*Bn; ++j) {
+						if (bit_set) printf(",");
+						printf("0x%X", *(Bn+j));
+						bit_set = 1;
+					}
 				}
-				else
-					printf("''");
+				printf("'");
 				break;
                         }
 			case STDF_GDR_Dn: {
@@ -157,13 +152,23 @@ void print_Vn(char *n, stdf_dtc_Vn v, int c)
 				stdf_dtc_U2 *num_bits = (stdf_dtc_U2*)Dn, len;
 				len = *num_bits / 8;
         			if (*num_bits % 8) ++len;
+				printf("'");
 				if (len) {
-					printf("0x");
-					for ( j=0; j<len; ++j)
-						printf("%02X", reverse(*(Dn+j+2)));
+					bit_number = 0;
+					bit_set = 0;
+					for ( j=0; j<len; ++j) {
+						if (*(Dn+j+2)) {
+							for (flag=1, iter=0; iter< 8; flag <<=1, iter++)
+								if (*(Dn+j+2) & flag) {
+									if (bit_set) printf(",");
+									printf("%u", bit_number + iter);
+									bit_set = 1;
+								}
+						}
+						bit_number +=8;
+					}
 				}
-				else
-					printf("''");
+				printf("'");
 				break;
 			}
 			case STDF_GDR_N1: printf("0x%X", *((stdf_dtc_N1*)v[i].data)); break;
@@ -175,31 +180,47 @@ void print_Vn(char *n, stdf_dtc_Vn v, int c)
 
 void print_Bn(char *n, stdf_dtc_Bn b)
 {
-	stdf_dtc_U1 i;
+	stdf_dtc_U1 i, bit_set;
+	printf("\t<%s value='", n);
 	if (*b) {
-		printf("\t<%s value=0x", n);
-		for (i=1; i<=*b; ++i)
-			printf("%02X", reverse(*(b+i)));
+                bit_set = 0;
+		for (i=1; i<=*b; ++i) {
+			if (bit_set) printf(",");
+			printf("0x%X", *(b+i));
+			bit_set = 1;
+		}
 	}
-	else 
-		printf("\t<%s value=''", n);
-	printf("/>\n");
+	printf("'/>\n");
 }
 
 void print_Dn(char *n, stdf_dtc_Dn d)
 {
-	int i;
+        stdf_dtc_U1 flag,bit_set;
+	stdf_dtc_U2 i,iter,bit_number;
 	stdf_dtc_U2 *num_bits = (stdf_dtc_U2*)d, len;
 	len = *num_bits / 8;
 	if (*num_bits % 8) ++len;
 	if (len) {
-		printf("\t<%s value=0x", n);
-		for (i=0; i<len; ++i)
-			printf("%02X", reverse(*(d+i+2)));
+       		// first data item is in the least significant bit of the third byte of the array
+       		// the set bits refer to indices (PMR_INDX)
+		bit_number = 0;
+		bit_set = 0;
+		printf("\t<%s value='", n);
+		for ( i=0; i<len; ++i) {
+			if (*(d+i+2)) {
+				for (flag=1, iter=0; iter < 8; flag <<=1, iter++)
+					if (*(d+i+2) & flag) {
+						if (bit_set) printf(",");
+						printf("%u", bit_number + iter); // PMR_INDX
+						bit_set = 1;
+					}
+			}
+			bit_number +=8;
+		}
 	}
 	else
-		printf("\t<%s value=''", n);
-	printf("/>\n");
+		printf("\t<%s value='", n);
+	printf("'/>\n");
 }
 
 #define print_UNK(n) \

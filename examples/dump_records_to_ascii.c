@@ -99,15 +99,6 @@ void print_xN1(char *member, stdf_dtc_xN1 xN1, stdf_dtc_U2 c)
 	printf("\n");
 }
 
-static unsigned char lookup[16] = {
-0x0, 0x8, 0x4, 0xc, 0x2, 0xa, 0x6, 0xe,
-0x1, 0x9, 0x5, 0xd, 0x3, 0xb, 0x7, 0xf };
-
-uint8_t reverse(uint8_t n) {
-   // Reverse the top and bottom nibble then swap them.
-   return (lookup[n&0xf] << 4) | lookup[n>>4];
-}
-
 void print_Vn(char *n, stdf_dtc_Vn v, int c)
 {
         stdf_dtc_U1 flag,bit_set;
@@ -134,9 +125,12 @@ void print_Vn(char *n, stdf_dtc_Vn v, int c)
 			case STDF_GDR_Bn: {
 				stdf_dtc_Bn Bn = *((stdf_dtc_Bn*)v[i].data);
 				if (*Bn) {
-					printf("%ubytes, 0x", *Bn);
-					for ( j=1; j<=*Bn; ++j)
-						printf("%02X", reverse(*(Bn+j)));
+                                        bit_set = 0;
+					for ( j=1; j<=*Bn; ++j) {
+						if (bit_set) printf(",");
+						printf("0x%X", *(Bn+j));
+						bit_set = 1;
+					}
 				}
 				else
 					printf(" (null)");
@@ -150,20 +144,17 @@ void print_Vn(char *n, stdf_dtc_Vn v, int c)
 				if (len) {
 					bit_number = 0;
 					bit_set = 0;
-					printf("%ubits", *num_bits);
 					for ( j=0; j<len; ++j) {
 						if (*(Dn+j+2)) {
-							for (flag=1, iter=1; iter<= 8; flag <<=1, iter++)
+							for (flag=1, iter=0; iter< 8; flag <<=1, iter++)
 								if (*(Dn+j+2) & flag) {
 									if (bit_set) printf(",");
-									else printf(", bit ");
 									printf("%u", bit_number + iter);
 									bit_set = 1;
 								}
 						}
 						bit_number +=8;
 					}
-					if (bit_set) printf(" set");
 				}
 				else
 					printf(" (null)");
@@ -178,16 +169,17 @@ void print_Vn(char *n, stdf_dtc_Vn v, int c)
 }
 void print_Bn(stdf_dtc_C1 *n, stdf_dtc_Bn b)
 {
-	stdf_dtc_U1 i;
+	stdf_dtc_U1 i, bit_set;
+	printf("\t%s:", n);
 	if (*b) {
-		printf("\t%s: %ubytes, 0x", n,*b);
-		// first data item in the least significant bit of the second byte of the array
-		// printing the bitfield with LSB first
-		for (i=1; i<*b; ++i)
-			printf("%02X", reverse(*(b+i)));
+		bit_set = 0;
+		// first data item is in the least significant bit of the second byte of the array
+		for (i=1; i<*b; ++i) {
+			if (bit_set) printf(",");
+			printf("0x%X", *(b+i));
+			bit_set = 1;
+		}
 	}
-	else
-		printf("\t%s: (null)", n);
         printf("\n");
 }
 
@@ -199,24 +191,22 @@ void print_Dn(stdf_dtc_C1 *n, stdf_dtc_Dn d)
 	len = *num_bits / 8;
 	if (*num_bits % 8) ++len;
 	if (len) {
-       		// first data item in the least significant bit of the third byte of the array
-       		// since the set bits refer to indices the amount of bits and the set bits are printed
+       		// first data item is in the least significant bit of the third byte of the array
+       		// the set bits refer to indices (PMR_INDX)
 		bit_number = 0;
 		bit_set = 0;
-		printf("\t%s: %ubits", n, *num_bits);
+		printf("\t%s: ", n);
 		for ( i=0; i<len; ++i) {
 			if (*(d+i+2)) {
-				for (flag=1, iter=1; iter <= 8; flag <<=1, iter++)
+				for (flag=1, iter=0; iter < 8; flag <<=1, iter++)
 					if (*(d+i+2) & flag) {
 						if (bit_set) printf(",");
-						else printf(", bit ");
-						printf("%u", bit_number + iter);
+						printf("%u", bit_number + iter); // PMR_INDX
 						bit_set = 1;
 					}
 			}
 			bit_number +=8;
 		}
-		if (bit_set) printf(" set");
 	}
 	else
 		printf("\t%s: (null)", n);
