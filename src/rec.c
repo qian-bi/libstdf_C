@@ -5,7 +5,7 @@
  */
 /*
  * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
- * Copyright (C) 2017 Stefan Brandner <stefan.brandner@gmx.at>
+ * Copyright (C) 2017-2018 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -71,13 +71,13 @@ static int _stdf_header_to_idx(stdf_rec_typ type, stdf_rec_sub sub)
 #endif
 		case STDF_REC_GDR:	return 30;
 		case STDF_REC_DTR:	return 31;
-                case STDF_REC_VUR:      return 32;
-                case STDF_REC_PSR:      return 33;
-                case STDF_REC_STR:      return 34;
-                case STDF_REC_NMR:      return 35;
-                case STDF_REC_CNR:      return 36;
-                case STDF_REC_SSR:      return 37;
-                case STDF_REC_CDR:      return 38;
+		case STDF_REC_VUR:  return 32;
+		case STDF_REC_PSR:  return 33;
+		case STDF_REC_STR:  return 34;
+		case STDF_REC_NMR:  return 35;
+		case STDF_REC_CNR:  return 36;
+		case STDF_REC_SSR:  return 37;
+		case STDF_REC_CDR:  return 38;
 		case STDF_REC_UNKNOWN:
 		default:		return 0;
 	}
@@ -193,8 +193,8 @@ void stdf_free_record(stdf_rec_unknown *rec)
 			free(rec);
 			break;
 		}
-                case STDF_REC_STR: {
-                        stdf_rec_str *str = (stdf_rec_str*)rec;
+		case STDF_REC_STR: {
+			stdf_rec_str *str = (stdf_rec_str*)rec;
 			free(str->LOG_TYP);
 			free(str->TEST_TXT);
 			free(str->ALARM_ID);
@@ -204,19 +204,19 @@ void stdf_free_record(stdf_rec_unknown *rec)
 			free(str->FAL_MAP);
 			free_xU2(str->LIM_INDX);
 			free_xU4(str->LIM_SPEC);
-                        free_xCn(str->COND_LST, str->COND_CNT);
-                        free_xUf(str->CYC_OFST);
-                        free_xUf(str->PMR_INDX);
-                        free_xUf(str->CHN_NUM);
-                        free_xU1(str->EXP_DATA);
-                        free_xU1(str->CAP_DATA);
-                        free_xU1(str->NEW_DATA);
-                        free_xUf(str->PAT_NUM);
-                        free_xUf(str->BIT_POS);
-                        free_xUf(str->USR1);
-                        free_xUf(str->USR2);
-                        free_xUf(str->USR3);
-                        free_xCn(str->USER_TXT, str->TXT_CNT);
+			free_xCn(str->COND_LST, str->COND_CNT);
+			free_xUf(str->CYC_OFST);
+			free_xUf(str->PMR_INDX);
+			free_xUf(str->CHN_NUM);
+			free_xU1(str->EXP_DATA);
+			free_xU1(str->CAP_DATA);
+			free_xU1(str->NEW_DATA);
+			free_xUf(str->PAT_NUM);
+			free_xUf(str->BIT_POS);
+			free_xUf(str->USR1);
+			free_xUf(str->USR2);
+			free_xUf(str->USR3);
+			free_xCn(str->USER_TXT, str->TXT_CNT);
 			free(rec);
 			break;
 		}
@@ -460,44 +460,44 @@ void stdf_free_record(stdf_rec_unknown *rec)
 			break;
 		}
 		case STDF_REC_PSR: {
-                        stdf_rec_psr *psr = (stdf_rec_psr*)rec;
-                        free(psr->PSR_NAM);
-                        free_xU8(psr->PAT_BGN);
-                        free_xU8(psr->PAT_END);
-                        free_xCn(psr->PAT_FILE,psr->LOCP_CNT);
-                        free_xCn(psr->PAT_LBL,psr->LOCP_CNT);
-                        free_xCn(psr->FILE_UID,psr->LOCP_CNT);
-                        free_xCn(psr->ATPG_DSC,psr->LOCP_CNT);
-                        free_xCn(psr->SRC_ID,psr->LOCP_CNT);
+			stdf_rec_psr *psr = (stdf_rec_psr*)rec;
+			free(psr->PSR_NAM);
+			free_xU8(psr->PAT_BGN);
+			free_xU8(psr->PAT_END);
+			free_xCn(psr->PAT_FILE,psr->LOCP_CNT);
+			free_xCn(psr->PAT_LBL,psr->LOCP_CNT);
+			free_xCn(psr->FILE_UID,psr->LOCP_CNT);
+			free_xCn(psr->ATPG_DSC,psr->LOCP_CNT);
+			free_xCn(psr->SRC_ID,psr->LOCP_CNT);
 			free(rec);
 			break;
 		}
 		case STDF_REC_NMR: {
-                        stdf_rec_nmr *nmr = (stdf_rec_nmr*)rec;
-                        free_xU2(nmr->PMR_INDX);
-                        free_xCn(nmr->ATPG_NAM,nmr->LOCM_CNT);
+       		stdf_rec_nmr *nmr = (stdf_rec_nmr*)rec;
+			free_xU2(nmr->PMR_INDX);
+			free_xCn(nmr->ATPG_NAM,nmr->LOCM_CNT);
 			free(rec);
 			break;
 		}
 		case STDF_REC_CNR: {
-                        stdf_rec_cnr *cnr = (stdf_rec_cnr*)rec;
-                        free(cnr->CELL_NAM);
+			stdf_rec_cnr *cnr = (stdf_rec_cnr*)rec;
+			free(cnr->CELL_NAM);
 			free(rec);
 			break;
 		}
 		case STDF_REC_SSR: {
-                        stdf_rec_ssr *ssr = (stdf_rec_ssr*)rec;
-                        free(ssr->SSR_NAM);
-                        free_xU2(ssr->CHN_LIST);
+			stdf_rec_ssr *ssr = (stdf_rec_ssr*)rec;
+			free(ssr->SSR_NAM);
+			free_xU2(ssr->CHN_LIST);
 			free(rec);
 			break;
 		}
 		case STDF_REC_CDR: {
-                        stdf_rec_cdr *cdr = (stdf_rec_cdr*)rec;
-                        free(cdr->CHN_NAM);
-                        free_xU2(cdr->M_CLKS);
-                        free_xU2(cdr->S_CLKS);
-                        free_xSn(cdr->CELL_LST,cdr->LST_CNT);
+			stdf_rec_cdr *cdr = (stdf_rec_cdr*)rec;
+			free(cdr->CHN_NAM);
+			free_xU2(cdr->M_CLKS);
+			free_xU2(cdr->S_CLKS);
+			free_xSn(cdr->CELL_LST,cdr->LST_CNT);
 			free(rec);
 			break;
 		}
@@ -545,12 +545,12 @@ void stdf_free_record(stdf_rec_unknown *rec)
 			free(atr);
 			break;
 		}
-                case STDF_REC_VUR: {
-                        stdf_rec_vur *vur = (stdf_rec_vur*)rec;
-                        free(vur->UPD_NAM);
-                        free(vur);
-                        break;
-                }
+		case STDF_REC_VUR: {
+			stdf_rec_vur *vur = (stdf_rec_vur*)rec;
+			free_xCn(vur->UPD_NAM, vur->UPD_CNT);
+			free(vur);
+			break;
+		}
 
 		/* all the rest */
 		case STDF_REC_UNKNOWN: {
@@ -607,7 +607,8 @@ stdf_rec_atr* stdf_read_rec_atr(stdf_file *file)
 stdf_rec_vur* stdf_read_rec_vur(stdf_file *file)
 {
 	stdf_rec_vur *vur = malloc(sizeof(*vur));
-	_stdf_read_dtc_Cn(file, &(vur->UPD_NAM));
+    _stdf_read_dtc_U1(file, &(vur->UPD_CNT));
+	_stdf_read_dtc_xCn(file, &(vur->UPD_NAM), vur->UPD_CNT);
 	return vur;
 }
 
@@ -1476,7 +1477,7 @@ static inline size_t _calc_rec_len_atr(stdf_attribute_unused stdf_file *f, stdf_
 
 static inline size_t _calc_rec_len_vur(stdf_attribute_unused stdf_file *f, stdf_rec_vur *r)
 {
-	return _lenCn(r->UPD_NAM);
+	return sizeof(r->UPD_CNT)+_len_dtcXCn(r->UPD_NAM, r->UPD_CNT);
 }
 
 static inline size_t _calc_rec_len_mir(stdf_file *f, stdf_rec_mir *r)
@@ -2062,7 +2063,8 @@ ssize_t stdf_write_rec_vur(stdf_file *file, stdf_rec_vur *vur)
 		SET_HEADER(vur->header, STDF_REC_VUR, _calc_rec_len_vur(file, vur));
 	_stdf_check_write_buffer(file, vur->header.REC_LEN);
 	_stdf_write_dtc_header(file, &(vur->header));
-	_stdf_write_dtc_Cn(file, vur->UPD_NAM);
+    _stdf_write_dtc_U1(file, vur->UPD_CNT);
+	_stdf_write_dtc_xCn(file, vur->UPD_NAM, vur->UPD_CNT);
 	return _stdf_write_flush(file, vur->header.REC_LEN);
 }
 

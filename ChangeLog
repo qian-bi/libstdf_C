@@ -1,3 +1,8 @@
+0.7
+	* correct implementation of VUR record
+	* dump_records_to_ascii.c, stdf2xtdf.c -> print_Dn prints PMR_INDEX instead of bit field
+	* updated examples
+
 0.6	
 	* Added support for stdf v4-2007
 	* fixed GDR record

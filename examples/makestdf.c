@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
- * Copyright (C) 2017 Stefan Brandner <stefan.brandner@gmx.at>
+ * Copyright (C) 2017-2018 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -49,8 +49,10 @@ int main(int argc, char *argv[])
 	}
 
 	{
+		stdf_dtc_Cn vur_info[2] = {"\007V4-2007", "\013Scan:2007.1"};
 		stdf_rec_vur vur = {
-			.UPD_NAM = "\007V4-2007"
+			.UPD_CNT = 2,
+			.UPD_NAM = vur_info
 		};
 		stdf_init_header(vur.header, STDF_REC_VUR);
 		stdf_write_record(f, &vur);
@@ -465,7 +467,9 @@ int main(int argc, char *argv[])
 	}
 	{
 		// little endian
-   		stdf_dtc_Dn mask_map = (unsigned char*)"\000\000";
+   		//stdf_dtc_Dn mask_map = (unsigned char*)"\110\000\004\000\001\000\004\000\000\001\000";
+		//unsigned char mask_map[] = { 0x10, 0x00, 0x00, 0x04 };
+		unsigned char mask_map[] = { 0x48, 0x00, 0x04, 0x00, 0x01 ,0x00 ,0x04, 0x00, 0x00, 0x01, 0x00 };
    		stdf_dtc_Dn fal_map = (unsigned char*)"\110\000\004\000\001\000\004\000\000\001\000";
 		stdf_dtc_U2 condition_count = 3;
 		stdf_dtc_Cn condition_list[3] = {"\0041.1V","\0041.5v","\0043.3V"};
@@ -488,7 +492,7 @@ int main(int argc, char *argv[])
 			.PROG_TXT = "\010PROG_TXT",
 			.RSLT_TXT = "\006Failed",
 			.Z_VAL = 0,
-			.FMU_FLG = 4,	
+			.FMU_FLG = 0x5,	
 			.MASK_MAP = mask_map,
 			.FAL_MAP = fal_map,
 			.CYCL_CNT = 2,

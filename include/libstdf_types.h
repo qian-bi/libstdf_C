@@ -4,7 +4,7 @@
  */
 /*
  * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
- * Copyright (C) 2017 Stefan Brandner <stefan.brandner@gmx.at>
+ * Copyright (C) 2017-2018 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -198,7 +198,8 @@ typedef struct {	/* V4 */
 /* VUR: Version update record */
 typedef struct {	/* V4-2007 */
 	stdf_rec_header	header;
-	stdf_dtc_Cn		UPD_NAM;
+    stdf_dtc_U1			UPD_CNT;
+	stdf_dtc_xCn		UPD_NAM;
 } stdf_rec_vur;
 
 /* MIR: Master Information Record [page 20] */

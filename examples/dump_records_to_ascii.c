@@ -3,7 +3,7 @@
  */
 /*
  * Copyright (C) 2004-2007 Mike Frysinger <vapier@gmail.com>
- * Copyright (C) 2017 Stefan Brandner <stefan.brandner@gmx.at>
+ * Copyright (C) 2017-2018 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
  */
@@ -125,7 +125,7 @@ void print_Vn(char *n, stdf_dtc_Vn v, int c)
 			case STDF_GDR_Bn: {
 				stdf_dtc_Bn Bn = *((stdf_dtc_Bn*)v[i].data);
 				if (*Bn) {
-                                        bit_set = 0;
+					bit_set = 0;
 					for ( j=1; j<=*Bn; ++j) {
 						if (bit_set) printf(",");
 						printf("0x%X", *(Bn+j));
@@ -191,8 +191,8 @@ void print_Dn(stdf_dtc_C1 *n, stdf_dtc_Dn d)
 	len = *num_bits / 8;
 	if (*num_bits % 8) ++len;
 	if (len) {
-       		// first data item is in the least significant bit of the third byte of the array
-       		// the set bits refer to indices (PMR_INDX)
+		// first data item is in the least significant bit of the third byte of the array
+		// the set bits refer to indices (PMR_INDX)
 		bit_number = 0;
 		bit_set = 0;
 		printf("\t%s: ", n);
@@ -266,7 +266,8 @@ for (i=1; i<argc; ++i) {
 			}
 			case STDF_REC_VUR: {
 				stdf_rec_vur *vur = (stdf_rec_vur*)rec;
-				print_Cn("UPD_NAM", vur->UPD_NAM);
+				print_int("UPD_CNT", vur->UPD_CNT);
+				print_xCn("UPD_NAM", vur->UPD_NAM,vur->UPD_CNT);
 				break;
 			}
 			case STDF_REC_MIR: {
@@ -274,69 +275,69 @@ for (i=1; i<argc; ++i) {
 #ifdef STDF_VER3
 				if (stdf_ver == 4) {
 #endif
-				print_tim("SETUP_T", mir->SETUP_T);
-				print_tim("START_T", mir->START_T);
-				print_int("STAT_NUM", mir->STAT_NUM);
-				print_chr("MODE_COD", mir->MODE_COD);
-				print_chr("RTST_COD", mir->RTST_COD);
-				print_chr("PROT_COD", mir->PROT_COD);
-				print_int("BURN_TIM", mir->BURN_TIM);
-				print_chr("CMOD_COD", mir->CMOD_COD);
-				print_Cn("LOT_ID", mir->LOT_ID);
-				print_Cn("PART_TYP", mir->PART_TYP);
-				print_Cn("NODE_NAM", mir->NODE_NAM);
-				print_Cn("TSTR_TYP", mir->TSTR_TYP);
-				print_Cn("JOB_NAM", mir->JOB_NAM);
-				print_Cn("JOB_REV", mir->JOB_REV);
-				print_Cn("SBLOT_ID", mir->SBLOT_ID);
-				print_Cn("OPER_NAM", mir->OPER_NAM);
-				print_Cn("EXEC_TYP", mir->EXEC_TYP);
-				print_Cn("EXEC_VER", mir->EXEC_VER);
-				print_Cn("TEST_COD", mir->TEST_COD);
-				print_Cn("TST_TEMP", mir->TST_TEMP);
-				print_Cn("USER_TXT", mir->USER_TXT);
-				print_Cn("AUX_FILE", mir->AUX_FILE);
-				print_Cn("PKG_TYP", mir->PKG_TYP);
-				print_Cn("FAMILY_ID", mir->FAMILY_ID);
-				print_Cn("DATE_COD", mir->DATE_COD);
-				print_Cn("FACIL_ID", mir->FACIL_ID);
-				print_Cn("FLOOR_ID", mir->FLOOR_ID);
-				print_Cn("PROC_ID", mir->PROC_ID);
-				print_Cn("OPER_FRQ", mir->OPER_FRQ);
-				print_Cn("SPEC_NAM", mir->SPEC_NAM);
-				print_Cn("SPEC_VER", mir->SPEC_VER);
-				print_Cn("FLOW_ID", mir->FLOW_ID);
-				print_Cn("SETUP_ID", mir->SETUP_ID);
-				print_Cn("DSGN_REV", mir->DSGN_REV);
-				print_Cn("ENG_ID", mir->ENG_ID);
-				print_Cn("ROM_COD", mir->ROM_COD);
-				print_Cn("SERL_NUM", mir->SERL_NUM);
-				print_Cn("SUPR_NAM", mir->SUPR_NAM);
+					print_tim("SETUP_T", mir->SETUP_T);
+					print_tim("START_T", mir->START_T);
+					print_int("STAT_NUM", mir->STAT_NUM);
+					print_chr("MODE_COD", mir->MODE_COD);
+					print_chr("RTST_COD", mir->RTST_COD);
+					print_chr("PROT_COD", mir->PROT_COD);
+					print_int("BURN_TIM", mir->BURN_TIM);
+					print_chr("CMOD_COD", mir->CMOD_COD);
+					print_Cn("LOT_ID", mir->LOT_ID);
+					print_Cn("PART_TYP", mir->PART_TYP);
+					print_Cn("NODE_NAM", mir->NODE_NAM);
+					print_Cn("TSTR_TYP", mir->TSTR_TYP);
+					print_Cn("JOB_NAM", mir->JOB_NAM);
+					print_Cn("JOB_REV", mir->JOB_REV);
+					print_Cn("SBLOT_ID", mir->SBLOT_ID);
+					print_Cn("OPER_NAM", mir->OPER_NAM);
+					print_Cn("EXEC_TYP", mir->EXEC_TYP);
+					print_Cn("EXEC_VER", mir->EXEC_VER);
+					print_Cn("TEST_COD", mir->TEST_COD);
+					print_Cn("TST_TEMP", mir->TST_TEMP);
+					print_Cn("USER_TXT", mir->USER_TXT);
+					print_Cn("AUX_FILE", mir->AUX_FILE);
+					print_Cn("PKG_TYP", mir->PKG_TYP);
+					print_Cn("FAMILY_ID", mir->FAMILY_ID);
+					print_Cn("DATE_COD", mir->DATE_COD);
+					print_Cn("FACIL_ID", mir->FACIL_ID);
+					print_Cn("FLOOR_ID", mir->FLOOR_ID);
+					print_Cn("PROC_ID", mir->PROC_ID);
+					print_Cn("OPER_FRQ", mir->OPER_FRQ);
+					print_Cn("SPEC_NAM", mir->SPEC_NAM);
+					print_Cn("SPEC_VER", mir->SPEC_VER);
+					print_Cn("FLOW_ID", mir->FLOW_ID);
+					print_Cn("SETUP_ID", mir->SETUP_ID);
+					print_Cn("DSGN_REV", mir->DSGN_REV);
+					print_Cn("ENG_ID", mir->ENG_ID);
+					print_Cn("ROM_COD", mir->ROM_COD);
+					print_Cn("SERL_NUM", mir->SERL_NUM);
+					print_Cn("SUPR_NAM", mir->SUPR_NAM);
 #ifdef STDF_VER3
 				} else {
-				print_int("CPU_TYPE", mir->CPU_TYPE);
-				print_int("STDF_VER", mir->STDF_VER);
-				print_chr("MODE_COD", mir->MODE_COD);
-				print_int("STAT_NUM", mir->STAT_NUM);
-				print_Cn("TEST_COD", mir->TEST_COD);
-				print_chr("RTST_COD", mir->RTST_COD);
-				print_chr("PROT_COD", mir->PROT_COD);
-				print_chr("CMOD_COD", mir->CMOD_COD);
-				print_tim("SETUP_T", mir->SETUP_T);
-				print_tim("START_T", mir->START_T);
-				print_Cn("LOT_ID", mir->LOT_ID);
-				print_Cn("PART_TYP", mir->PART_TYP);
-				print_Cn("JOB_NAM", mir->JOB_NAM);
-				print_Cn("OPER_NAM", mir->OPER_NAM);
-				print_Cn("NODE_NAM", mir->NODE_NAM);
-				print_Cn("TSTR_TYP", mir->TSTR_TYP);
-				print_Cn("EXEC_TYP", mir->EXEC_TYP);
-				print_Cn("SUPR_NAM", mir->SUPR_NAM);
-				print_Cn("HAND_ID", mir->HAND_ID);
-				print_Cn("SBLOT_ID", mir->SBLOT_ID);
-				print_Cn("JOB_REV", mir->JOB_REV);
-				print_Cn("PROC_ID", mir->PROC_ID);
-				print_Cn("PRB_CARD", mir->PRB_CARD);
+					print_int("CPU_TYPE", mir->CPU_TYPE);
+					print_int("STDF_VER", mir->STDF_VER);
+					print_chr("MODE_COD", mir->MODE_COD);
+					print_int("STAT_NUM", mir->STAT_NUM);
+					print_Cn("TEST_COD", mir->TEST_COD);
+					print_chr("RTST_COD", mir->RTST_COD);
+					print_chr("PROT_COD", mir->PROT_COD);
+					print_chr("CMOD_COD", mir->CMOD_COD);
+					print_tim("SETUP_T", mir->SETUP_T);
+					print_tim("START_T", mir->START_T);
+					print_Cn("LOT_ID", mir->LOT_ID);
+					print_Cn("PART_TYP", mir->PART_TYP);
+					print_Cn("JOB_NAM", mir->JOB_NAM);
+					print_Cn("OPER_NAM", mir->OPER_NAM);
+					print_Cn("NODE_NAM", mir->NODE_NAM);
+					print_Cn("TSTR_TYP", mir->TSTR_TYP);
+					print_Cn("EXEC_TYP", mir->EXEC_TYP);
+					print_Cn("SUPR_NAM", mir->SUPR_NAM);
+					print_Cn("HAND_ID", mir->HAND_ID);
+					print_Cn("SBLOT_ID", mir->SBLOT_ID);
+					print_Cn("JOB_REV", mir->JOB_REV);
+					print_Cn("PROC_ID", mir->PROC_ID);
+					print_Cn("PRB_CARD", mir->PRB_CARD);
 				}
 #endif
 				break;
@@ -346,11 +347,11 @@ for (i=1; i<argc; ++i) {
 				print_tim("FINISH_T", mrr->FINISH_T);
 #ifdef STDF_VER3
 				if (stdf_ver == 3) {
-				print_int("PART_CNT", mrr->PART_CNT);
-				print_int("RTST_CNT", mrr->RTST_CNT);
-				print_int("ABRT_CNT", mrr->ABRT_CNT);
-				print_int("GOOD_CNT", mrr->GOOD_CNT);
-				print_int("FUNC_CNT", mrr->FUNC_CNT);
+					print_int("PART_CNT", mrr->PART_CNT);
+					print_int("RTST_CNT", mrr->RTST_CNT);
+					print_int("ABRT_CNT", mrr->ABRT_CNT);
+					print_int("GOOD_CNT", mrr->GOOD_CNT);
+					print_int("FUNC_CNT", mrr->FUNC_CNT);
 				}
 #endif
 				print_chr("DISP_COD", mrr->DISP_COD);
@@ -512,10 +513,10 @@ for (i=1; i<argc; ++i) {
 				print_int("HEAD_NUM", wir->HEAD_NUM);
 #ifdef STDF_VER3
 				if (stdf_ver == 3)
-				print_hex("PAD_BYTE", wir->PAD_BYTE);
+					print_hex("PAD_BYTE", wir->PAD_BYTE);
 				else
 #endif
-				print_int("SITE_GRP", wir->SITE_GRP);
+					print_int("SITE_GRP", wir->SITE_GRP);
 				print_tim("START_T", wir->START_T);
 				print_Cn("WAFER_ID", wir->WAFER_ID);
 				break;
@@ -525,14 +526,14 @@ for (i=1; i<argc; ++i) {
 #ifdef STDF_VER3
 				if (stdf_ver == 4) {
 #endif
-				print_int("HEAD_NUM", wrr->HEAD_NUM);
-				print_int("SITE_GRP", wrr->SITE_GRP);
-				print_tim("FINISH_T", wrr->FINISH_T);
+					print_int("HEAD_NUM", wrr->HEAD_NUM);
+					print_int("SITE_GRP", wrr->SITE_GRP);
+					print_tim("FINISH_T", wrr->FINISH_T);
 #ifdef STDF_VER3
 				} else {
-				print_tim("FINISH_T", wrr->FINISH_T);
-				print_int("HEAD_NUM", wrr->HEAD_NUM);
-				print_hex("PAD_BYTE", wrr->PAD_BYTE);
+					print_tim("FINISH_T", wrr->FINISH_T);
+					print_int("HEAD_NUM", wrr->HEAD_NUM);
+					print_hex("PAD_BYTE", wrr->PAD_BYTE);
 				}
 #endif
 				print_int("PART_CNT", wrr->PART_CNT);
@@ -544,13 +545,13 @@ for (i=1; i<argc; ++i) {
 #ifdef STDF_VER3
 				if (stdf_ver == 4) {
 #endif
-				print_Cn("FABWF_ID", wrr->FABWF_ID);
-				print_Cn("FRAME_ID", wrr->FRAME_ID);
-				print_Cn("MASK_ID", wrr->MASK_ID);
+					print_Cn("FABWF_ID", wrr->FABWF_ID);
+					print_Cn("FRAME_ID", wrr->FRAME_ID);
+					print_Cn("MASK_ID", wrr->MASK_ID);
 #ifdef STDF_VER3
 				} else {
-				print_Cn("HAND_ID", wrr->HAND_ID);
-				print_Cn("PRB_CARD", wrr->PRB_CARD);
+					print_Cn("HAND_ID", wrr->HAND_ID);
+					print_Cn("PRB_CARD", wrr->PRB_CARD);
 				}
 #endif
 				print_Cn("USR_DESC", wrr->USR_DESC);
@@ -576,9 +577,9 @@ for (i=1; i<argc; ++i) {
 				print_int("SITE_NUM", pir->SITE_NUM);
 #ifdef STDF_VER3
 				if (stdf_ver == 3) {
-				print_int("X_COORD", pir->X_COORD);
-				print_int("Y_COORD", pir->Y_COORD);
-				print_Cn("PART_ID", pir->PART_ID);
+					print_int("X_COORD", pir->X_COORD);
+					print_int("Y_COORD", pir->Y_COORD);
+					print_Cn("PART_ID", pir->PART_ID);
 				}
 #endif
 				break;
@@ -590,14 +591,14 @@ for (i=1; i<argc; ++i) {
 #ifdef STDF_VER3
 				if (stdf_ver == 4)
 #endif
-				print_hex("PART_FLG", prr->PART_FLG);
+					print_hex("PART_FLG", prr->PART_FLG);
 				print_int("NUM_TEST", prr->NUM_TEST);
 				print_int("HARD_BIN", prr->HARD_BIN);
 				print_int("SOFT_BIN", prr->SOFT_BIN);
 #ifdef STDF_VER3
 				if (stdf_ver == 3) {
-				print_hex("PART_FLG", prr->PART_FLG);
-				print_hex("PAD_BYTE", prr->PAD_BYTE);
+					print_hex("PART_FLG", prr->PART_FLG);
+					print_hex("PAD_BYTE", prr->PAD_BYTE);
 				}
 #endif
 				print_int("X_COORD", prr->X_COORD);
@@ -605,7 +606,7 @@ for (i=1; i<argc; ++i) {
 #ifdef STDF_VER3
 				if (stdf_ver == 4)
 #endif
-				print_tim("TEST_T", prr->TEST_T);
+					print_tim("TEST_T", prr->TEST_T);
 				print_Cn("PART_ID", prr->PART_ID);
 				print_Cn("PART_TXT", prr->PART_TXT);
 				print_Bn("PART_FIX", prr->PART_FIX);
@@ -649,7 +650,7 @@ for (i=1; i<argc; ++i) {
 #ifdef STDF_VER3
 				if (stdf_ver == 4)
 #endif
-				print_chr("TEST_TYP", tsr->TEST_TYP);
+					print_chr("TEST_TYP", tsr->TEST_TYP);
 				print_int("TEST_NUM", tsr->TEST_NUM);
 				print_int("EXEC_CNT", tsr->EXEC_CNT);
 				print_int("FAIL_CNT", tsr->FAIL_CNT);
@@ -657,27 +658,27 @@ for (i=1; i<argc; ++i) {
 #ifdef STDF_VER3
 				if (stdf_ver == 4) {
 #endif
-				print_Cn("TEST_NAM", tsr->TEST_NAM);
-				print_Cn("SEQ_NAME", tsr->SEQ_NAME);
-				print_Cn("TEST_LBL", tsr->TEST_LBL);
-				print_hex("OPT_FLAG", tsr->OPT_FLAG);
-				print_rel("TEST_TIM", tsr->TEST_TIM);
-				print_rel("TEST_MIN", tsr->TEST_MIN);
-				print_rel("TEST_MAX", tsr->TEST_MAX);
-				print_rel("TST_SUMS", tsr->TST_SUMS);
-				print_rel("TST_SQRS", tsr->TST_SQRS);
+					print_Cn("TEST_NAM", tsr->TEST_NAM);
+					print_Cn("SEQ_NAME", tsr->SEQ_NAME);
+					print_Cn("TEST_LBL", tsr->TEST_LBL);
+					print_hex("OPT_FLAG", tsr->OPT_FLAG);
+					print_rel("TEST_TIM", tsr->TEST_TIM);
+					print_rel("TEST_MIN", tsr->TEST_MIN);
+					print_rel("TEST_MAX", tsr->TEST_MAX);
+					print_rel("TST_SUMS", tsr->TST_SUMS);
+					print_rel("TST_SQRS", tsr->TST_SQRS);
 #ifdef STDF_VER3
 				} else {
-				print_hex("OPT_FLAG", tsr->OPT_FLAG);
-				print_hex("PAD_BYTE", tsr->PAD_BYTE);
-				print_rel("TEST_MIN", tsr->TEST_MIN);
-				print_rel("TEST_MAX", tsr->TEST_MAX);
-				print_rel("TST_MEAN", tsr->TST_MEAN);
-				print_rel("TST_SDEV", tsr->TST_SDEV);
-				print_rel("TST_SUMS", tsr->TST_SUMS);
-				print_rel("TST_SQRS", tsr->TST_SQRS);
-				print_Cn("TEST_NAM", tsr->TEST_NAM);
-				print_Cn("SEQ_NAME", tsr->SEQ_NAME);
+					print_hex("OPT_FLAG", tsr->OPT_FLAG);
+					print_hex("PAD_BYTE", tsr->PAD_BYTE);
+					print_rel("TEST_MIN", tsr->TEST_MIN);
+					print_rel("TEST_MAX", tsr->TEST_MAX);
+					print_rel("TST_MEAN", tsr->TST_MEAN);
+					print_rel("TST_SDEV", tsr->TST_SDEV);
+					print_rel("TST_SUMS", tsr->TST_SUMS);
+					print_rel("TST_SQRS", tsr->TST_SQRS);
+					print_Cn("TEST_NAM", tsr->TEST_NAM);
+					print_Cn("SEQ_NAME", tsr->SEQ_NAME);
 				}
 #endif
 				break;

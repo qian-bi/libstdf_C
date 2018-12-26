@@ -116,26 +116,26 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-for (i=1; i<argc; ++i) {
-	printf("Analyzing %s\n", argv[i]);
-	f = stdf_open(argv[i]);
-	if (!f) {
-		perror("Could not open file");
-		continue;
-	}
+	for (i=1; i<argc; ++i) {
+		printf("Analyzing %s\n", argv[i]);
+		f = stdf_open(argv[i]);
+		if (!f) {
+			perror("Could not open file");
+			continue;
+		}
 
-	HASH_INIT
-	cnt = 0;
-	while ((rec=stdf_read_record(f)) != NULL) {
-		recname = stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB);
-		HASH_UPDATE(recname)
-		cnt++;
-		stdf_free_record(rec);
-	}
-	stdf_close(f);
-	HASH_PRINT
+		HASH_INIT
+		cnt = 0;
+		while ((rec=stdf_read_record(f)) != NULL) {
+			recname = stdf_get_rec_name(rec->header.REC_TYP, rec->header.REC_SUB);
+			HASH_UPDATE(recname)
+			cnt++;
+			stdf_free_record(rec);
+		}
+		stdf_close(f);
+		HASH_PRINT
 
-	printf("\tTOTAL : %li\n", cnt);
-}
+		printf("\tTOTAL : %li\n", cnt);
+	}
 	return EXIT_SUCCESS;
 }

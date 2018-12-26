@@ -27,7 +27,7 @@ Install MSYS2:
 Download MSYS2 from https://msys2.github.io/ and install it to c:\msys64.
 
 For proxy add following line to the .bashrc
-export http_proxy=proxy.company.com:8080
+export http_proxy=proxy.company.com:912
 export https_proxy=$http_proxy
 export ftp_proxy=$http_proxy
 export rsync_proxy=$http_proxy
@@ -43,7 +43,7 @@ pacman -Syu
 pacman -Su
 
 install software for mingw64:
-pacman -S base-devel git tar mingw-w64-x86_64-toolchain mingw-w64-x86_64-zziplib
+pacman -S base-devel tar mingw-w64-x86_64-toolchain mingw-w64-x86_64-zziplib
 
 Install the libstdf library:
 

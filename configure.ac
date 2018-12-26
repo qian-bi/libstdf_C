@@ -1,4 +1,4 @@
-AC_INIT([libstdf], [0.6], [vapier@gmail.com])
+AC_INIT([libstdf], [0.7], [vapier@gmail.com, stefan.brandner@gmx.at])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADER([config.h])
