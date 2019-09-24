@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
 	stdf_file *f;
 	char *recname;
 	stdf_rec_unknown *rec;
-	int i;
+	stdf_dtc_U2 i;
 	stdf_dtc_U4 stdf_ver;
 
 	if (argc <= 1) {
@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-for (i=1; i<argc; ++i) {
+	for (i=1; i<argc; ++i) {
 	printf("Dumping %s\n", argv[i]);
 	f = stdf_open(argv[i]);
 	if (!f) {

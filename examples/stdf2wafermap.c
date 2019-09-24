@@ -1,8 +1,7 @@
 /**
- * @file stdf2img.c
+ * @file stdf2wafermap.c
  */
 /*
- * Copyright (C) 2005-2007 Mike Frysinger <vapier@gmail.com>
  * Copyright (C) 2019 Stefan Brandner <stefan.brandner@gmx.at>
  * Released under the BSD license.  For more information,
  * please see: http://opensource.org/licenses/bsd-license.php
@@ -10,9 +9,17 @@
 
 #include <config.h>
 #include <libstdf.h>
-#include <png.h>
 
 #include <internal/headers.h>
+
+unsigned udc(int u) //unsigned digit count
+{
+	if (abs(u) < 10)    return 1;
+	if (abs(u) < 100)   return 2;
+	if (abs(u) < 1000)  return 3;
+	if (abs(u) < 10000) return 4;
+	return 0; //number was not supported
+}
 
 int main(int argc, char *argv[])
 {
@@ -20,9 +27,10 @@ int main(int argc, char *argv[])
 	stdf_rec_unknown *r;
 
 	stdf_dtc_I2 x_min, y_min, x_max, y_max, x, y, x_range, y_range;
-	stdf_dtc_U2 **hard_bins, **soft_bins, sb_max;
+	stdf_dtc_U2 **hard_bins, **soft_bins, sb_max, i;
 	stdf_dtc_U1 has_wafer_data = 0;
 
+	char column_str[4];
 	const stdf_dtc_I2 COORD_MAX = 9999;
 	const stdf_dtc_I2 COORD_MIN = -9999;
 
@@ -64,7 +72,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	printf("Creating Wafermap hb_wafermap.png\n\n");
+	printf("Wafermap\n\n");
 
 	x_range = x_max - x_min + 1;
 	y_range = y_max - y_min + 1;
@@ -83,6 +91,7 @@ int main(int argc, char *argv[])
 	if (!f)
 		return EXIT_FAILURE;
 
+	sb_max = 0;
 	while ((r=stdf_read_record(f)) != NULL) {
 		if (HEAD_TO_REC(r->header) == STDF_REC_PRR) {
 			stdf_rec_prr *prr = (stdf_rec_prr*)r;
@@ -100,94 +109,57 @@ int main(int argc, char *argv[])
 	}
 	stdf_close(f);
 
-	{
-		FILE *outimg;
+	printf("HBIN Map\n\n");
+	printf("MAP ROWS            : %i\n", y_range);
+	printf("MAP COLUMNS         : %i\n", x_range);
 
-		png_structp png_ptr = NULL;
-		png_infop info_ptr = NULL;
-		//size_t x, y;
-		png_byte ** row_pointers = NULL;
-
-		int pixel_size = 3;
-		int depth = 8;
-
-		outimg = fopen("hb_wafermap.png", "wb");
-		if (!outimg) {
-			return EXIT_FAILURE;
+	for (i=0; i<3; i++) {
+		printf("\n    ");
+		for (x=x_min; x<=x_max; x++) {
+			sprintf(column_str, "%03i", x);
+			printf("%c", column_str[i]);
 		}
-		png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-		if (png_ptr == NULL) {
-			fclose(outimg);
-			return EXIT_FAILURE;
+	}
+	printf("\n\n");
+
+	i=y_min;
+	for (y=0; y<y_range; y++) {
+		printf("%03i ", i++);
+		for (x=0; x<x_range; x++) {
+			if (hard_bins[x][y] == 0)
+				printf(" ");
+			else
+				printf("%x", hard_bins[x][y]);
 		}
-		info_ptr = png_create_info_struct(png_ptr);
-		if (info_ptr == NULL) {
-			png_destroy_write_struct(&png_ptr, &info_ptr);
-			fclose(outimg);
-			return EXIT_FAILURE;
+		printf("\n");
+	}
+
+	printf("\nSBIN Map\n\n");
+	printf("MAP ROWS            : %i\n", y_range);
+	printf("MAP COLUMNS         : %i\n", x_range);
+
+	unsigned sb_digits = udc(sb_max);
+
+	for (i=0; i<3; i++) {
+		printf("\n   %*c", sb_digits, ' ');
+		for (x=x_min; x<=x_max; x++) {
+			sprintf(column_str, "%03i", x);
+			printf("%c", column_str[i]);
+			printf("%*c", sb_digits, ' ');
 		}
+	}
+	printf("\r\n\r\n");
 
-		/* Set up error handling. */
-		if (setjmp(png_jmpbuf(png_ptr))) {
-			png_destroy_write_struct(&png_ptr, &info_ptr);
-			fclose(outimg);
-			return EXIT_FAILURE;
+	i=y_min;
+	for (y=0; y<y_range; y++) {
+		printf("%03i ", i++);
+		for (x=0; x<x_range; x++) {
+			if (soft_bins[x][y] == 0)
+				printf("%*c", sb_digits+1, ' ');
+			else
+				printf("%*i ", sb_digits, soft_bins[x][y]);
 		}
-
-		/* Set image attributes. */
-		png_set_IHDR(png_ptr,
-					 info_ptr,
-					 x_range,
-					 y_range,
-					 depth,
-					 PNG_COLOR_TYPE_RGB,
-					 PNG_INTERLACE_NONE,
-					 PNG_COMPRESSION_TYPE_DEFAULT,
-					 PNG_FILTER_TYPE_DEFAULT);
-
-		/* Initialize rows of PNG. */
-		row_pointers = png_malloc(png_ptr, y_range * sizeof(png_byte *));
-		for (y = 0; y < y_range; y++) {
-			png_byte *row = png_malloc(png_ptr, sizeof(uint8_t) * x_range * pixel_size);
-			row_pointers[y] = row;
-			for (x = 0; x < x_range; x++) {
-				if (hard_bins[x][y] == 0) {
-					// color white
-					*row++ = 255; // red
-					*row++ = 255; // green
-					*row++ = 255; // blue
-					// printf(" ");
-				}
-				else if (hard_bins[x][y] == 1) {
-					// color green
-					*row++ = 0;   // red
-					*row++ = 247; // green
-					*row++ = 0;   // blue
-					// printf("P");
-				}
-				else {
-					// color red
-					*row++ = 255; // red
-					*row++ = 0;   // green
-					*row++ = 0;   // blue
-					// printf("F");
-				}
-			}
-			// printf("\n");
-		}
-
-		/* Write the image data to "outimg". */
-		png_init_io(png_ptr, outimg);
-		png_set_rows(png_ptr, info_ptr, row_pointers);
-		png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
-
-		for (y = 0; y < y_range; y++) {
-			png_free(png_ptr, row_pointers[y]);
-		}
-		png_free(png_ptr, row_pointers);
-
-		png_destroy_write_struct(&png_ptr, &info_ptr);
-		fclose(outimg);
+		printf("\n");
 	}
 
 	for (x=0; x < x_range; x++) {

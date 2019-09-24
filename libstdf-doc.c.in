@@ -72,3 +72,7 @@ $ gcc -o example example.c -lstdf
 /** @example read_write.c Reads and writes a stdf file with its raw data */
 /** @example record_stats.c Display summary information about the number of records found */
 /** @example stdf2xtdf.c Dump STDF files to the XTDF format */
+/** @example stdf2wafermap Creates ascii HBIN and SBIN wafermap */
+/** @example stdf2img Creates hb_wafermap.png */ 
+/** @example makestdf.c Creates dummy stdf file */
+/** @example extract_records.c Extracts records */

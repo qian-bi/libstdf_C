@@ -162,7 +162,6 @@ PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.0,
 	AM_CONDITIONAL(HAVE_GLIB, false)
 	GLIB_CFLAGS=""
 	GLIB_LIBS=""
-	AC_MSG_RESULT(no)
 ])
 if test "x$HASH_LIBS" != "x" -o "x$ECORE_LIBS" != "x" ; then
 	GLIB_CFLAGS=""
@@ -173,23 +172,15 @@ AC_SUBST(GLIB_LIBS)
 fi
 
 dnl ********************************************************
-dnl *                        GD                            *
+dnl *                        PNG                           *
 dnl ********************************************************
-if test "x$enable_example_programs" = "xyes" ; then
-AC_PATH_PROG(GDLIB_CONFIG, "gdlib-config", "")
-if test "x$GDLIB_CONFIG" != "x" ; then
-	AC_DEFINE(HAVE_GDLIB, 1, [Has gd support (used by example programs)])
-	AM_CONDITIONAL(HAVE_GDLIB, true)
-	GDLIB_CFLAGS=`gdlib-config --cflags`
-	GDLIB_LIBS="-lgd `gdlib-config --libs`"
-else
-	AM_CONDITIONAL(HAVE_GDLIB, false)
-	GDLIB_CFLAGS=""
-	GDLIB_LIBS=""
-fi
-AC_SUBST(GDLIB_CFLAGS)
-AC_SUBST(GDLIB_LIBS)
-fi
+
+PKG_CHECK_MODULES([libpng], [libpng12], [HAVE_LIBPNG=1], [HAVE_LIBPNG=0])
+AM_CONDITIONAL([USE_LIBPNG], [test "$HAVE_LIBPNG" -eq 1])
+AM_COND_IF([USE_LIBPNG],
+			[AC_MSG_NOTICE([Using PNG for stdf2img])],
+		   	[AC_MSG_WARN([libpng not found. Example stdf2img will not be created.])])
+
 
 dnl ********************************************************
 dnl *                     docs [doxygen]                   *
