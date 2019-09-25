@@ -175,10 +175,10 @@ dnl ********************************************************
 dnl *                        PNG                           *
 dnl ********************************************************
 
-PKG_CHECK_MODULES([libpng], [libpng12], [HAVE_LIBPNG=1], [HAVE_LIBPNG=0])
+PKG_CHECK_MODULES([libpng], [libpng], [HAVE_LIBPNG=1], [HAVE_LIBPNG=0])
 AM_CONDITIONAL([USE_LIBPNG], [test "$HAVE_LIBPNG" -eq 1])
 AM_COND_IF([USE_LIBPNG],
-			[AC_MSG_NOTICE([Using PNG for stdf2img])],
+			[AC_MSG_NOTICE([Using libpng for example stdf2img])],
 		   	[AC_MSG_WARN([libpng not found. Example stdf2img will not be created.])])
 
 
